@@ -28,7 +28,7 @@ textResponseToInput <- function(file, area){
 }
 
 # load promiscuity
-file_promiscuity <- "data/promiscuity_gfeller_100.RData"
+file_promiscuity <- "planning/gergo/data/promiscuity_gfeller_100.RData"
 load(file_promiscuity)
 promiscuity <- formFilterPromVector(promiscuity)
 

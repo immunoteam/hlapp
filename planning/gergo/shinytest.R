@@ -7,8 +7,11 @@
 library(shiny)
 library(dplyr)
 library(tidyr)
-source("R/01_promiscuity_calculation.R")
-source("R/shiny_backend.R")
+
+dir <- file.path("planning", "gergo")
+
+source(file.path(dir, "scr", "01_promiscuity_calculation.R") )
+source(file.path(dir, "scr", "shiny_backend.R") )
 
 
 ### UI
