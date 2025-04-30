@@ -85,22 +85,27 @@ formatCohortTable <- function(x,
 #'@param x the data frame containing the HLA genotypes of the patients. output of the formatCohortTable function
 #'@param y data frame containig HLA promiscuity values. Output of the fromFilterPromVector function
 #'@param hla.col column of x. Contains HLA genotype
-calcGenotypePromiscuity <- function(x, y,
-                                    hla.col = "HLA_II"){
+calcGenotypePromiscuity <- function(x){
   require(dplyr) 
   
-  str.end <- ifelse(hla.col == "HLA_I", 1, 2)
-  x$Allele <- sub("[^a-zA-Z]", "", x[, hla.col]) |> substr(1, str.end)
-  
-  res <- left_join(x, y) |>
+  res <- x |>
     group_by(ID, Allele) |>
     summarise(Promiscuity = mean(Promiscuity, na.rm = F), .groups = "drop") |>
     pivot_wider(names_from = Allele, values_from = Promiscuity, names_prefix = "Prom_")
   res$Prom_GT = rowMeans(select(res, contains("Prom_")), na.rm = F)
   
-  if (hla.col == "HLA_II") {
-    res$Prom_DQR = rowMeans(select(res, all_of(c("Prom_DQ", "Prom_DR") ) ), na.rm = F)
-  }
+  return(res)
+}
+
+
+# function to join the HLA genotype and promiscuity
+joinGenotypePromiscuity <- function(x, y, hla.col = "HLA_II") {
+  str.end <- ifelse(hla.col == "HLA_I", 1, 2)
+  x$Allele <- sub("[^a-zA-Z]", "", x[, hla.col]) |> substr(1, str.end)
+  
+  res <- left_join(x, y)
   
   return(res)
 }
+  
+

@@ -16,10 +16,15 @@ source(file.path(dir, "scr", "shiny_backend.R") )
 
 ### UI
 ui <- fluidPage(
-  fileInput(inputId = "file", label = "upload HLA genotype file"),
-  submitButton(),
-  textOutput(outputId = "resptext"),
-  DT::dataTableOutput(outputId = "DT")
+  fluidRow(
+    fileInput(inputId = "file", label = "upload HLA genotype file"),
+    submitButton(),
+    textOutput("resptext")
+  ),
+  fluidRow(
+    column(6, "Promiscuity of alleles", DT::dataTableOutput("joined_table") ),
+    column(6, "Patient promiscuity", DT::dataTableOutput("prom_table") )
+  )
 )
 
 
@@ -27,36 +32,40 @@ ui <- fluidPage(
 ### SERVER
 server <- function(input, output, session){
   
+  DToptions <- list(dom = "Bfrtrip" ,
+                    buttons = c("excel", "csv", "copy"), 
+                    scrollX = T ) 
   # Define outputs - outside of render functions - but inside the server function, ar reactive() objects
     # Text response  
   out_text <- reactive(ifelse(is.null(input$file), 
                           "Please upload a .tsv file",
-                          "File received"
-                          )
+                          "File received")
                        )
-    # Output data table 
- # is_input_null <- reactive( is.null(input$file ))
-  #input_file <- reactive(input$file)
-  #input_df <- reactive( read.delim(input$file$datapath, sep = "\t" ) )
-  #out_df <- reactive( input$file )
-  file <- reactive(input$File$datapath)
+  
+  file <- reactive(input$file$datapath)
   in_df <- reactive(read.delim(file() ) )
-  out_df <- reactive( formatCohortTable(in_df(), select.cols = c("ID", "HLA_II") ) |>
-                        calcGenotypePromiscuity(promiscuity, hla.col = "HLA_II") |> 
+  
+  out_joined <- reactive(formatCohortTable(in_df(), select.cols = c("ID", "HLA_II") ) |>
+                           joinGenotypePromiscuity(promiscuity, hla.col = "HLA_II") |>
+                           mutate_if(is.numeric, signif, 4)
+                         )
+  out_prom <- reactive( calcGenotypePromiscuity(out_joined() ) |>
                         mutate_if(is.numeric, signif, 3)
                       )
 
   # Render outputs
   output$resptext <- renderText( out_text() )
   
-  output$DT <- DT::renderDataTable({
-        
-    #out_df <- read.delim(file = file())
-      DT::datatable(out_df(), extensions = "Buttons", 
-                       options = list(dom = "Bfrtrip" ,
-                                      buttons = c("excel", "csv", "copy"), 
-                                      scrollX = T )  
-                       )
+  output$prom_table <- DT::renderDataTable({
+      DT::datatable(out_prom(), 
+                    extensions = "Buttons", 
+                    options = DToptions)
+    })
+  
+  output$joined_table <- DT::renderDataTable({
+      DT::datatable(out_joined(), 
+                  extensions = "Buttons", 
+                  options = DToptions)
     })
 }
 
