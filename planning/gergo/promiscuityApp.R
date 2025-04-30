@@ -16,7 +16,7 @@ source(file.path(dir, "scr", "shiny_backend.R") )
 
 ### UI
 ui <- fluidPage(
-  fileInput(inputId = "File", label = "upload HLA genotype file"),
+  fileInput(inputId = "file", label = "upload HLA genotype file"),
   submitButton(),
   textOutput(outputId = "resptext"),
   DT::dataTableOutput(outputId = "DT")
@@ -26,38 +26,51 @@ ui <- fluidPage(
 
 ### SERVER
 server <- function(input, output, session){
+  
+  # Define outputs - outside of render functions - but inside the server function, ar reactive() objects
+    # Text response  
+  out_text <- reactive(ifelse(is.null(input$file), 
+                          "Please upload a .tsv file",
+                          "File received"
+                          )
+                       )
+    # Output data table 
+ # is_input_null <- reactive( is.null(input$file ))
+  #input_file <- reactive(input$file)
+  #input_df <- reactive( read.delim(input$file$datapath, sep = "\t" ) )
+  #out_df <- reactive( input$file )
+  file <- reactive(input$File$datapath)
+  in_df <- reactive(read.delim(file() ) )
+  out_df <- reactive( formatCohortTable(in_df(), select.cols = c("ID", "HLA_II") ) |>
+                        calcGenotypePromiscuity(promiscuity, hla.col = "HLA_II") |> 
+                        mutate_if(is.numeric, signif, 3)
+                      )
 
-  output$resptext <- renderText({
-    if (is.null(input$File)){
-      print("Please upload a .tsv file")
-    }
-  })
+  # Render outputs
+  output$resptext <- renderText( out_text() )
   
   output$DT <- DT::renderDataTable({
-    
-    if(!is.null(input$File)) {
-      
-      file<- input$File
-      input.df <- read.delim(file$datapath, sep = "\t")
-      
-      out <- formatCohortTable(input.df, select.cols = c("ID", "HLA_II")) |>
-        calcGenotypePromiscuity(promiscuity, hla.col = "HLA_II") |> 
-        mutate_if(is.numeric, signif, 3)  # round output to 3 digits
         
-      DT::datatable(out, extensions = "Buttons", 
+    #out_df <- read.delim(file = file())
+      DT::datatable(out_df(), extensions = "Buttons", 
                        options = list(dom = "Bfrtrip" ,
-                                      buttons = c("excel", "csv"), 
-                                      scrollX = T 
-                                      )  
+                                      buttons = c("excel", "csv", "copy"), 
+                                      scrollX = T )  
                        )
-    }
-  })
+    })
 }
 
 shinyApp(ui = ui, server = server)
 
 
-#' develop backend 
-#' create stamdardised rormat after inout
-#' functions to calculate all available promiscuities
-#' return outout as data tables
+
+#'  
+#'  tips: 
+#'  
+#'  validate() for checking certain parameters of input
+#'  values, fuctions can be defined outside of UI, just like base R
+#'  observeEvent / EventReactive - buttons and action links
+#'  
+#'  do as little computation in render functions as possible ! 
+#'  {} in render is only necessary if multiple lines are used
+
