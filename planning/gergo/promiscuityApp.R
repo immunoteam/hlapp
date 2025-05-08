@@ -18,8 +18,8 @@ source(file.path(dir, "scr", "shiny_backend.R") )
 ui <- fluidPage(
   fluidRow(
     fileInput(inputId = "file", label = "upload HLA genotype file"),
-    submitButton(),
-    textOutput("resptext")
+    actionButton("submit",  "Submit file"),
+    textOutput("resptext") 
   ),
   fluidRow(
     column(6, "Promiscuity of alleles", DT::dataTableOutput("joined_table") ),
@@ -42,16 +42,24 @@ server <- function(input, output, session){
                           "File received")
                        )
   
-  file <- reactive(input$file$datapath)
-  in_df <- reactive(read.delim(file() ) )
+  file <- eventReactive(input$submit, {
+    input$file$datapath
+    })
+  in_df <- eventReactive(input$submit, {
+    read.delim(file() ) 
+    })
   
-  out_joined <- reactive(formatCohortTable(in_df(), select.cols = c("ID", "HLA_II") ) |>
+  out_joined <- eventReactive( input$submit, {
+    formatCohortTable(in_df(), select.cols = c("ID", "HLA_II") ) |>
                            joinGenotypePromiscuity(promiscuity, hla.col = "HLA_II") |>
                            mutate_if(is.numeric, signif, 4)
-                         )
-  out_prom <- reactive( calcGenotypePromiscuity(out_joined() ) |>
+  })
+  
+  out_prom <- eventReactive( input$submit, {
+    calcGenotypePromiscuity(out_joined() ) |>
                         mutate_if(is.numeric, signif, 3)
-                      )
+  })
+                      
 
   # Render outputs
   output$resptext <- renderText( out_text() )
