@@ -14,19 +14,19 @@ source(file.path("scr", "shiny_backend.R") )
 
 #load data
 file <- file.path("data/HLA_II_promiscuity.rds")
-readRDS(file)
+promiscuity <- readRDS(file)
 
 
 ### UI
 ui <- fluidPage(
   fluidRow(
-    fileInput(inputId = "file", label = "upload HLA genotype file", accept = c(".tsv", ".csv")),
-    actionButton("submit",  "Submit file"),
-    textOutput("resptext") 
+    fileInput(inputId = "file", label = " Upload HLA genotype file", accept = c(".tsv", ".csv")),
+    textOutput("resptext") ,
+    actionButton("submit",  "Submit file")
   ),
   fluidRow(
-    column(6, "Promiscuity of individual HLA-II molecules", DT::dataTableOutput("joined_table") ),
-    column(6, "Patient promiscuity", DT::dataTableOutput("prom_table") )
+    column(6, h4("Promiscuity of individual HLA-II molecules:"), DT::dataTableOutput("joined_table") ),
+    column(6, h4("Patient promiscuity:"), DT::dataTableOutput("prom_table") )
   )
 )
 
@@ -41,7 +41,7 @@ server <- function(input, output, session){
   # Define outputs - outside of render functions - but inside the server function, ar reactive() objects
     # Text response  
   out_text <- reactive(ifelse(is.null(input$file), 
-                          "Please upload a .tsv file",
+                          "Please upload a .tsv or .csv file",
                           "File received")
                        )
   
