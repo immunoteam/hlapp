@@ -8,10 +8,13 @@ library(shiny)
 library(dplyr)
 library(tidyr)
 
-dir <- file.path("planning", "gergo")
+#source functions
+source(file.path("scr", "01_promiscuity_calculation.R") )
+source(file.path("scr", "shiny_backend.R") )
 
-source(file.path(dir, "scr", "01_promiscuity_calculation.R") )
-source(file.path(dir, "scr", "shiny_backend.R") )
+#load data
+file <- file.path("data/HLA_II_promiscuity.rds")
+readRDS(file)
 
 
 ### UI
@@ -22,7 +25,7 @@ ui <- fluidPage(
     textOutput("resptext") 
   ),
   fluidRow(
-    column(6, "Promiscuity of alleles", DT::dataTableOutput("joined_table") ),
+    column(6, "Promiscuity of individual HLA-II molecules", DT::dataTableOutput("joined_table") ),
     column(6, "Patient promiscuity", DT::dataTableOutput("prom_table") )
   )
 )
