@@ -20,7 +20,7 @@ readRDS(file)
 ### UI
 ui <- fluidPage(
   fluidRow(
-    fileInput(inputId = "file", label = "upload HLA genotype file"),
+    fileInput(inputId = "file", label = "upload HLA genotype file", accept = c(".tsv", ".csv")),
     actionButton("submit",  "Submit file"),
     textOutput("resptext") 
   ),
@@ -45,11 +45,16 @@ server <- function(input, output, session){
                           "File received")
                        )
   
-  file <- eventReactive(input$submit, {
-    input$file$datapath
-    })
+  #  file <- eventReactive(input$submit, {  input$file$datapath })
   in_df <- eventReactive(input$submit, {
-    read.delim(file() ) 
+    
+    ext <- tools::file_ext(input$file$name)
+    switch (ext,
+      tsv = read.delim(input$file$datapath ),
+      csv = read.csv(input$file$datapath)
+    )
+    
+    
     })
   
   out_joined <- eventReactive( input$submit, {
