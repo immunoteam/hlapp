@@ -108,4 +108,15 @@ joinGenotypePromiscuity <- function(x, y, hla.col = "HLA_II") {
   return(res)
 }
   
+# function to respond to input
+textResponseToInput <- function(file, area){
+  if (is.null(file)) { 
+    out <- "No file input, detected. Text input is used detected"
+  } 
+  else  {
+    out <- "File input detected"
+  } 
+  return(out)
+}
+
 
