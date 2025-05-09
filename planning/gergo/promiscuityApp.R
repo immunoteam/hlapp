@@ -9,8 +9,7 @@ library(dplyr)
 library(tidyr)
 
 #source functions
-source(file.path("scr", "01_promiscuity_calculation.R") )
-source(file.path("scr", "shiny_backend.R") )
+source(file.path("scr", "app_functions.R") )
 
 #load data
 file <- file.path("data/HLA_II_promiscuity.rds")
