@@ -74,14 +74,16 @@ server <- function(input, output, session){
   
   output$prom_table <- DT::renderDataTable({
       DT::datatable(out_prom(), 
+                    rownames = FALSE,
                     extensions = "Buttons", 
                     options = DToptions)
     })
   
   output$joined_table <- DT::renderDataTable({
       DT::datatable(out_joined(), 
-                  extensions = "Buttons", 
-                  options = DToptions)
+                    rownames = FALSE,
+                    extensions = "Buttons", 
+                    options = DToptions)
     })
 }
 
