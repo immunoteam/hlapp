@@ -2,6 +2,7 @@
 
 promiscuityServer <- function(id) {
   moduleServer(id, function(input, output, session) {
+    require(dplyr)
     
     #options for datatable output
     file <- file.path("data/HLA_II_promiscuity.rds")
