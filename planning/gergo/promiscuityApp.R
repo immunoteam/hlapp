@@ -1,5 +1,8 @@
 # testing the shiny applications. 
 
+#' To Do : functions to translate multilpe formats of input. 
+#'  file- extensions: tsv, csv, excel
+
 
 # output goal DT::renderDatatable - downladable data table. - rows are patient IDs, columns are allele promiscuities
 # input goal 
@@ -19,7 +22,7 @@ promiscuity <- readRDS(file)
 ### UI
 ui <- fluidPage(
   fluidRow(
-    fileInput(inputId = "file", label = " Upload HLA genotype file", accept = c(".tsv", ".csv")),
+    fileInput(inputId = "file", label = " Upload HLA genotype file", accept = c(".tsv", ".csv", ".xlsx")),
     textOutput("resptext") ,
     actionButton("submit",  "Submit file")
   ),
@@ -50,7 +53,8 @@ server <- function(input, output, session){
     ext <- tools::file_ext(input$file$name)
     switch (ext,
       tsv = read.delim(input$file$datapath ),
-      csv = read.csv(input$file$datapath)
+      csv = read.csv(input$file$datapath), 
+      xlsx = as.data.frame(readxl::read_excel(input$file$datapath))
     )
     
     
