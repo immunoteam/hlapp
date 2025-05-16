@@ -54,7 +54,7 @@ promiscuityServer <- function(id) {
     })
     
     output$joined_table <- DT::renderDataTable({
-      DT::datatable(in_df() #out_joined(), 
+      DT::datatable(out_joined(), 
                     rownames = FALSE,
                     extensions = "Buttons", 
                     options = DToptions)
