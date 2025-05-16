@@ -86,6 +86,7 @@ formatCohortTable <- function(x,
 #'@param y data frame containig HLA promiscuity values. Output of the fromFilterPromVector function
 #'@param hla.col column of x. Contains HLA genotype
 joinGenotypePromiscuity <- function(x, y, hla.col = "HLA_II") {
+  require(dplyr)
   str.end <- ifelse(hla.col == "HLA_I", 1, 2)
   x$Allele <- sub("[^a-zA-Z]", "", x[, hla.col]) |> substr(1, str.end)
   
@@ -99,6 +100,7 @@ joinGenotypePromiscuity <- function(x, y, hla.col = "HLA_II") {
 #'@param x the data frame containing the HLA genotypes and promiscuity values of patients, output of joinGenotypePromiscuity
 calcGenotypePromiscuity <- function(x){
   require(dplyr) 
+  require(tidyr)
   
   res <- x |>
     group_by(ID, Allele) |>
