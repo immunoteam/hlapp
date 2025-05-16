@@ -12,7 +12,7 @@ library(dplyr)
 library(tidyr)
 
 #source functions
-source(file.path("scr", "app_functions.R") )
+#source(file.path("scr", "app_functions.R") )
 
 #load data
 file <- file.path("data/HLA_II_promiscuity.rds")
