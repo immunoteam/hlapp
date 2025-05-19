@@ -16,12 +16,7 @@ promiscuityServer <- function(id) {
     # get the input data into a data table, 
     in_df <- eventReactive(input$submit, {
       
-      ext <- tools::file_ext(input$file$name)
-      switch (ext,
-              tsv = read.delim(input$file$datapath ),
-              csv = read.csv(input$file$datapath), 
-              xlsx = as.data.frame(readxl::read_excel(input$file$datapath))
-      )
+      readInputFile(input$file)
     })
     
     
