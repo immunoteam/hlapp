@@ -22,8 +22,8 @@ promiscuityServer <- function(id) {
     
     # create the two output tables
     out_joined <- eventReactive( input$submit, {
-      formatCohortTable(in_df(), select.cols = c("ID", "HLA_II") ) |>
-        joinGenotypePromiscuity(promiscuity, hla.col = "HLA_II") |>
+      formatInputTable(in_df()) |>
+        #joinGenotypePromiscuity(promiscuity, hla.col = "HLA_II") |>
         mutate_if(is.numeric, signif, 4)
     })
     
