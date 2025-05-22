@@ -77,15 +77,22 @@ formatStandardTable <- function(x){
 #'
 #'@return a filtered data.frame, with the same coluns as x
 rmForbiddenCombinations <- function(x, 
-                                    hla.col = "HLA_II"){
+                                    hla.col = "HLA", flag = F ){
   require(dplyr)
   
   x$TMP <- x[ , hla.col]
   x <- x |> 
     mutate(AB_comb  = paste(substr(TMP, 1, 6), 
                             substr(TMP, 10, 15), 
-                            sep = "-" )) |>
-    filter(!AB_comb %in% forbidden_DQ_combinations) |>
+                            sep = "-" ))
+  
+  if(!flag) {
+    x <-  filter(x, !AB_comb %in% forbidden_DQ_combinations)
+  } else {
+    x$forbidden_DQ <- ifelse(x$AB_comb %in% forbidden_DQ_combinations, "forbidden!", "") 
+    }
+  
+    x <- x |>
     select(!all_of(c("TMP", "AB_comb" ) ) )
   
   return(x)
@@ -118,7 +125,7 @@ formatInputTable <- function(x, rm.forbidden = T){
   
   #rm forbidden alpha-beta combinations
   if (rm.forbidden) {
-    x <- rmForbiddenCombinations(x, hla.col = "HLA")
+    x <- rmForbiddenCombinations(x, flag = T)
   }
   
   x <- arrange(x, ID, HLA)
