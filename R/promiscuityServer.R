@@ -23,14 +23,14 @@ promiscuityServer <- function(id) {
     # create the two output tables
     out_joined <- eventReactive( input$submit, {
       formatInputTable(in_df()) |>
-        #joinGenotypePromiscuity(promiscuity, hla.col = "HLA_II") |>
+        joinGenotypePromiscuity(promiscuity) |>
         mutate_if(is.numeric, signif, 4)
     })
     
 
     
     out_prom <- eventReactive( input$submit, {
-      calcGenotypePromiscuity(out_joined() ) |>
+      calcPromiscuity(out_joined() ) |>
         mutate_if(is.numeric, signif, 3)
     })
     
