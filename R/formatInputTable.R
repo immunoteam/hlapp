@@ -3,15 +3,19 @@
 #'  
 #'  @param x data frame
 recogniseInputFormat <- function(x) {
-  case <- "unknown"
-  suppressWarnings(
-    if( all(colnames(x) == c("ID", "HLA_I", "HLA_II") ) ) case <- "cohort"
-  )
   
-  switch(case,
-         cohort = message(paste("Table format recognised:", case)),
-         validate("Unrecognised HLA table format")
-         )
+  cohort_cols <- c("ID", "HLA_I", "HLA_II") 
+  standard_cols <- c("A1", "A2", "B1", "B2", "C1", "C2", "
+                     DPA11", "DPA12", "DPB11", "DPB12", "DQA11", "DQA12", "DQB11",
+                     "DRB11", "DRB12" )
+  
+  case <- "unknown"
+  
+  if(  all(colnames(x) %in% cohort_cols)  ){ case <- "cohort" } 
+    else if ( any(colnames(x) %in% standard_cols ) ) { case <- "standard" }
+  
+  if (case != "unknown") message(paste("Table format recognised:", case))
+  else stop("Unrecognised HLA table format")
   
   return(case)
 }
@@ -26,8 +30,45 @@ formatCohortTable <- function(x, delim = ",") {
     select(ID, HLA_allele)
 }
 
+formatStandardTable <- function(x){
+  
+  #get A, B, C and DR alleles
+  getABCDR <- function(x, locus){
+    a1 <- x[grep(paste0("^", locus, "1"),  names(x)) ] |> as.character()
+    a2 <- x[grep(paste0("^", locus, "2"),  names(x)) ] |> as.character()
+    
+    paste(a1, a2, sep = ", ")
+  }
+  
+  # combine HLA_DP and DR alleles
+  combineDPDQ <- function(x, locus){
+    
+    a <- x[grep(paste0(locus, "A1"), names(x)) ]
+    b <- x[grep(paste0(locus, "B1"), names(x)) ]
+    
+    expand.grid(a, b) |> 
+      mutate(comb = paste(Var1, Var2, sep = "-")) |> 
+      unique() |> 
+      pull(comb) |>
+      paste(collapse = ", ")
+  }
 
-# functions to format input from cohorts and to calculate HLA-II promiscuity
+  out <- data.frame(ID = x[, 1],
+             A = apply(x, 1, getABCDR, locus = "A"),
+             B = apply(x, 1, getABCDR, locus = "B"),
+             C = apply(x, 1, getABCDR, locus = "C"),
+             DP = apply(x, 1, combineDPDQ, locus = "DP"),
+             DQ = apply(x, 1, combineDPDQ, locus = "DQ"),
+             DR = apply(x, 1, getABCDR, locus = "DRB1")
+                    ) 
+   out <- out |> 
+     mutate(HLA_allele = paste(A, B, C, DP, DQ, DR, sep = ", ")) |>
+     select(ID, HLA_allele) |>
+     separate_longer_delim(cols = all_of("HLA_allele"), delim = ", ")
+     
+  return(out)
+}
+
 
 #'remove forbidden HLA-DQ combinations from datasets
 #'
@@ -60,18 +101,28 @@ rmForbiddenCombinations <- function(x,
 #' @return a data frame
 formatInputTable <- function(x, rm.forbidden = T){
   
-  case <-recogniseInputFormat(x)
+  case <-recogniseInputFormat(x) # decide the type of input data based on column names
   
+  #turn input table into the two tow format
   x <- switch(case, 
-         cohort = formatCohortTable(x)
+         cohort = formatCohortTable(x),
+         standard = formatStandardTable(x)
          )
+  
+  # check if HLA allele names contain any * or : if they do, remove them
+  
+  if(any(grepl("\\*|:", x$HLA_allele) ) ){
+    message("Removing * and : from allele names")
+    x$HLA_allele <- gsub("\\*|:", "", x$HLA_allele)
+  } 
   
   #rm forbidden alpha-beta combinations
   if (rm.forbidden) {
     x <- rmForbiddenCombinations(x, hla.col = "HLA_allele")
   }
   
+  x <- arrange(x, ID, HLA_allele)
+  
   return(x)
 }
-
-
+ 
