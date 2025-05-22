@@ -25,9 +25,9 @@ formatCohortTable <- function(x, delim = ",") {
   
   x |>
     select(all_of(select_cols) ) |>
-    mutate(HLA_allele = paste(HLA_I, HLA_II, sep = ",")) |>
-    separate_longer_delim(cols = all_of("HLA_allele"), delim = delim ) |>
-    select(ID, HLA_allele)
+    mutate(HLA = paste(HLA_I, HLA_II, sep = ",")) |>
+    separate_longer_delim(cols = all_of("HLA"), delim = delim ) |>
+    select(ID, HLA)
 }
 
 formatStandardTable <- function(x){
@@ -62,9 +62,9 @@ formatStandardTable <- function(x){
              DR = apply(x, 1, getABCDR, locus = "DRB1")
                     ) 
    out <- out |> 
-     mutate(HLA_allele = paste(A, B, C, DP, DQ, DR, sep = ", ")) |>
-     select(ID, HLA_allele) |>
-     separate_longer_delim(cols = all_of("HLA_allele"), delim = ", ")
+     mutate(HLA = paste(A, B, C, DP, DQ, DR, sep = ", ")) |>
+     select(ID, HLA) |>
+     separate_longer_delim(cols = all_of("HLA"), delim = ", ")
      
   return(out)
 }
@@ -111,17 +111,17 @@ formatInputTable <- function(x, rm.forbidden = T){
   
   # check if HLA allele names contain any * or : if they do, remove them
   
-  if(any(grepl("\\*|:", x$HLA_allele) ) ){
+  if(any(grepl("\\*|:", x$HLA) ) ){
     message("Removing * and : from allele names")
-    x$HLA_allele <- gsub("\\*|:", "", x$HLA_allele)
+    x$HLA <- gsub("\\*|:", "", x$HLA)
   } 
   
   #rm forbidden alpha-beta combinations
   if (rm.forbidden) {
-    x <- rmForbiddenCombinations(x, hla.col = "HLA_allele")
+    x <- rmForbiddenCombinations(x, hla.col = "HLA")
   }
   
-  x <- arrange(x, ID, HLA_allele)
+  x <- arrange(x, ID, HLA)
   
   return(x)
 }
