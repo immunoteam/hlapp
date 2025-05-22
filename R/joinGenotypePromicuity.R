@@ -10,5 +10,3 @@ joinGenotypePromiscuity <- function(x, y, add.locus = T) {
   
   return(res)
 }
-
-joinGenotypePromiscuity(test_HLA_table1, promiscuity)
