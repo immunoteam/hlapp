@@ -6,7 +6,7 @@ calcPromiscuity <- function(x){
   res <- x |>
     group_by(ID, Locus) |>
     summarise(Promiscuity = mean(Promiscuity, na.rm = F), .groups = "drop") |>
-    pivot_wider(names_from = Locus, values_from = Promiscuity, names_prefix = "Prom_")
+    tidyr::pivot_wider(names_from = Locus, values_from = Promiscuity, names_prefix = "Prom_")
   res$Prom_GT = rowMeans(select(res, contains("Prom_")), na.rm = F)
   
   return(res)
