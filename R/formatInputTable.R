@@ -80,10 +80,9 @@ rmForbiddenCombinations <- function(x,
                                     hla.col = "HLA", flag = F ){
   require(dplyr)
   
-  x$TMP <- x[ , hla.col]
   x <- x |> 
-    dplyr::mutate(AB_comb  = paste(substr(TMP, 1, 6), 
-                            substr(TMP, 10, 15), 
+    dplyr::mutate(AB_comb  = paste(substr(.data[[hla.col]] , 1, 6), 
+                            substr(.data[[hla.col]], 10, 15), 
                             sep = "-" ))
   
   if(flag) {
@@ -92,7 +91,6 @@ rmForbiddenCombinations <- function(x,
     x <-  dplyr::filter(x, !AB_comb %in% forbidden_DQ_combinations)
     }
   
-  x$TMP <- NULL
   x$AB_comb <- NULL
   
   return(x)
