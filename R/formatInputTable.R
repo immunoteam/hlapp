@@ -24,10 +24,10 @@ formatCohortTable <- function(x, delim = ",") {
   select_cols <- c("ID", "HLA_I", "HLA_II")
   
   x |>
-    select(all_of(select_cols) ) |>
-    mutate(HLA = paste(HLA_I, HLA_II, sep = ",")) |>
-    separate_longer_delim(cols = all_of("HLA"), delim = delim ) |>
-    select(ID, HLA)
+    dplyr::select(tidyr::all_of(select_cols) ) |>
+    dplyr::mutate(HLA = paste(HLA_I, HLA_II, sep = ",")) |>
+    tidyr::separate_longer_delim(cols = tidyr::all_of("HLA"), delim = delim ) |>
+    dplyr::select(ID, HLA)
 }
 
 formatStandardTable <- function(x){
@@ -47,9 +47,9 @@ formatStandardTable <- function(x){
     b <- x[grep(paste0(locus, "B1"), names(x)) ]
     
     expand.grid(a, b) |> 
-      mutate(comb = paste(Var1, Var2, sep = "-")) |> 
+      dplyr::mutate(comb = paste(Var1, Var2, sep = "-")) |> 
       unique() |> 
-      pull(comb) |>
+      dplyr::pull(comb) |>
       paste(collapse = ", ")
   }
 
@@ -62,9 +62,9 @@ formatStandardTable <- function(x){
              DR = apply(x, 1, getABCDR, locus = "DRB1")
                     ) 
    out <- out |> 
-     mutate(HLA = paste(A, B, C, DP, DQ, DR, sep = ", ")) |>
-     select(ID, HLA) |>
-     separate_longer_delim(cols = all_of("HLA"), delim = ", ")
+     dplyr::mutate(HLA = paste(A, B, C, DP, DQ, DR, sep = ", ")) |>
+     dplyr::select(ID, HLA) |>
+     tidyr::separate_longer_delim(cols = all_of("HLA"), delim = ", ")
      
   return(out)
 }
@@ -82,18 +82,18 @@ rmForbiddenCombinations <- function(x,
   
   x$TMP <- x[ , hla.col]
   x <- x |> 
-    mutate(AB_comb  = paste(substr(TMP, 1, 6), 
+    dplyr::mutate(AB_comb  = paste(substr(TMP, 1, 6), 
                             substr(TMP, 10, 15), 
                             sep = "-" ))
   
-  if(!flag) {
-    x <-  filter(x, !AB_comb %in% forbidden_DQ_combinations)
-  } else {
+  if(flag) {
     x$forbidden_DQ <- ifelse(x$AB_comb %in% forbidden_DQ_combinations, "forbidden!", "") 
+  } else {
+    x <-  dplyr::filter(x, !AB_comb %in% forbidden_DQ_combinations)
     }
   
-    x <- x |>
-    select(!all_of(c("TMP", "AB_comb" ) ) )
+  x$TMP <- NULL
+  x$AB_comb <- NULL
   
   return(x)
 }
@@ -106,7 +106,7 @@ rmForbiddenCombinations <- function(x,
 #' @param rm.forbidden whether to remove forbidden HLAQ alpha-beta combinations for the table. TRUE by default.
 #' 
 #' @return a data frame
-formatInputTable <- function(x, rm.forbidden = T){
+formatInputTable <- function(x, flag.forbidden = T){
   
   case <-recogniseInputFormat(x) # decide the type of input data based on column names
   
@@ -124,11 +124,10 @@ formatInputTable <- function(x, rm.forbidden = T){
   } 
   
   #rm forbidden alpha-beta combinations
-  if (rm.forbidden) {
-    x <- rmForbiddenCombinations(x, flag = T)
-  }
-  
-  x <- arrange(x, ID, HLA)
+
+  x <- rmForbiddenCombinations(x, flag = flag.forbidden)
+
+  x <- dplyr::arrange(x, ID, HLA)
   
   return(x)
 }
