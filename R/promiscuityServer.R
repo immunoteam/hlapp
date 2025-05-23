@@ -11,11 +11,12 @@ promiscuityServer <- function(id) {
     #options for datatable output
     DToptions <- list(dom = "Bfrtrip" ,
                       buttons = c("excel", "csv", "copy"), 
-                      scrollX = T ) 
+                      scrollX = T,
+                      scrollY = 400, 
+                      paging = F) 
     
     # get the input data into a data table, 
-    in_df <- eventReactive(input$submit, {
-      
+    in_df <- reactive({
       readInputFile(input$file)
     })
     
@@ -39,18 +40,23 @@ promiscuityServer <- function(id) {
                                 "Please upload a .xlsx, .tsv or .csv file",
                                 "File received")
                          )
-    # Rneder outputs
+    # Render outputs
     output$resptext <- renderText( out_text() )
     
-    output$prom_table <- DT::renderDataTable({
-      DT::datatable(out_prom(), 
+    output$input_head <- DT::renderDataTable(head(in_df(), n = 3),
+                                             options = list(scrollX = T, paging = F, scrollY = 200, searching =F),
+                                             rownames =F
+                                             )
+    
+    output$joined_table <- DT::renderDataTable({
+      DT::datatable(out_joined(), 
                     rownames = FALSE,
                     extensions = "Buttons", 
                     options = DToptions)
     })
     
-    output$joined_table <- DT::renderDataTable({
-      DT::datatable(out_joined(), 
+    output$prom_table <- DT::renderDataTable({
+      DT::datatable(out_prom(), 
                     rownames = FALSE,
                     extensions = "Buttons", 
                     options = DToptions)
