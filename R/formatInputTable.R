@@ -104,12 +104,21 @@ rmForbiddenCombinations <- function(x,
 #' @param rm.forbidden whether to remove forbidden HLAQ alpha-beta combinations for the table. TRUE by default.
 #' 
 #' @return a data frame
-formatInputTable <- function(x, flag.forbidden = T){
+formatInputTable <- function(x, flag.forbidden = T, 
+                             manual = F, id.col = NULL, hla.cols = NULL){
   
-  case <-recogniseInputFormat(x) # decide the type of input data based on column names
+  
+  if(maual) {
+    case <- "manual"
+   # validate(!is.null(id.col), !is.null(hla.cols))
+  } else {
+    case <-recogniseInputFormat(x) # decide the type of input data based on column names
+  }
+  
   
   #turn input table into the two tow format
   x <- switch(case, 
+         manual = formatManualTable(x, id.col, hla.cols)
          cohort = formatCohortTable(x),
          standard = formatStandardTable(x)
          )

@@ -17,9 +17,16 @@ promiscuityServer <- function(id) {
     
     # get the input data into a data table, 
     in_df <- reactive({
+      req(input$file)
       readInputFile(input$file)
     })
     
+    observeEvent(in_df(), {
+      updateSelectInput(session, "idvar", choices = colnames(in_df() ) )
+    })
+    observeEvent(in_df(), {
+      updateCheckboxGroupInput(session, "hlavar", choices = colnames(in_df() ) )
+    })
     
     # create the two output tables
     out_joined <- eventReactive( input$submit, {
@@ -41,7 +48,8 @@ promiscuityServer <- function(id) {
                                 "File received")
                          )
     # Render outputs
-    output$resptext <- renderText( out_text() )
+    #output$resptext <- renderText( out_text() )
+    output$resptext <- renderText( paste(names(in_df() ), collapse = ", " ) )
     
     output$input_head <- DT::renderDataTable(head(in_df(), n = 3),
                                              options = list(scrollX = T, paging = F, scrollY = 200, searching =F),
