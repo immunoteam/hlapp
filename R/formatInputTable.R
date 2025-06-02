@@ -118,7 +118,7 @@ formatInputTable <- function(x, flag.forbidden = T,
   
   #turn input table into the two tow format
   x <- switch(case, 
-         manual = formatManualTable(x, id.col, hla.cols)
+         manual = formatManualTable(x, id.col, hla.cols),
          cohort = formatCohortTable(x),
          standard = formatStandardTable(x)
          )
@@ -139,3 +139,11 @@ formatInputTable <- function(x, flag.forbidden = T,
   return(x)
 }
  
+
+formatManualTable <- function(x, id.col, hla.cols, delim = ","){
+  x <- x |>
+    dplyr::select(all_of(c(id.col, hla.cols))) |>
+    tidyr::unite(HLA, all_of(hla.cols), sep = delim) |>
+    separate_longer_delim(HLA, delim = delim)
+  return(x)
+}
