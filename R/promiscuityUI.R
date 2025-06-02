@@ -7,8 +7,13 @@ promiscuityUI <- function(id) {
       sidebarPanel(
         fileInput(NS(id, "file"), label = " Upload HLA genotype file", accept = c(".tsv", ".csv", ".xlsx")),
         textOutput(NS(id, "resptext") ) ,
+        
+        selectInput(NS(id, "idvar"), "ID column:", choices = character(1) ),
+        checkboxGroupInput(NS(id, "hlavar"), "HLA genotype columns:", choices = character() ),
+        
+        
         # radioButtons("delim","Deliminator: ",  choices = c(";",",",":"), selected = ";", inline=TRUE),
-        DT::dataTableOutput(NS(id, "input_head")), # show input file
+        #DT::dataTableOutput(NS(id, "input_head")), # show input file
 
         checkboxGroupInput("type", "Promiscuity to calculate:", 
                            choices = c("HLA-A (individual)" = "A_ind",
