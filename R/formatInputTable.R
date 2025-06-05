@@ -133,8 +133,6 @@ formatInputTable <- function(x, flag.forbidden = T,
   #rm forbidden alpha-beta combinations
 
   x <- rmForbiddenCombinations(x, flag = flag.forbidden)
-  x <- dplyr::rename(x, "ID" = .data[[id.col]]) # rename id column, if not "ID"
-
   x <- dplyr::arrange(x, ID, HLA)
   
   return(x)
@@ -144,6 +142,7 @@ formatInputTable <- function(x, flag.forbidden = T,
 formatManualTable <- function(x, id.col, hla.cols, delim = ","){
   x <- x |>
     dplyr::select(all_of(c(id.col, hla.cols))) |>
+    dplyr::rename(ID = .data[[id.col]]) |>
     tidyr::unite(HLA, all_of(hla.cols), sep = delim) |>
     tidyr::separate_longer_delim(HLA, delim = delim)
   return(x)
