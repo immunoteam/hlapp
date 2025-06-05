@@ -105,10 +105,10 @@ rmForbiddenCombinations <- function(x,
 #' 
 #' @return a data frame
 formatInputTable <- function(x, flag.forbidden = T, 
-                             manual = F, id.col = NULL, hla.cols = NULL){
+                             manual = F, id.col = "ID", hla.cols = NULL){
   
   
-  if(maual) {
+  if(manual) {
     case <- "manual"
    # validate(!is.null(id.col), !is.null(hla.cols))
   } else {
@@ -133,6 +133,7 @@ formatInputTable <- function(x, flag.forbidden = T,
   #rm forbidden alpha-beta combinations
 
   x <- rmForbiddenCombinations(x, flag = flag.forbidden)
+  x <- dplyr::rename(x, "ID" = .data[[id.col]]) # rename id column, if not "ID"
 
   x <- dplyr::arrange(x, ID, HLA)
   
@@ -144,6 +145,6 @@ formatManualTable <- function(x, id.col, hla.cols, delim = ","){
   x <- x |>
     dplyr::select(all_of(c(id.col, hla.cols))) |>
     tidyr::unite(HLA, all_of(hla.cols), sep = delim) |>
-    separate_longer_delim(HLA, delim = delim)
+    tidyr::separate_longer_delim(HLA, delim = delim)
   return(x)
 }
