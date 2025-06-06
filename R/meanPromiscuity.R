@@ -13,7 +13,7 @@ meanPromiscuity <- function(middle_table, genes){
   
   prom <- matrix(NA, nrow = length(unique(middle_table$ID)), ncol = 1 )
   rownames(prom) <- unique(middle_table$ID)
-  colnames(prom) <- paste0(genes, "_avg")
+  colnames(prom) <- paste0(paste(genes, collapse = ""), "_avg")
    
   for(id in unique(middle_table$ID)){
     table <- subset(middle_table, middle_table$ID == id & middle_table$Locus %in% genes)
