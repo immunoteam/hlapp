@@ -8,12 +8,17 @@
 
 
 meanPromiscuity <- function(middle_table, genes){
-  prom <- rep(NA, length(unique(middle_table$ID)))
-  names(prom) <- unique(middle_table$ID)
+  
+  genes <- gsub("a", "", genes) #remave a from the end of gene string
+  
+  prom <- matrix(NA, nrow = length(unique(middle_table$ID)), ncol = 1 )
+  rownames(prom) <- unique(middle_table$ID)
+  colnames(prom) <- paste0(genes, "_avg")
+   
   for(id in unique(middle_table$ID)){
     table <- subset(middle_table, middle_table$ID == id & middle_table$Locus %in% genes)
     table <- subset(table, table$forbidden_DQ != "forbidden!")
-    prom[id] <- mean(table$Promiscuity)
+    prom[id, ] <- mean(table$Promiscuity)
   }
   return(prom)
 }

@@ -7,7 +7,10 @@
 
 
 selectPromiscuity <- function(middle_table, gene){
+  gene <- gsub("i", "", gene) #remave i from the end of gene string
+  
   if(startsWith(gene, "D")) n = 4 else n = 2
+  
   prom <- matrix(NA, nrow = length(unique(middle_table$ID)), ncol = n)
   rownames(prom) <- unique(middle_table$ID)
   colnames(prom) <- paste0(gene, 1:n)
