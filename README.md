@@ -24,6 +24,14 @@ Currently my (Gergő) code is running if you load the app as described below. An
 
 ## How to use
 
--   Dependencies: If new R packages need to be used pleas use renv::install() and then renv::snapshot(), then commit the renv.lock file. This allows other users to synchronize packages with renv::restore()
+-   **Dependencies:** If new R packages need to be used pleas use renv::install() and then renv::snapshot(), then commit the renv.lock file. This allows other users to synchronize packages with renv::restore()
 
--   
+-   **Code structure:**
+
+    -   app.R - the main script, that defined promiscuityApp() function, that starts the app
+
+    -   promiscuityServer - script of the server. all code is written within a moduleServer() function (modularity is not necessary right now, but will be useful, if the app becomes too complicated)
+
+    -   promiscuityUI - script for UI, to allow modularity, inputIDs, and outputIDs have to be defined within the NS() function. eg: instead of `inputID = "slide"` , `inputID = NS(id, "slide")` has to be used
+
+All other scripts contain other non-reactive functions. These mostly work as they would in a normal environment. One difference is that these scripts should not call Library() or require(). Instead any functions that are not from base or shiny should be called like this: `package_name::function_name()`
