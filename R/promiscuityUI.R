@@ -3,7 +3,7 @@
 checkbox_options <- c("HLA-A (individual)" = "Ai",
                      "HLA-B (individual" = "Bi",
                      "HLA-C (individual)" = "Ci",
-                     "HLA-DP (individual)" = "DQi",
+                     "HLA-DP (individual)" = "DPi",
                      "HLA-DQ (individual)" = "DQi",
                      "HLA-DR (individual)" = "DRi",
                      "HLA-A (average)" = "Aa",
@@ -36,7 +36,7 @@ promiscuityUI <- function(id) {
         
         h3("2. Choose output:"),
         p("Select the promiscuity values to be calculated!"),
-        checkboxGroupInput("type", "Promiscuity to calculate:", 
+        checkboxGroupInput(NS(id, "type"), "Promiscuity to calculate:", 
                            choices = checkbox_options,
                            selected = c("Aa", "Ba", "Ca", "DPa", "DQa", "DRa")
                            ),
@@ -44,7 +44,7 @@ promiscuityUI <- function(id) {
       ),
       mainPanel(
         fluidRow(
-          column(6, h4("Promiscuity of individual HLA-II molecules:"), DT::dataTableOutput(NS(id, "joined_table") ) ), # middle table containing promiscuities of individual alleles
+          column(6, h4("Promiscuity of individual HLA-II molecules:"), DT::dataTableOutput(NS(id, "middle_table") ) ), # middle table containing promiscuities of individual alleles
           column(6, h4("Patient promiscuity:"), DT::dataTableOutput(NS(id, "prom_table") ) ) # final output table 
         ),
         fluidRow(

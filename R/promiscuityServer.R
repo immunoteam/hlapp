@@ -29,17 +29,14 @@ promiscuityServer <- function(id) {
     })
     
     # create the two output tables
-    out_joined <- eventReactive( input$submit, {
+    middle_table <- eventReactive( input$submit, {
       formatInputTable(in_df(), manual = input$manual, id.col = input$idvar,  hla.cols = input$hlavar , flag.forbidden = T)  |>
         joinGenotypePromiscuity(promiscuity) |>
         mutate_if(is.numeric, signif, 4)
     })
     
-
-    
-    out_prom <- eventReactive( input$submit, {
-      calcPromiscuity(out_joined() ) |>
-        mutate_if(is.numeric, signif, 3)
+    out_prom <- eventReactive(input$submit, {
+      hlaFromMiddleTable(middle_table(), types = input$type)
     })
     
     # output respones for uploaded file
@@ -48,23 +45,25 @@ promiscuityServer <- function(id) {
                                 "File received")
                          )
     # Render outputs
-    #output$resptext <- renderText( out_text() )
     output$resptext <- renderText( paste(names(in_df() ), collapse = ", " ) )
     
+    #currently not in use
     output$input_head <- DT::renderDataTable(head(in_df(), n = 3),
                                              options = list(scrollX = T, paging = F, scrollY = 200, searching =F),
                                              rownames =F
                                              )
     
-    output$joined_table <- DT::renderDataTable({
-      DT::datatable(out_joined(), 
+    output$middle_table <- DT::renderDataTable({
+      req(middle_table())
+      DT::datatable(middle_table(), 
                     rownames = FALSE,
                     extensions = "Buttons", 
                     options = DToptions)
     })
     
     output$prom_table <- DT::renderDataTable({
-      DT::datatable(out_prom(), 
+     # req(out_prom())
+      DT::datatable(out_prom()[[1]], 
                     rownames = FALSE,
                     extensions = "Buttons", 
                     options = DToptions)
