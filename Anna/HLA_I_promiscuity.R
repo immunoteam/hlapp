@@ -1,7 +1,6 @@
-#required format: csv, seven columns named ID, A1, A2, B1, B3, C1, C2
 
 library(shiny)
-load("promiscuity_hlai_imm")
+load("Anna/promiscuity_hlai_imm")
 
 ui <- fluidPage(
   titlePanel("Promiscuity calculation"),
