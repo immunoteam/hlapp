@@ -12,6 +12,7 @@ meanPromiscuity <- function(middle_table, genes){
   names(prom) <- unique(middle_table$ID)
   for(id in unique(middle_table$ID)){
     table <- subset(middle_table, middle_table$ID == id & middle_table$Locus %in% genes)
+    table <- subset(table, table$forbidden_DQ != "forbidden!")
     prom[id] <- mean(table$Promiscuity)
   }
   return(prom)
