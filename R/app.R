@@ -1,5 +1,3 @@
-library(shiny)
-
 promiscuityApp <- function(...){
   ui <- fluidPage(promiscuityUI("test"))
   
