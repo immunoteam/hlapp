@@ -1,29 +1,40 @@
 middle_table = read.csv("planning/gergo/data/middle_table.csv")
+load("Anna/promiscuity_hlai_imm")
+p1 = promiscuity
+load("planning/gergo/data/promiscuity_gfeller_100.RData")
+p2 = promiscuity
+
+promiscuity = c(p1, p2)
+
 
 prom_df = NULL
 prom_all = NULL
 
 select_promiscuity = function(gene){
-  prom = matrix(NA, nrow = length(unique(middle_table$ID)), ncol = 2)
+  if(startsWith(gene, "D")) n = 4 else n = 2
+  prom = matrix(NA, nrow = length(unique(middle_table$ID)), ncol = n)
   rownames(prom) = unique(middle_table$ID)
-  colnames(prom) = paste0(gene, 1:2)
+  colnames(prom) = paste0(gene, 1:n)
   for(id in unique(middle_table$ID)){
     table = subset(middle_table, middle_table$ID == id & middle_table$Locus == gene)
     prom[id,] = table$Promiscuity
+    if(gene == "DQ"){
+      prom[id,table$forbidden_DQ == "forbidden!"] = "forbidden"
+    }
   }
   return(prom)
 }
 
 
-if(("HLA-A (individual alleles)" %in% input$type)){
+if(("Ai" %in% input$type)){
   prom_df = cbind(prom_df, select_promiscuity("A"))
 }
 
-if(("HLA-B (individual alleles)" %in% input$type)){
+if(("Bi" %in% input$type)){
   prom_df = cbind(prom_df, select_promiscuity("B"))
 }
 
-if(("HLA-C (individual alleles)" %in% input$type)){
+if(("Ci" %in% input$type)){
   prom_df = cbind(prom_df, select_promiscuity("C"))
 }
 
@@ -34,10 +45,12 @@ mean_promiscuity = function(genes){
   names(prom) = unique(middle_table$ID)
   for(id in unique(middle_table$ID)){
     table = subset(middle_table, middle_table$ID == id & middle_table$Locus %in% genes)
-    prom[id] = mean(table$Promiscuity)
+    table = subset(table, table$forbidden_DQ != "forbidden!")
+    prom[id] = mean(table$Promiscuity, na.rm = input$NA)
   }
   return(prom)
 }
+
 
 
 if(("HLA-A (average)" %in% input$type)){
