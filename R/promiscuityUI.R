@@ -48,7 +48,7 @@ promiscuityUI <- function(id) {
           column(6, h4("Patient promiscuity:"), DT::dataTableOutput(NS(id, "prom_table") ) ) # final output table 
         ),
         fluidRow(
-          downloadButton("download_all", "Download all") # TODO - make download button only appear after results are shown
+          downloadButton(NS(id, "download_all"), "Download all") # TODO - make download button only appear after results are shown
         )
       )
     )
