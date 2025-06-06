@@ -4,6 +4,7 @@
 #' CHANGES FROM ORIGINAL
 #' name of function was changed to camelCase for consistency
 #' added middle_table as a function variable
+#' retured value is a data frame with column names, so its easier to bind to other tables 
 
 
 
