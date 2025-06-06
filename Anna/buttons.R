@@ -15,7 +15,7 @@ ui <- fluidPage(
                                      "HLA-C (average)" = "Ca", "all HLA-I (average)" = "I"),
                          selected = c("Aa", "Ba", "Ca")),
       radioButtons("NA", label = "Ignore missing alleles?", 
-        choices = list("Calculate with NAs", "Calculate without NAs")), 
+        choices = list("Calculate with NAs" = T, "Calculate without NAs" = F)), 
       downloadButton("download_selected", "Download selected"),
       downloadButton("download_all", "Download all")),
     mainPanel(

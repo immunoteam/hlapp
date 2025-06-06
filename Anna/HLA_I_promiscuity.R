@@ -1,7 +1,10 @@
-#required format: csv, seven columns named ID, A1, A2, B1, B3, C1, C2
 
 library(shiny)
+<<<<<<< HEAD
+load("Anna/promiscuity_hlai_imm")
+=======
 load(file.path("Anna" , "promiscuity_hlai_imm"))
+>>>>>>> f3184262c37e7ef1e9c9f87e95101587653b7f6f
 
 ui <- fluidPage(
   titlePanel("Promiscuity calculation"),
