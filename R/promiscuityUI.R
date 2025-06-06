@@ -1,5 +1,22 @@
 
+#define checkbox optioons outside of ui for easier readibility 
+checkbox_options <- c("HLA-A (individual)" = "Ai",
+                     "HLA-B (individual" = "Bi",
+                     "HLA-C (individual)" = "Ci",
+                     "HLA-DP (individual)" = "DQi",
+                     "HLA-DQ (individual)" = "DQi",
+                     "HLA-DR (individual)" = "DRi",
+                     "HLA-A (average)" = "Aa",
+                     "HLA-B (average" = "Ba",
+                     "HLA-C (average)" = "Ca",
+                     "HLA-DP (average)" = "DPa",
+                     "HLA-DQ (average)" = "DQa",
+                     "HLA-DR (average)" = "DRa",
+                     "HLA-I (average)" = "HLA_I",
+                     "HLA-II (average)" = 'HLA_II'
+)
 
+#define ui
 promiscuityUI <- function(id) {
   tagList(
     titlePanel("Promiscuity calculation"),
@@ -20,22 +37,8 @@ promiscuityUI <- function(id) {
         h3("2. Choose output:"),
         p("Select the promiscuity values to be calculated!"),
         checkboxGroupInput("type", "Promiscuity to calculate:", 
-                           choices = c("HLA-A (individual)" = "A_ind",
-                                       "HLA-B (individual" = "B_ind",
-                                       "HLA-C (individual)" = "C_ind",
-                                       "HLA-DP (individual)" = "DQ_ind",
-                                       "HLA-DQ (individual)" = "DQ_ind",
-                                       "HLA-DR (individual)" = "DR_ind",
-                                       "HLA-A (average)" = "A_avg",
-                                       "HLA-B (average" = "B_avg",
-                                       "HLA-C (average)" = "C_avg",
-                                       "HLA-DP (average)" = "DQ_avg",
-                                       "HLA-DQ (average)" = "DQ_avg",
-                                       "HLA-DR (average)" = "DR_avg",
-                                       "HLA-I" = "HLA_I",
-                                       "HLA-II" = 'HLA_II'
-                                       ),
-                           selected = c("A_avg", "B_avg", "C_avg", "DP_avg", "DQ_avg", "DR_avg")
+                           choices = checkbox_options,
+                           selected = c("Aa", "Ba", "Ca", "DPa", "DQa", "DRa")
                            ),
         actionButton(NS(id, "submit"),  "Get results")  # submit input for promiscuity calculation
       ),
