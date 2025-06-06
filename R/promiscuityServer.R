@@ -64,10 +64,16 @@ promiscuityServer <- function(id) {
     output$prom_table <- DT::renderDataTable({
      # req(out_prom())
       DT::datatable(out_prom()[[1]], 
-                    rownames = FALSE,
+                    rownames = TRUE,
                     extensions = "Buttons", 
                     options = DToptions)
     })
     
+    output$download_all <- downloadHandler(
+      filename = "promiscuity.csv",
+      content = function(file){
+        utils::write.csv(out_prom()[[2]], file, row.names = T, quote = T)
+      }
+    )
   })
 }
