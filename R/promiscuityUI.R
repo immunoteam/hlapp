@@ -24,11 +24,16 @@ promiscuityUI <- function(id) {
       sidebarPanel(
         h3("1. Choose Input:"),
         fileInput(NS(id, "file"), label = " Upload HLA genotype file", accept = c(".tsv", ".csv", ".xlsx")),
-        textOutput(NS(id, "resptext") ) ,
         
-        radioButtons(NS(id, "manual"),  "Automatic recognition:", choices = c("ON" = FALSE, "OFF" = TRUE)),
-        selectInput(NS(id, "idvar"), "ID column:", choices = character(1) ),
-        checkboxGroupInput(NS(id, "hlavar"), "HLA genotype columns:", choices = character() ),
+        radioButtons(NS(id, "is_manual"),  "Input recognition:", choices = c("Automatic" = FALSE, "Manual" = TRUE)),
+        tabsetPanel(
+          id = NS(id, "input_switcher"), type = "hidden",
+          tabPanelBody("automatic", ""),
+          tabPanelBody("manual",         
+                       selectInput(NS(id, "idvar"), "ID column:", choices = character(1) ),
+                       checkboxGroupInput(NS(id, "hlavar"), "HLA genotype columns:", choices = character() ))
+                    ),
+
         
         
         # radioButtons("delim","Deliminator: ",  choices = c(";",",",":"), selected = ";", inline=TRUE),
