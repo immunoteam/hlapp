@@ -15,6 +15,11 @@ promiscuityServer <- function(id) {
                       scrollY = 400, 
                       paging = F) 
     
+    #change input, if patter recognotion is manual
+    observeEvent(input$is_manual, {
+      updateTabsetPanel(inputId = "input_switcher", selected = ifelse(input$is_manual, "manual", "automatic"))
+    })
+    
     # get the input data into a data table, 
     in_df <- reactive({
       req(input$file)
@@ -30,7 +35,7 @@ promiscuityServer <- function(id) {
     
     # create the two output tables
     middle_table <- eventReactive( input$submit, {
-      formatInputTable(in_df(), manual = input$manual, id.col = input$idvar,  hla.cols = input$hlavar , flag.forbidden = T)  |>
+      formatInputTable(in_df(), manual = input$is_manual, id.col = input$idvar,  hla.cols = input$hlavar , flag.forbidden = T)  |>
         joinGenotypePromiscuity(promiscuity) |>
         mutate_if(is.numeric, signif, 4)
     })
