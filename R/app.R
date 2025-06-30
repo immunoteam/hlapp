@@ -1,11 +1,13 @@
+library(shiny)
+
 promiscuityApp <- function(...){
-  ui <- fluidPage(promiscuityUI("test"))
+  ui <- shiny::fluidPage(promiscuityUI("test"))
   
   server <- function(input, output, session) {
     promiscuityServer("test")
   }
   
-  shinyApp(ui, server, ...)
+  shiny::shinyApp(ui, server, ...)
 }
 
 #promiscuityApp()
