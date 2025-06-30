@@ -18,10 +18,10 @@ checkbox_options <- c("HLA-A (individual)" = "Ai",
 
 #define ui
 promiscuityUI <- function(id) {
-  tagList(
-    titlePanel("Promiscuity calculation"),
-    sidebarLayout(
-      sidebarPanel(
+  shiny::tagList(
+    shiny::titlePanel("Promiscuity calculation"),
+    shiny::sidebarLayout(
+      shiny::sidebarPanel(
         h3("1. Choose Input:"),
         fileInput(NS(id, "file"), label = " Upload HLA genotype file", accept = c(".tsv", ".csv", ".xlsx")),
         
