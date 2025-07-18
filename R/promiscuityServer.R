@@ -2,11 +2,6 @@
 
 promiscuityServer <- function(id) {
   moduleServer(id, function(input, output, session) {
-    require(dplyr)
-    
-    #loaddata
-    #file <- file.path("data/HLA_II_promiscuity.rds")
-    #promiscuity <- readRDS(file)
     
     #options for datatable output
     DToptions <- list(dom = "Bfrtrip" ,
