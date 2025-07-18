@@ -5,14 +5,7 @@ promiscuityServer <- function(id) {
     
     user_data <- reactiveValues(loggedIn = FALSE)
     
-    loginUI <- function(id){
-      tagList(
-        textInput( NS(id, "userName"), "User Name:"),
-        passwordInput( NS(id, "passwd"), "Password:"),
-        actionButton( NS(id, "Login"), "LogIn"),
-        textOutput( NS(id, "login_message"))
-      )
-    }
+
     
     # Bejelentkezési képernyő UI
     output$login_ui <- renderUI({
