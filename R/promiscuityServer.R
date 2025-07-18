@@ -7,7 +7,12 @@ promiscuityServer <- function(id, login_status = NULL ) {
     output$login_feedback <- renderText(paste("login status: ", as.character(login_status() ) ) ) 
     
     output$promiscuity_interface <- renderUI(
+      if(login_status()) {
         promiscuityUI2(id)
+      } else {
+        return(NULL)
+      }
+        
       
     )
     
