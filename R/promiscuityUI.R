@@ -24,9 +24,6 @@ promiscuityUI <- function(id) {
     
     shiny::titlePanel("Promiscuity calculation"),
     
-    # Bejelentkezési képernyő UI-ja
-    uiOutput(NS( id, "login_ui")),
-    
     shiny::sidebarLayout(
       shiny::sidebarPanel(
         h3("1. Choose Input:"),
