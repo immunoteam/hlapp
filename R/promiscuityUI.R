@@ -23,6 +23,10 @@ promiscuityUI <- function(id) {
     tags$head(tags$meta(name = "robots", content = "noindex, nofollow")), # this line prevents search bots to read the content of the app
     
     shiny::titlePanel("Promiscuity calculation"),
+    
+    # Bejelentkezési képernyő UI-ja
+    uiOutput("login_ui"),
+    
     shiny::sidebarLayout(
       shiny::sidebarPanel(
         h3("1. Choose Input:"),
