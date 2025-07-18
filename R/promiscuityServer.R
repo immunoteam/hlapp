@@ -6,6 +6,11 @@ promiscuityServer <- function(id, login_status = NULL ) {
     # place of loginserver
     output$login_feedback <- renderText(paste("login status: ", as.character(login_status() ) ) ) 
     
+    output$promiscuity_interface <- renderUI(
+        promiscuityUI2(id)
+      
+    )
+    
     #options for datatable output
     DToptions <- list(dom = "Bfrtrip" ,
                       buttons = c("excel", "csv", "copy"), 

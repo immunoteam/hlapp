@@ -4,7 +4,7 @@
 # Bejelentkezési képernyő UI-ja
 
 loginUI <- function(id){
-uiOutput(NS( id, "login_ui"))
+ uiOutput(NS( id, "login_ui"))
 }
 
 loginServer <- function(id){
