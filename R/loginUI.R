@@ -42,6 +42,7 @@ loginServer <- function(id){
       user_data$loggedIn <- login_pass()
     })
     
+    reactive(login_pass()) # server module output, taken by other module
     
   })
 }

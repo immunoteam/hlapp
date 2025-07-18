@@ -7,8 +7,8 @@ promiscuityApp <- function(...){
     )
   
   server <- function(input, output, session) {
-    loginServer("login")
-    promiscuityServer("test")
+    login_status <- loginServer("login")
+    promiscuityServer("test", login_status = login_status)
   }
   
   shiny::shinyApp(ui, server, ...)

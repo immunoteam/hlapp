@@ -1,9 +1,10 @@
 
 
-promiscuityServer <- function(id) {
+promiscuityServer <- function(id, login_status = NULL ) {
   moduleServer(id, function(input, output, session) {
     
     # place of loginserver
+    output$login_feedback <- renderText(paste("login status: ", as.character(login_status() ) ) ) 
     
     #options for datatable output
     DToptions <- list(dom = "Bfrtrip" ,
