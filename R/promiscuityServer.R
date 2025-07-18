@@ -5,15 +5,19 @@ promiscuityServer <- function(id) {
     
     user_data <- reactiveValues(loggedIn = FALSE)
     
+    loginUI <- function(id){
+      tagList(
+        textInput( NS(id, "userName"), "User Name:"),
+        passwordInput( NS(id, "passwd"), "Password:"),
+        actionButton( NS(id, "Login"), "LogIn"),
+        textOutput( NS(id, "login_message"))
+      )
+    }
+    
     # Bejelentkezési képernyő UI
     output$login_ui <- renderUI({
       if (!user_data$loggedIn) {
-        tagList(
-          textInput( NS(id, "userName"), "User Name:"),
-          passwordInput( NS(id, "passwd"), "Password:"),
-          actionButton( NS(id, "Login"), "LogIn"),
-          textOutput( NS(id, "login_message"))
-        )
+        loginUI(id)
       } else {
         return(NULL)  # Ha már be van jelentkezve, nem jelenítjük meg a bejelentkezési képernyőt
       }
