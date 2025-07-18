@@ -3,39 +3,7 @@
 promiscuityServer <- function(id) {
   moduleServer(id, function(input, output, session) {
     
-    user_data <- reactiveValues(loggedIn = FALSE)
-    
-
-    
-    # Bejelentkezési képernyő UI
-    output$login_ui <- renderUI({
-      if (!user_data$loggedIn) {
-        loginUI(id)
-      } else {
-        return(NULL)  # Ha már be van jelentkezve, nem jelenítjük meg a bejelentkezési képernyőt
-      }
-    })
-    
-    login_pass <- eventReactive(input$Login, {
-      input$userName == "test" && input$passwd =="test"
-    })
-    
-    log_mess <-eventReactive(input$Login, {
-      paste(
-      "input received",
-      ifelse(login_pass(), "login succesful", "login failed")
-      )
-    })
-    
-    output$login_message <- renderText(log_mess())
-  
-    observeEvent(input$Login, {
-      user_data$loggedIn <- login_pass()
-    })
-    
-    
-    
-    
+    # place of loginserver
     
     #options for datatable output
     DToptions <- list(dom = "Bfrtrip" ,
@@ -66,7 +34,7 @@ promiscuityServer <- function(id) {
     middle_table <- eventReactive( input$submit, {
       formatInputTable(in_df(), manual = input$is_manual, id.col = input$idvar,  hla.cols = input$hlavar , flag.forbidden = T)  |>
         joinGenotypePromiscuity(promiscuity) |>
-        mutate_if(is.numeric, signif, 4)
+        dplyr::mutate_if(is.numeric, signif, 4)
     })
     
     out_prom <- eventReactive(input$submit, {
