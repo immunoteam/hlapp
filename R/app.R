@@ -2,6 +2,8 @@ library(shiny)
 
 promiscuityApp <- function(...){
   ui <- shiny::fluidPage(
+    
+    shiny::titlePanel("Promiscuity calculation"),
     loginUI("login"),
     promiscuityUI("test")
     )

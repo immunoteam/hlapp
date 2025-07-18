@@ -1,4 +1,5 @@
-
+#' this script creates the main promiscuity app.
+#' it was moved here, because it had to be responsive to the login status of the server
 
 #define checkbox optioons outside of ui for easier readibility 
 checkbox_options <- c("HLA-A (individual)" = "Ai",
