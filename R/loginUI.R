@@ -28,7 +28,7 @@ loginServer <- function(id){
     
     # check is password is correct - this needs to be made safe !!!
     login_pass <- eventReactive(input$Login, {
-      input$userName == "test" && input$passwd =="test"
+      input$userName == Sys.getenv("userid") && input$passwd == Sys.getenv("pwd")
     })
     
     # feedback message for user about login
