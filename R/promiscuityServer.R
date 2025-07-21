@@ -4,7 +4,7 @@ promiscuityServer <- function(id, login_status = NULL ) {
   moduleServer(id, function(input, output, session) {
     
     # place of loginserver
-    output$login_feedback <- renderText(ifelse(login_status(), "Succesful login!", "Failed login. IF YOU SEE THIS MESSAGE CONTACT GERGŐ" ) )  
+    output$login_feedback <- renderText(ifelse(login_status(), "Succesful login!", "Failed login." ) )  
     
     output$promiscuity_interface <- renderUI(
       if(login_status()) {
