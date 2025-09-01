@@ -8,5 +8,8 @@ joinGenotypePromiscuity <- function(x, y, add.locus = T) {
   
   res <- dplyr::left_join(x, y, dplyr::join_by(HLA) )
   
+  res <- dplyr::filter(res, Locus %in% c("A", "B", "C", "DP", "DQ", "DR"))
+  message("Middle table is succesful")
+  
   return(res)
 }
