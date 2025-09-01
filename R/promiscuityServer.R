@@ -75,7 +75,6 @@ promiscuityServer <- function(id, login_status = NULL ) {
     })
     
     output$prom_table <- DT::renderDataTable({
-     # req(out_prom())
       DT::datatable(out_prom()[[1]], 
                     rownames = TRUE,
                     extensions = "Buttons", 
