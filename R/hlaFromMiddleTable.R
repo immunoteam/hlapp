@@ -26,6 +26,10 @@ hlaFromMiddleTable <- function(middle_table, types){
   message(paste0("ind types: ", paste(ind_types, collapse = ", "), "\navg types: ", paste(avg_types, collapse = ", ") ) )
   
   #remove not alloowed loci from middle table
+  middle_table <- middle_table |>
+    dplyr::filter(flag == "") |>
+    select(!any_of("flag"))
+  
   
   # get individual promiscuity values - one row for each patient, one column for each 
   prom_ind_all <- middle_table |> 
