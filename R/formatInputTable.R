@@ -136,7 +136,7 @@ formatStandardTable <- function(x){
 
 
 # formatting manual input - add DQ combination that is robust enough
-formatManualTable <- function(x, id.col, hla.cols, delim = ","){
+formatManualTable <- function(x, id.col, hla.cols, delim = ", "){
   x <- x |>
     dplyr::select(all_of(c(id.col, hla.cols))) |>
     dplyr::rename(ID = .data[[id.col]]) |>
@@ -144,17 +144,15 @@ formatManualTable <- function(x, id.col, hla.cols, delim = ","){
   
   # replace DQ and DP genes with complexes
   x <- x |>
-    rowwise() |>
-    mutate(HLA = replaceComplex(HLA, "DQ")) |>
-    mutate(HLA = replaceComplex(HLA, "DP"))
+    dplyr::rowwise() |>
+    dplyr::mutate(HLA = replaceComplex(HLA, "DQ")) |>
+    dplyr::mutate(HLA = replaceComplex(HLA, "DP"))
   
   
   #transform the table into a long format
   x <- x |>
     tidyr::separate_longer_delim(HLA, delim = delim) |>
-    arrange(ID, HLA)
-  
-  
+    dplyr::arrange(ID, HLA)
   
   return(x)
 }
@@ -197,11 +195,16 @@ formatInputTable <- function(x, flag.forbidden = T,
   } 
   
   #remove P from the end of the allele name
-  if (any(grepl("P$", x$HLA) ) ){
+  if (any(grepl("P$|P-", x$HLA) ) ){
     message("Removing P from end of the allele names")
-    x$HLA <- gsub("P$", "", x$HLA)  
+    x$HLA <- gsub("P$", "", x$HLA) 
+    x$HLA <- gsub("P-", "-", x$HLA) 
   }
   
+  # remove empty and non identified allele rows
+  x <- x |>
+    filter(HLA != "") |>
+    filter(grepl("\\d\\d\\d\\d", HLA))
   
   #rm forbidden alpha-beta combinations
   x <- rmForbiddenCombinations(x, flag = flag.forbidden)
