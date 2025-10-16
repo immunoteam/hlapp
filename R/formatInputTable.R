@@ -94,7 +94,7 @@ rmForbiddenCombinations <- function(x,
                             sep = "-" ))
   
   if(flag) {
-    x$forbidden_DQ <- ifelse(x$AB_comb %in% forbidden_DQ_combinations, "forbidden!", "") 
+    x$flag <- ifelse(x$AB_comb %in% forbidden_DQ_combinations, "forbidden!", "") 
   } else {
     x <-  dplyr::filter(x, !AB_comb %in% forbidden_DQ_combinations)
     }
