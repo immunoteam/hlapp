@@ -33,7 +33,7 @@ promiscuityUI2 <- function(id){
                      selectInput(NS(id, "idvar"), "ID column:", choices = character(1) ),
                      checkboxGroupInput(NS(id, "hlavar"), "HLA genotype columns:", choices = character() ))
       ),
-      
+      actionButton(NS(id, "next_button") , "Next!", disabled = T), 
       
       
       # radioButtons("delim","Deliminator: ",  choices = c(";",",",":"), selected = ";", inline=TRUE),

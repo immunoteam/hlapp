@@ -69,7 +69,15 @@ formatStandardTable <- function(x){
   return(out)
 }
 
-
+# formatting manual input - add DQ combination that is robust enough
+formatManualTable <- function(x, id.col, hla.cols, delim = ","){
+  x <- x |>
+    dplyr::select(all_of(c(id.col, hla.cols))) |>
+    dplyr::rename(ID = .data[[id.col]]) |>
+    tidyr::unite(HLA, all_of(hla.cols), sep = delim) |>
+    tidyr::separate_longer_delim(HLA, delim = delim)
+  return(x)
+}
 #'remove forbidden HLA-DQ combinations from datasets
 #'
 #'@param x dataframe containing acolumn of HLA molecule genotypes
@@ -130,8 +138,14 @@ formatInputTable <- function(x, flag.forbidden = T,
     x$HLA <- gsub("\\*|:", "", x$HLA)
   } 
   
+  #remove P from the end of the allele name
+  if (any(grepl("P$", x$HLA) ) ){
+    message("Removing P from end of the allele names")
+    x$HLA <- gsub("P$", "", x$HLA)  
+  }
+  
+  
   #rm forbidden alpha-beta combinations
-
   x <- rmForbiddenCombinations(x, flag = flag.forbidden)
   x <- dplyr::arrange(x, ID, HLA)
   
@@ -139,11 +153,3 @@ formatInputTable <- function(x, flag.forbidden = T,
 }
  
 
-formatManualTable <- function(x, id.col, hla.cols, delim = ","){
-  x <- x |>
-    dplyr::select(all_of(c(id.col, hla.cols))) |>
-    dplyr::rename(ID = .data[[id.col]]) |>
-    tidyr::unite(HLA, all_of(hla.cols), sep = delim) |>
-    tidyr::separate_longer_delim(HLA, delim = delim)
-  return(x)
-}
