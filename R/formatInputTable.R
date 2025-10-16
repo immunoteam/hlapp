@@ -144,12 +144,13 @@ formatManualTable <- function(x, id.col, hla.cols, delim = ","){
   
   # replace DQ and DP genes with complexes
   x <- x |>
+    rowwise() |>
     mutate(HLA = replaceComplex(HLA, "DQ")) |>
     mutate(HLA = replaceComplex(HLA, "DP"))
   
   
   #transform the table into a long format
-  x |>
+  x <- x |>
     tidyr::separate_longer_delim(HLA, delim = delim) |>
     arrange(ID, HLA)
   
