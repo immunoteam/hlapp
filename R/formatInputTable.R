@@ -20,6 +20,62 @@ recogniseInputFormat <- function(x) {
   return(case)
 }
 
+#' function to take DQ and DP alleles from a comma separated string and form them into complexes
+#'
+#'
+#'@param x string containing allele names, separated by ", "
+#'@param locus DP or DQ
+#'
+replaceComplex <- function(x, locus){
+  if(!locus %in% c("DQ", "DP")) stop("complex locus must be DP or DQ")
+  
+  # get valuues to be replaced
+  x_vec <- strsplit(x, ", ") |> unlist()
+  vals_to_replace <- grep("-", grep(locus, x_vec, value = T), invert = T,  value = T)
+  
+  vals_to_keep <- x_vec[!x_vec %in% vals_to_replace]
+  
+  a <- grep("A", vals_to_replace, value = T )
+  b <- grep("B", vals_to_replace, value = T )
+  complexes <- expand.grid(a, b)  |>
+    dplyr::mutate(comb = paste(Var1, Var2, sep = "-")) |> 
+    unique() |> 
+    dplyr::pull(comb) 
+  
+  out <- paste(c(vals_to_keep, complexes), collapse = ", ")
+  return(out)
+}
+
+
+#'remove forbidden HLA-DQ combinations from datasets
+#'
+#'@param x dataframe containing acolumn of HLA molecule genotypes
+#'@param hla.col name of the column containig hla - genotype
+#'
+#'@return a filtered data.frame, with the same coluns as x
+rmForbiddenCombinations <- function(x, 
+                                    hla.col = "HLA", flag = F ){
+  require(dplyr)
+  
+  x <- x |> 
+    dplyr::mutate(AB_comb  = paste(substr(.data[[hla.col]] , 1, 6), 
+                                   substr(.data[[hla.col]], 10, 15), 
+                                   sep = "-" ))
+  
+  if(flag) {
+    x$flag <- ifelse(x$AB_comb %in% forbidden_DQ_combinations, "forbidden!", "") 
+  } else {
+    x <-  dplyr::filter(x, !AB_comb %in% forbidden_DQ_combinations)
+  }
+  
+  x$AB_comb <- NULL
+  
+  return(x)
+}
+
+
+
+# function to transform cohort format
 formatCohortTable <- function(x, delim = ",") {
   select_cols <- c("ID", "HLA_I", "HLA_II")
   
@@ -30,6 +86,10 @@ formatCohortTable <- function(x, delim = ",") {
     dplyr::select(ID, HLA)
 }
 
+
+
+
+# function to transform the data from the table format tha contains the hla i and hla ii genotypes in two columns, divided by commas
 formatStandardTable <- function(x){
   
   #get A, B, C and DR alleles
@@ -40,6 +100,7 @@ formatStandardTable <- function(x){
     paste(a1, a2, sep = ", ")
   }
   
+
   # combine HLA_DP and DR alleles
   combineDPDQ <- function(x, locus){
     
@@ -69,40 +130,36 @@ formatStandardTable <- function(x){
   return(out)
 }
 
+
+
+
+
+
 # formatting manual input - add DQ combination that is robust enough
 formatManualTable <- function(x, id.col, hla.cols, delim = ","){
   x <- x |>
     dplyr::select(all_of(c(id.col, hla.cols))) |>
     dplyr::rename(ID = .data[[id.col]]) |>
-    tidyr::unite(HLA, all_of(hla.cols), sep = delim) |>
-    tidyr::separate_longer_delim(HLA, delim = delim)
-  return(x)
-}
-#'remove forbidden HLA-DQ combinations from datasets
-#'
-#'@param x dataframe containing acolumn of HLA molecule genotypes
-#'@param hla.col name of the column containig hla - genotype
-#'
-#'@return a filtered data.frame, with the same coluns as x
-rmForbiddenCombinations <- function(x, 
-                                    hla.col = "HLA", flag = F ){
-  require(dplyr)
+    tidyr::unite(HLA, all_of(hla.cols), sep = delim) 
   
-  x <- x |> 
-    dplyr::mutate(AB_comb  = paste(substr(.data[[hla.col]] , 1, 6), 
-                            substr(.data[[hla.col]], 10, 15), 
-                            sep = "-" ))
+  # replace DQ and DP genes with complexes
+  x <- x |>
+    mutate(HLA = replaceComplex(HLA, "DQ")) |>
+    mutate(HLA = replaceComplex(HLA, "DP"))
   
-  if(flag) {
-    x$flag <- ifelse(x$AB_comb %in% forbidden_DQ_combinations, "forbidden!", "") 
-  } else {
-    x <-  dplyr::filter(x, !AB_comb %in% forbidden_DQ_combinations)
-    }
   
-  x$AB_comb <- NULL
+  #transform the table into a long format
+  x |>
+    tidyr::separate_longer_delim(HLA, delim = delim) |>
+    arrange(ID, HLA)
+  
+  
   
   return(x)
 }
+
+
+
 
 #' format patient HLA genotype into a optimal format for promiscuity calculation
 #' 
@@ -147,9 +204,16 @@ formatInputTable <- function(x, flag.forbidden = T,
   
   #rm forbidden alpha-beta combinations
   x <- rmForbiddenCombinations(x, flag = flag.forbidden)
-  x <- dplyr::arrange(x, ID, HLA)
+  x <- dplyr::arrange(x, ID, HLA) 
   
   return(x)
 }
- 
+
+# create complexes - 
+
+
+
+
+#grep("-", grep( "DQ|DP" , x$HLA, value = T), invert = T, value = T)
+
 
