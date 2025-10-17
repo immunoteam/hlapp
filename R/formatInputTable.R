@@ -26,11 +26,11 @@ recogniseInputFormat <- function(x) {
 #'@param x string containing allele names, separated by ", "
 #'@param locus DP or DQ
 #'
-replaceComplex <- function(x, locus){
+replaceComplex <- function(x, locus, delim = ","){
   if(!locus %in% c("DQ", "DP")) stop("complex locus must be DP or DQ")
   
   # get valuues to be replaced
-  x_vec <- strsplit(x, ", ") |> unlist()
+  x_vec <- strsplit(x, delim) |> unlist()
   vals_to_replace <- grep("-", grep(locus, x_vec, value = T), invert = T,  value = T)
   
   vals_to_keep <- x_vec[!x_vec %in% vals_to_replace]
@@ -42,7 +42,7 @@ replaceComplex <- function(x, locus){
     unique() |> 
     dplyr::pull(comb) 
   
-  out <- paste(c(vals_to_keep, complexes), collapse = ", ")
+  out <- paste(c(vals_to_keep, complexes), collapse = delim)
   return(out)
 }
 
@@ -136,17 +136,18 @@ formatStandardTable <- function(x){
 
 
 # formatting manual input - add DQ combination that is robust enough
-formatManualTable <- function(x, id.col, hla.cols, delim = ", "){
+formatManualTable <- function(x, id.col, hla.cols, delim = ","){
   x <- x |>
     dplyr::select(all_of(c(id.col, hla.cols))) |>
     dplyr::rename(ID = .data[[id.col]]) |>
-    tidyr::unite(HLA, all_of(hla.cols), sep = delim) 
+    tidyr::unite(HLA, all_of(hla.cols), sep = delim) |>
+    dplyr::mutate(HLA = gsub(" ", "", HLA)) # remove spaces from rows
   
   # replace DQ and DP genes with complexes
   x <- x |>
     dplyr::rowwise() |>
-    dplyr::mutate(HLA = replaceComplex(HLA, "DQ")) |>
-    dplyr::mutate(HLA = replaceComplex(HLA, "DP"))
+    dplyr::mutate(HLA = replaceComplex(HLA, "DQ", delim)) |>
+    dplyr::mutate(HLA = replaceComplex(HLA, "DP", delim))
   
   
   #transform the table into a long format
@@ -156,9 +157,6 @@ formatManualTable <- function(x, id.col, hla.cols, delim = ", "){
   
   return(x)
 }
-
-
-
 
 #' format patient HLA genotype into a optimal format for promiscuity calculation
 #' 
