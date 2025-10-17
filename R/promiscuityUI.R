@@ -20,34 +20,35 @@ checkbox_options <- c("HLA-A (individual)" = "Ai",
 
  promiscuityUI <- function(id){
   
-  shiny::sidebarLayout(
-    shiny::sidebarPanel(
-      h3("1. Choose Input:"),
-      fileInput(NS(id, "file"), label = " Upload HLA genotype file", accept = c(".tsv", ".csv", ".xlsx")),
-      
-      radioButtons(NS(id, "is_manual"),  "Input recognition:", choices = c("Automatic" = FALSE, "Manual" = TRUE)),
-      tabsetPanel(
-        id = NS(id, "input_switcher"), type = "hidden",
-        tabPanelBody("automatic", ""),
-        tabPanelBody("manual",         
-                     selectInput(NS(id, "idvar"), "ID column:", choices = character(1) ),
-                     checkboxGroupInput(NS(id, "hlavar"), "HLA genotype columns:", choices = character() ))
-      ),
-      actionButton(NS(id, "next_button") , "Next!", disabled = T), 
-      
-      
-      # radioButtons("delim","Deliminator: ",  choices = c(";",",",":"), selected = ";", inline=TRUE),
-      #DT::dataTableOutput(NS(id, "input_head")), # show input file
-      
-      h3("2. Choose output:"),
-      p("Select the promiscuity values to be calculated!"),
-      checkboxGroupInput(NS(id, "type"), "Promiscuity to calculate:", 
-                         choices = checkbox_options,
-                         selected = c("Aa", "Ba", "Ca", "DPa", "DQa", "DRa")
-      ),
-      actionButton(NS(id, "submit"),  "Get results")  # submit input for promiscuity calculation
+  shiny::fluidPage(
+    shiny::fluidRow(
+      shiny::h3("1. Choose Input:"),
+      bslib::navset_tab(
+        bslib::nav_panel( "Upload file", 
+          fileInput(NS(id, "file"), label = " Upload HLA genotype file", accept = c(".tsv", ".csv", ".xlsx"))
+        ), 
+        bslib::nav_panel( "Select input columns", 
+          shiny::radioButtons(NS(id, "is_manual"),  "Input recognition:", choices = c("Automatic" = FALSE, "Manual" = TRUE)),
+          shiny::tabsetPanel(
+            id = NS(id, "input_switcher"), type = "hidden",
+            shiny::tabPanelBody("automatic", ""),
+            shiny::tabPanelBody("manual",         
+                         shiny::selectInput(NS(id, "idvar"), "ID column:", choices = character(1) ),
+                         shiny::checkboxGroupInput(NS(id, "hlavar"), "HLA genotype columns:", choices = character() ))
+          ),
+          shiny::actionButton(NS(id, "next_button") , "Next!", disabled = T)
+        ),
+        bslib::nav_panel("Choose output", 
+          shiny::p("Select the promiscuity values to be calculated!"),
+          
+          checkboxGroupInput(NS(id, "type"), "Promiscuity to calculate:", 
+                             choices = checkbox_options,
+                             selected = c("Aa", "Ba", "Ca", "DPa", "DQa", "DRa")),
+          actionButton(NS(id, "submit"),  "Get results")  # submit input for promiscuity calculation
+        )
+      )
     ),
-    mainPanel(
+    fluidRow(
       fluidRow(
         column(6, h4("Promiscuity of individual HLA-II molecules:"), DT::dataTableOutput(NS(id, "middle_table") ) ), # middle table containing promiscuities of individual alleles
         column(6, h4("Patient promiscuity:"), DT::dataTableOutput(NS(id, "prom_table") ) ) # final output table 
