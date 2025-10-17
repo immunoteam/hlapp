@@ -203,8 +203,8 @@ formatInputTable <- function(x, flag.forbidden = T,
   
   # remove empty and non identified allele rows
   x <- x |>
-    filter(HLA != "") |>
-    filter(grepl("\\d\\d\\d\\d", HLA))
+    dplyr::filter(HLA != "") |>
+    dplyr::filter(grepl("\\d\\d\\d\\d", HLA))
   
   #rm forbidden alpha-beta combinations
   x <- rmForbiddenCombinations(x, flag = flag.forbidden)
