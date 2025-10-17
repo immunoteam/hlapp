@@ -14,13 +14,9 @@ Currently my (Gergő) code is running if you load the app as described below. An
 
 `renv::install("devtools")`
 
--   **Load the app -** this allows running the package from the R console, and loads the functions like an R package. devtools::load_all() sources all .R code from the R directory and loads all .rdafiles from the data folder
+-   **Start the app** - this should start the application in the popup window. Before starting the app, the scripts sources all the functions like an R package. `devtools::load_all()` sources all .R code from the R directory and loads all .rdafiles from the data folder
 
-`devtools::load_all()`
-
--   **Start the app** - this should start the application in the popup window
-
-`promiscuityApp()`
+`shiny::runApp()`
 
 ## How to use
 
@@ -28,7 +24,7 @@ Currently my (Gergő) code is running if you load the app as described below. An
 
 -   **Code structure:**
 
-    -   app.R - the main script, that defined promiscuityApp() function, that starts the app
+    -   app.R - the main script, that loads all the scripts and starts the app
 
     -   promiscuityServer - script of the server. all code is written within a moduleServer() function (modularity is not necessary right now, but will be useful, if the app becomes too complicated)
 
