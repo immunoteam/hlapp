@@ -1,6 +1,12 @@
 # promiscuity_app
 
-Currently my (Gergő) code is running if you load the app as described below. Anna's code swoul still be run Whithin the Anna folder the usual way, but there could be errors. Iwill fix any rising errors as soon as possible.
+Currently the app can be tested on : <https://c2bia7-gergely-kopp0ny.shinyapps.io/promiscuityapp/>
+
+user: sysimmgroup
+
+pw: LetMeIn
+
+If you want to make changes to the app, follow the instructions below.
 
 ## SETUP
 
