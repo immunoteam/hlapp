@@ -18,7 +18,7 @@ checkbox_options <- c("HLA-A (individual)" = "Ai",
                       "HLA-II (average)" = 'HLA_II'
 )
 
-promiscuityUI2 <- function(id){
+ promiscuityUI2 <- function(id){
   
   shiny::sidebarLayout(
     shiny::sidebarPanel(
