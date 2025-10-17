@@ -41,21 +41,21 @@ checkbox_options <- c("HLA-A (individual)" = "Ai",
         bslib::nav_panel("Choose output", 
           shiny::p("Select the promiscuity values to be calculated!"),
           
-          checkboxGroupInput(NS(id, "type"), "Promiscuity to calculate:", 
+          shiny::checkboxGroupInput(NS(id, "type"), "Promiscuity to calculate:", 
                              choices = checkbox_options,
                              selected = c("Aa", "Ba", "Ca", "DPa", "DQa", "DRa")),
-          actionButton(NS(id, "submit"),  "Get results")  # submit input for promiscuity calculation
+          shiny::actionButton(NS(id, "submit"),  "Get results")  # submit input for promiscuity calculation
         )
       )
     ),
     
     ### OUTPUT PANELS
-      fluidRow(
-        column(6, h4("Promiscuity of individual HLA-II molecules:"), DT::dataTableOutput(NS(id, "middle_table") ) ), # middle table containing promiscuities of individual alleles
-        column(6, h4("Patient promiscuity:"), DT::dataTableOutput(NS(id, "prom_table") ) ) # final output table 
+      shiny::fluidRow(
+        shiny::column(6, shiny::h4("Promiscuity of individual HLA-II molecules:"), DT::dataTableOutput(NS(id, "middle_table") ) ), # middle table containing promiscuities of individual alleles
+        shiny::column(6, shiny::h4("Patient promiscuity:"), DT::dataTableOutput(NS(id, "prom_table") ) ) # final output table 
       ),
-      fluidRow(
-        downloadButton(NS(id, "download_all"), "Download all") # TODO - make download button only appear after results are shown
+      shiny::fluidRow(
+        shiny::downloadButton(NS(id, "download_all"), "Download all") # TODO - make download button only appear after results are shown
       )
     )
 }
