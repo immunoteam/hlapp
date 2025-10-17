@@ -39,8 +39,13 @@ hlaFromMiddleTable <- function(middle_table, types){
     tidyr::pivot_wider(names_from = all_of("Locus"), values_from = all_of(c("HLA", "Promiscuity")))
   
   # subset ind table to user selection  
-  prom_ind_sel <- prom_ind_all |> 
-    select(any_of(c("ID")), contains( paste0("_", gsub("i", "_", ind_types) ) ) )
+  if (length(ind_types) > 0) {
+    prom_ind_sel <- prom_ind_all |> 
+      select(any_of(c("ID")), contains( paste0("_", gsub("i", "_", ind_types) ) ) )
+  } else {
+    prom_ind_sel <- prom_ind_all |> 
+      select(any_of(c("ID")) )
+  }
   
   prom_avg_all <-  middle_table |>
     # remove flagged DQ alleles
@@ -48,8 +53,13 @@ hlaFromMiddleTable <- function(middle_table, types){
     dplyr::summarise(mean_Promiscuity = mean(Promiscuity, na.rm = T), .groups = "drop") |>
     tidyr::pivot_wider(names_from = Locus, values_from = mean_Promiscuity, names_prefix = "Promiscuity_mean_")
   
-  prom_avg_sel <- prom_avg_all |>
-    select(any_of("ID"), contains( paste0("_", gsub("a", "", avg_types) ) ) )
+  if (length(avg_types) > 0){
+    prom_avg_sel <- prom_avg_all |>
+      select(any_of("ID"), contains( paste0("_", gsub("a", "", avg_types) ) ) )
+  } else {
+    prom_avg_sel <- prom_avg_all |>
+      select(any_of("ID") )
+  }
   
   prom_sel <- full_join(prom_ind_sel, prom_avg_sel, by = join_by(ID))
   prom_all <- full_join(prom_ind_all, prom_avg_all, by = join_by(ID))
