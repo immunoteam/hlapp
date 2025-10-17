@@ -8,7 +8,7 @@ promiscuityServer <- function(id, login_status = NULL ) {
     
     output$promiscuity_interface <- renderUI(
       if(login_status()) {
-        promiscuityUI2(id)
+        promiscuityUI(id)
       } else {
         return(NULL)
       }
