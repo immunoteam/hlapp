@@ -34,6 +34,8 @@ promiscuityServer <- function(id, login_status = NULL ) {
       readInputFile(input$file)
     })
     
+    #### CONTINUE HERE
+    #check is input df is really a df, if it is update id and hla column selection 
     observeEvent(in_df(), {
       updateSelectInput(session, "idvar", choices = colnames(in_df() ) )
     })
