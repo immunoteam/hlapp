@@ -48,7 +48,8 @@ checkbox_options <- c("HLA-A (individual)" = "Ai",
         )
       )
     ),
-    fluidRow(
+    
+    ### OUTPUT PANELS
       fluidRow(
         column(6, h4("Promiscuity of individual HLA-II molecules:"), DT::dataTableOutput(NS(id, "middle_table") ) ), # middle table containing promiscuities of individual alleles
         column(6, h4("Patient promiscuity:"), DT::dataTableOutput(NS(id, "prom_table") ) ) # final output table 
@@ -57,5 +58,4 @@ checkbox_options <- c("HLA-A (individual)" = "Ai",
         downloadButton(NS(id, "download_all"), "Download all") # TODO - make download button only appear after results are shown
       )
     )
-  )
 }
