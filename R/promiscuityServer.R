@@ -32,8 +32,25 @@ promiscuityServer <- function(id, login_status = NULL ) {
       readInputFile(input$file)
     })
     
-    #### CONTINUE HERE
-    #check is input df is really a df, if it is update id and hla column selection 
+    #feedback on uploaded file
+    output$file_message <- renderUI({
+      if (!is.data.frame(in_df())) {
+        tagList(
+          tags$p("❌ Error reading file. Please check the format.", style = "color:red;")
+        )
+      } else {
+        tagList(
+          tags$p("✅ File read successfully!", style = "color:green;")
+        )
+      }
+    })
+    
+
+    
+    
+    
+    ##### SELECT MODUL ------------------------
+    
     observeEvent(in_df(), {
       updateSelectInput(session, "idvar", choices = colnames(in_df() ) )
     })
@@ -41,6 +58,8 @@ promiscuityServer <- function(id, login_status = NULL ) {
       updateCheckboxGroupInput(session, "hlavar", choices = colnames(in_df() ) )
     })
     
+    
+    ### ------------------ OUTPUT PART -----------------
     # create the two output tables
     middle_table <- eventReactive( input$submit, {
       formatInputTable(in_df(), manual = input$is_manual, id.col = input$idvar,  hla.cols = input$hlavar , flag.forbidden = T)  |>
