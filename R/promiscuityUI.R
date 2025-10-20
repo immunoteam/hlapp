@@ -24,8 +24,9 @@ checkbox_options <- c("HLA-A (individual)" = "Ai",
     shiny::fluidRow(
       shiny::h3("1. Choose Input:"),
       bslib::navset_tab(
-        bslib::nav_panel( "Upload file", 
-          fileInput(NS(id, "file"), label = " Upload HLA genotype file", accept = c(".tsv", ".csv", ".xlsx"))
+        bslib::nav_panel( "1. Upload file", 
+          #fileInput(NS(id, "file"), label = " Upload HLA genotype file", accept = c(".tsv", ".csv", ".xlsx"))
+          uploadModuleUI(id)
         ), 
         bslib::nav_panel( "Select input columns", 
           shiny::radioButtons(NS(id, "is_manual"),  "Input recognition:", choices = c("Automatic" = FALSE, "Manual" = TRUE)),
