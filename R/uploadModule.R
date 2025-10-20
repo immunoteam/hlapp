@@ -1,6 +1,6 @@
 # --- Upload UI ---
 
-uploadModuleUI <- function(id){
+uploadUI <- function(id){
   fluidRow(  
     shiny::fileInput(NS(id, "file"), label = " Upload HLA genotype file", accept = c(".tsv", ".csv", ".xlsx")), 
     shiny::uiOutput(NS(id, "file_message")), 
@@ -8,5 +8,9 @@ uploadModuleUI <- function(id){
   )
 }
 
-# ---Upload server ---
-# To do...
+# ---Select_columns_UI---
+
+selectUI <- function(id){
+  
+  
+}
