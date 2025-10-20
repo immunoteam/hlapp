@@ -12,8 +12,6 @@ promiscuityServer <- function(id, login_status = NULL ) {
       } else {
         return(NULL)
       }
-        
-      
     )
     
     #options for datatable output
@@ -57,16 +55,7 @@ promiscuityServer <- function(id, login_status = NULL ) {
     # output respones for uploaded file
     out_text <- reactive(ifelse(is.null(input$file), 
                                 "Please upload a .xlsx, .tsv or .csv file",
-                                "File received")
-                         )
-    # Render outputs
-    output$resptext <- renderText( paste(names(in_df() ), collapse = ", " ) )
-    
-    #currently not in use
-    output$input_head <- DT::renderDataTable(head(in_df(), n = 3),
-                                             options = list(scrollX = T, paging = F, scrollY = 200, searching =F),
-                                             rownames =F
-                                             )
+                                "File received")  )
     
     output$middle_table <- DT::renderDataTable({
       req(middle_table())
