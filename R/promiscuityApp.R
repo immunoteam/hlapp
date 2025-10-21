@@ -5,12 +5,12 @@ promiscuityApp <- function(...){
     
     shiny::titlePanel("Promiscuity calculation"),
     loginUI("login"),
-    appUI("promiscuity")
+    mainUI("promiscuity")
     )
   
   server <- function(input, output, session) {
     login_status <- loginServer("login")
-    promiscuityServer("promiscuity", login_status = login_status)
+    mainServer("promiscuity", login_status = login_status)
   }
   
   shiny::shinyApp(ui, server, ...)

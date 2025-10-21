@@ -1,6 +1,6 @@
 
 
-promiscuityServer <- function(id, login_status = NULL ) {
+mainServer <- function(id, login_status = NULL ) {
   moduleServer(id, function(input, output, session) {
     
     # place of loginserver

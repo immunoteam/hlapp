@@ -1,6 +1,6 @@
 
 #define ui
-appUI <- function(id) {
+mainUI <- function(id) {
   ns <- NS(id)
   shiny::tagList(
     
