@@ -1,3 +1,10 @@
+# ui render function
+# Bejelentkezési képernyő UI-ja
+
+loginUI <- function(id){
+  uiOutput(NS( id, "login_ui"))
+}
+
 
 loginServer <- function(id){
   moduleServer(id, function(input, output, session){
