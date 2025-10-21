@@ -18,7 +18,7 @@ checkbox_options <- c("HLA-A (individual)" = "Ai",
                       "HLA-II (average)" = 'HLA_II'
 )
 
- promiscuityUI <- function(id){
+ promiscuityUI_old <- function(id){
   
   shiny::fluidPage(
     shiny::fluidRow(
@@ -26,7 +26,7 @@ checkbox_options <- c("HLA-A (individual)" = "Ai",
       bslib::navset_tab(
         bslib::nav_panel( "1. Upload file", 
           #fileInput(NS(id, "file"), label = " Upload HLA genotype file", accept = c(".tsv", ".csv", ".xlsx"))
-          uploadModuleUI(id)
+          uploadUI(id)
         ), 
         bslib::nav_panel( "Select input columns", 
           shiny::radioButtons(NS(id, "is_manual"),  "Input recognition:", choices = c("Automatic" = FALSE, "Manual" = TRUE)),
