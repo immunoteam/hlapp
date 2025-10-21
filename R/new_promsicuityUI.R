@@ -22,13 +22,7 @@ promiscuityUI <- function(id){
     ),
     
     ### OUTPUT PANELS
-    shiny::fluidRow(
-      shiny::column(6, shiny::h4("Promiscuity of individual HLA-II molecules:"), DT::dataTableOutput(ns("middle_table") ) ), # middle table containing promiscuities of individual alleles
-      shiny::column(6, shiny::h4("Patient promiscuity:"), DT::dataTableOutput(ns("prom_table") ) ) # final output table 
-    ),
-    shiny::fluidRow(
-      shiny::downloadButton(ns("download_all"), "Download all") # TODO - make download button only appear after results are shown
-    )
+  resultsUI(id)
   )
 }
   
