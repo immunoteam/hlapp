@@ -1,0 +1,64 @@
+---
+title: "App Planning"
+---
+
+This notebook will be used to try to refactor the app into a more logical, streamlined structure.
+
+# Top level
+
+## app.R
+
+This script simply loads everything and startrs the app
+```{r}
+pkgload::load_all(".")
+promiscuityApp()
+```
+
+## promiscuityApp.R
+This level 1 main role: Ask for the login credentials, then start the applictaion.
+
+```{r}
+
+promiscuityApp <- function(...){
+  
+  ui <- shiny::fluidPage(
+     tags$head(tags$meta(name = "robots", content = "noindex, nofollow")), # this line prevents search bots to read the content of the app
+    shiny::titlePanel("Promiscuity calculation"),
+    loginUI("login"),
+    shiny::textOutput("login_feedback"),
+    uiOutput("promUI")
+    )
+  
+  server <- function(input, output, session) {
+    
+    login_status <- loginServer("login") #ask for login credentials
+    # Give feedback on login
+    output$login_feedback <- renderText(ifelse(login_status(),
+                                               "Succesful Login!",
+                                               "Failed Login, Please try angain!"))
+    
+    # render Promiscuuity UI if login is passed
+    output$promUI <- renderUI({
+      req(login_status())
+      promiscuityUI("promiscuity")
+    })
+    
+    # load promiscuity server if login is passed
+    observeEvent(login_status(), {
+      if (login_status()) {
+        promiscuityServer("promiscuity")  
+      }
+    })
+  }
+  
+  shiny::shinyApp(ui, server, ...)
+}
+
+promiscuityApp()
+```
+
+
+# Backend, non reactives
+
+Here we source all the non reactive functions
+
