@@ -1,18 +1,7 @@
 
 
-mainServer <- function(id, login_status = NULL ) {
+promiscuityServer <- function(id) {
   moduleServer(id, function(input, output, session) {
-    
-    # place of loginserver
-    output$login_feedback <- renderText(ifelse(login_status(), "Succesful login!", "Failed login." ) )  
-    
-    output$promiscuity_interface <- renderUI(
-      if(login_status()) {
-        promiscuityUI(id)
-      } else {
-        return(NULL)
-      }
-    )
     
     #options for datatable output
     DToptions <- list(dom = "Bfrtrip" ,
