@@ -34,7 +34,7 @@ loginServer <- function(id){
     # feedback message for user about login
     log_mess <-eventReactive(input$Login, {
       paste(
-        "input received",
+        "LOGIN:input received",
         ifelse(login_pass(), "login succesful", "login failed")
       )
     })
