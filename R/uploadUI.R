@@ -1,5 +1,23 @@
 # --- Upload UI ---
 
+#define checkbox optioons outside of ui for easier readibility 
+checkbox_options <- c("HLA-A (individual)" = "Ai",
+                      "HLA-B (individual" = "Bi",
+                      "HLA-C (individual)" = "Ci",
+                      "HLA-DP (individual)" = "DPi",
+                      "HLA-DQ (individual)" = "DQi",
+                      "HLA-DR (individual)" = "DRi",
+                      "HLA-A (average)" = "Aa",
+                      "HLA-B (average" = "Ba",
+                      "HLA-C (average)" = "Ca",
+                      "HLA-DP (average)" = "DPa",
+                      "HLA-DQ (average)" = "DQa",
+                      "HLA-DR (average)" = "DRa",
+                      "HLA-I (average)" = "HLA_I",
+                      "HLA-II (average)" = 'HLA_II'
+)
+
+
 uploadUI <- function(id){
   ns <-NS(id)
   fluidRow(  
@@ -51,3 +69,10 @@ resultsUI <- function(id){
     )
   ) 
 }
+
+# SERVER FUNCTIONS
+
+uploadServer <- function(id){
+  
+}
+
