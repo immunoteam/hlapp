@@ -19,8 +19,8 @@ This level 1 main role: Ask for the login credentials, then start the applictaio
 
 ```{r}
 
-promiscuityApp <- function(...){
-  
+promiscuityApp2 <- function(...){
+
   ui <- shiny::fluidPage(
      tags$head(tags$meta(name = "robots", content = "noindex, nofollow")), # this line prevents search bots to read the content of the app
     shiny::titlePanel("Promiscuity calculation"),
@@ -40,13 +40,13 @@ promiscuityApp <- function(...){
     # render Promiscuuity UI if login is passed
     output$promUI <- renderUI({
       req(login_status())
-      promiscuityUI("promiscuity")
+      promiscuityUI2("promiscuity")
     })
     
     # load promiscuity server if login is passed
     observeEvent(login_status(), {
       if (login_status()) {
-        promiscuityServer("promiscuity")  
+        promiscuityServer2("promiscuity")  
       }
     })
   }
@@ -54,7 +54,171 @@ promiscuityApp <- function(...){
   shiny::shinyApp(ui, server, ...)
 }
 
-promiscuityApp()
+promiscuityApp2()
+```
+# Promiscuity server and ui
+
+## Middle Layer
+
+```{r}
+promiscuityUI2 <- function(id){
+  ns <- NS(id)
+  
+   shiny::fluidPage(
+    shiny::fluidRow(
+      shiny::h3("1. Choose Input:"),
+      bslib::navset_tab(
+        bslib::nav_panel( "1. Upload file", 
+                          uploadUI2(ns("upload"))
+        ), 
+        bslib::nav_panel( "Select input columns", 
+                         selectColumnsUI2(ns("columns"))
+        ),
+        bslib::nav_panel("Choose output", 
+                        # chooseUI(id)
+        )
+      )
+    ),
+    
+    ### OUTPUT PANELS
+    h3("results placeholder")
+  #resultsUI(id)
+  )
+}
+
+promiscuityServer2 <- function(id){
+  moduleServer(id, function(input, output, session) {
+    input_df <- uploadServer2("upload")
+    
+    selectColumnsServer2("columns", input_df = input_df())
+    
+  })
+}
+```
+
+# Bottom Layer
+
+chooseColumnsModule 
+```{r}
+selectColumnsUI2 <- function(id){
+  ns <- NS(id)
+  fluidRow(
+    shiny::selectInput(ns("idcol"), "ID column:", choices = character(1) ),
+    shiny::checkboxGroupInput(ns("hlacol"), "HLA genotype columns:", choices = character() )
+  )
+}
+
+selectColumnsServer2 <- function(id, input_df = NULL){
+  moduleServer(id, function(input, output, session) {
+    
+    # get the column names of input_df
+    cols <- reactive({
+     colnames(input_df)
+    })
+    
+    # update the column with patient IDs, when input_df is changed
+    observeEvent(cols(), {
+      updateSelectInput(session, "idcol", choices = cols() ) 
+    })
+    
+    # updtae hla column options when input_df is changed
+     observeEvent(cols(), {
+      updateCheckboxGroupInput(session, "hlacol", choices = cols() ) 
+    })
+     
+    # updtae hla column options when input_df is changed
+     observeEvent(input$idcol, {
+      updateCheckboxGroupInput(session, "hlacol", choices = cols()[cols() != input$idcol] ) 
+    })
+     
+  })
+  
+}
+
+
+promiscuityApp2()
+```
+
+
+```{r}
+
+fluidRow(
+    shiny::radioButtons(ns("is_manual"),  "Input recognition:", choices = c("Automatic" = FALSE, "Manual" = TRUE)),
+    shiny::tabsetPanel(
+      id = ns("input_switcher"), type = "hidden",
+      shiny::tabPanelBody("automatic", ""),
+      shiny::tabPanelBody("manual",         
+                          shiny::selectInput(ns("idcol"), "ID column:", choices = character(1) ),
+                          shiny::checkboxGroupInput(ns("hlacol"), "HLA genotype columns:", choices = character() ))
+    ) #,
+    #shiny::actionButton(ns("next_button") , "Next!", disabled = T)
+  )
+
+
+    #change input, if pattern recognition is manual
+    observeEvent(input$is_manual, {
+      updateTabsetPanel(inputId = "input_switcher", selected = ifelse(input$is_manual, "manual", "automatic"))
+    })
+    
+    #select ID column
+    observeEvent(input_df(), {
+      updateSelectInput(session, "idcol", choices = colnames(input_df() ) )
+    })
+    
+    # select HLA columns
+    observeEvent(input_df(), {
+      updateCheckboxGroupInput(session, "hlacol", choices = colnames(input_df() ) )
+    })
+    
+    middle_table <- eventReactive( input$submit, {
+      formatInputTable(input_df(), manual = input$is_manual, id.col = input$idcol,  hla.cols = input$hlacol , flag.forbidden = T)  |>
+        joinGenotypePromiscuity(promiscuity) |>
+        dplyr::mutate_if(is.numeric, signif, 4)
+    })
+```
+
+
+uploadModule
+```{r}
+#uploadModule
+
+uploadUI2 <- function(id){
+  ns <- NS(id)
+  tagList(
+    shiny::fileInput(ns("file"), 
+                     label = "Upload HLA genotype file:", 
+                     accept = c(".tsv", ".csv", ".xlsx") ),
+    shiny::uiOutput(ns("file_feedback"))
+  )
+}
+
+uploadServer2 <- function(id){
+  moduleServer(id, function(input, output, session) {
+    #take the selected file, if any, if no file is selected, dont do anything
+    input_file <- reactive({
+      validate(need(input$file, message = F))
+      input$file
+    })
+    
+    input_df <- reactive({
+      readInputFile(input_file())
+    })
+    
+    output$file_feedback <- renderUI({
+      if (!is.data.frame(input_df())) {
+        tagList(
+          tags$p("❌ Error reading file. Please check the format.", style = "color:red;")
+        )
+      } else {
+        tagList(
+          tags$p("✅ File read successfully!", style = "color:green;")
+        )
+      }
+    })
+    
+    return(input_df)
+  })
+}
 ```
 
 
