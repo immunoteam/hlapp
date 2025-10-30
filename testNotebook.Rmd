@@ -91,14 +91,16 @@ promiscuityUI2 <- function(id){
 
 promiscuityServer2 <- function(id){
   moduleServer(id, function(input, output, session) {
+    
     input_df <- uploadServer2("upload")
     
-    selectColumnsServer2("columns", input_df = input_df())
+    selectColumnsServer2("columns", input_df)
+    
+    
     
     main_cols <- reactive(colnames(input_df()))
     output$main_col_feedback <- renderPrint(main_cols())
     output$df_head <- DT::renderDT(head(input_df()))
-    
   })
 }
 ```
