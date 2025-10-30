@@ -22,7 +22,6 @@ promiscuityUI <- function(id){
     ),
     
     ### OUTPUT PANELS
-    
     DT::DTOutput(ns("result_df"))
   )
 }
