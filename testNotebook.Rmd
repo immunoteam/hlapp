@@ -129,11 +129,6 @@ selectColumnsServer2 <- function(id, input_df = NULL){
     observeEvent(cols(), {
       updateSelectInput(session, "idcol", choices = cols() ) 
     })
-    
-    # updtae hla column options when input_df is changed
-     observeEvent(cols(), {
-      updateCheckboxGroupInput(session, "hlacol", choices = cols() ) 
-    })
      
     # updtae hla column options when input_df is changed
      observeEvent(input$idcol, {
