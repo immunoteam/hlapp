@@ -12,7 +12,7 @@ resultsUI <- function(id){
   )
 }
 
-resultsServer <- function(id, middle_table){
+resultsServer <- function(id, middle_table, main_session){
   moduleServer(id, function(input, output, session) {
     
     #get the available loci
@@ -38,6 +38,8 @@ resultsServer <- function(id, middle_table){
     out_prom <- eventReactive(res_types() ,{
       hlaFromMiddleTable(middle_table(), res_types())
     })
+    
+    
     
     return(out_prom)
   })
