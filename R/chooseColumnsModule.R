@@ -55,6 +55,8 @@ selectColumnsServer <- function(id, input_df = NULL){
     output$hla_check <- renderUI(giveFeedBack(hla_check())) # feedback for recognised HLA loci
     
     output$mid_tab <- DT::renderDT(middle_table())
+    
+    return(middle_table)
   })
   
 }
