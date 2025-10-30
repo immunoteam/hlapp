@@ -13,8 +13,6 @@ promiscuityServer <- function(id){
                                      rownames = FALSE,
                                      extensions = "Buttons", 
                                      options = DToptions)
-
-    
   })
 }
 
