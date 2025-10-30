@@ -14,7 +14,7 @@ promiscuityUI <- function(id){
         ), 
         bslib::nav_panel( "Select input columns", 
                          #selectUI(id)
-                         selectColumnsUI2(ns("columns"))
+                         selectColumnsUI(ns("columns"))
         ),
         bslib::nav_panel("Choose output", 
                          #chooseUI(id)
