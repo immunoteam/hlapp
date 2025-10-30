@@ -5,12 +5,12 @@ promiscuityServer <- function(id){
     
     input_df <- uploadServer("upload")
     
-    selectColumnsServer("columns", input_df)
+    middle_table <- selectColumnsServer("columns", input_df)
     
     
     
     main_cols <- reactive(colnames(input_df()))
     output$main_col_feedback <- renderPrint(main_cols())
-    output$df_head <- DT::renderDT(head(input_df()))
+    output$df_head <- DT::renderDT(head(middle_table()))
   })
 }
