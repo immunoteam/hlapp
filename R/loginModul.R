@@ -1,3 +1,11 @@
+# ui render function
+# Bejelentkezési képernyő UI-ja
+
+loginUI <- function(id){
+  ns <- NS(id)
+  uiOutput(ns("login_ui"))
+}
+
 
 loginServer <- function(id){
   moduleServer(id, function(input, output, session){
@@ -26,7 +34,7 @@ loginServer <- function(id){
     # feedback message for user about login
     log_mess <-eventReactive(input$Login, {
       paste(
-        "input received",
+        "LOGIN:input received",
         ifelse(login_pass(), "login succesful", "login failed")
       )
     })
