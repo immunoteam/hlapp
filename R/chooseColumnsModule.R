@@ -8,7 +8,11 @@ selectColumnsUI <- function(id){
     ),
     bslib::layout_columns(
       shiny::checkboxGroupInput(ns("hlacol"), "HLA genotype columns:", choices = character() ),
-      shiny::uiOutput(ns("hla_check"))
+      shiny::uiOutput(ns("hla_check")),
+    ),
+    bslib::layout_columns(
+      shiny::actionButton(ns("select_back"), "Go back", disabled = FALSE),
+      shiny::actionButton(ns("select_next"), "Next ➡️", disabled = TRUE)
     )
     
     #, DT::dataTableOutput(ns("mid_tab")),
@@ -54,7 +58,20 @@ selectColumnsServer <- function(id, input_df = NULL, main_session){
     })
     output$hla_check <- renderUI(giveFeedBack(hla_check())) # feedback for recognised HLA loci
     
-    #output$mid_tab <- DT::renderDT(middle_table())
+    #navbuttons
+    observeEvent(input$select_back, {
+      updateTabsetPanel(main_session, "main_tabs", selected = "upload")
+    })
+    
+    select_check <- reactive(id_check() & hla_check())
+    observeEvent(select_check(), {
+      shiny::updateActionButton(session, "select_next", disabled = !select_check())
+    })
+    
+    observeEvent(input$select_next, {
+      updateTabsetPanel(main_session, "main_tabs", selected = "result")
+    })
+    
     
     return(middle_table)
   })
