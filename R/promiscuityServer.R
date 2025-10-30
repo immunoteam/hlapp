@@ -4,9 +4,9 @@ promiscuityServer <- function(id){
     
     input_df <- uploadServer("upload", main_session = session)
     
-    middle_table <- selectColumnsServer("columns", input_df)
+    middle_table <- selectColumnsServer("columns", input_df, main_session = session)
     
-    out_prom <- resultsServer("results", middle_table)
+    out_prom <- resultsServer("results", middle_table, main_session = session)
     
     #main_cols <- reactive(colnames(input_df()))
     #output$main_col_feedback <- renderPrint(main_cols())
