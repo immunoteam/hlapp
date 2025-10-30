@@ -11,7 +11,7 @@ selectColumnsUI <- function(id){
       shiny::uiOutput(ns("hla_check"))
     )
     
-    , DT::dataTableOutput(ns("mid_tab")),
+    #, DT::dataTableOutput(ns("mid_tab")),
   )
 }
 
@@ -54,7 +54,7 @@ selectColumnsServer <- function(id, input_df = NULL){
     })
     output$hla_check <- renderUI(giveFeedBack(hla_check())) # feedback for recognised HLA loci
     
-    output$mid_tab <- DT::renderDT(middle_table())
+    #output$mid_tab <- DT::renderDT(middle_table())
     
     return(middle_table)
   })

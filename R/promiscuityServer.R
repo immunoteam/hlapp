@@ -9,8 +9,8 @@ promiscuityServer <- function(id){
     
     
     
-    main_cols <- reactive(colnames(input_df()))
-    output$main_col_feedback <- renderPrint(main_cols())
+    #main_cols <- reactive(colnames(input_df()))
+    #output$main_col_feedback <- renderPrint(main_cols())
     output$df_head <- DT::renderDT(head(middle_table()))
   })
 }
