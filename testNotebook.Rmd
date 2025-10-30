@@ -108,13 +108,15 @@ promiscuityServer2 <- function(id){
 # Bottom Layer
 
 chooseColumnsModule 
-```{r}
+```{r, message=FALSE, warning=FALSE}
 selectColumnsUI2 <- function(id){
   ns <- NS(id)
   fluidRow(
-    shiny::verbatimTextOutput(ns("sub_col_feedback")),
+   # shiny::verbatimTextOutput(ns("sub_col_feedback")),
     shiny::selectInput(ns("idcol"), "ID column:", choices = character(1) ),
-    shiny::checkboxGroupInput(ns("hlacol"), "HLA genotype columns:", choices = character() )
+    shiny::checkboxGroupInput(ns("hlacol"), "HLA genotype columns:", choices = character() ),
+    DT::dataTableOutput(ns("mid_tab")),
+    shiny::p("End of module")
   )
 }
 
@@ -123,56 +125,40 @@ selectColumnsServer2 <- function(id, input_df = NULL){
     
     # get the column names of input_df
     cols <- reactive(colnames(input_df()))
-    output$sub_col_feedback <- renderPrint(cols())
+    # output$sub_col_feedback <- renderPrint(cols()) # this is a feedback for testing, can be commented
     
     # update the column with patient IDs, when input_df is changed
     observeEvent(cols(), {
       updateSelectInput(session, "idcol", choices = cols() ) 
     })
      
-    # updtae hla column options when input_df is changed
+    # update hla column options when id col is selected
      observeEvent(input$idcol, {
       updateCheckboxGroupInput(session, "hlacol", choices = cols()[cols() != input$idcol] ) 
     })
+     
+     
+     middle_table <- eventReactive(input$hlacol, {
+       formatInputTable(input_df(), manual = TRUE, 
+                        id.col = input$idcol, hla.cols = input$hlacol,
+                        flag.forbidden = T ) |>
+        joinGenotypePromiscuity(promiscuity) |>
+        dplyr::mutate_if(is.numeric, signif, 4)
+     })
+     
+     output$mid_tab <- DT::renderDT(middle_table())
      
   })
   
 }
 
-
 promiscuityApp2()
+
 ```
 
 
 ```{r}
 
-fluidRow(
-    shiny::radioButtons(ns("is_manual"),  "Input recognition:", choices = c("Automatic" = FALSE, "Manual" = TRUE)),
-    shiny::tabsetPanel(
-      id = ns("input_switcher"), type = "hidden",
-      shiny::tabPanelBody("automatic", ""),
-      shiny::tabPanelBody("manual",         
-                          shiny::selectInput(ns("idcol"), "ID column:", choices = character(1) ),
-                          shiny::checkboxGroupInput(ns("hlacol"), "HLA genotype columns:", choices = character() ))
-    ) #,
-    #shiny::actionButton(ns("next_button") , "Next!", disabled = T)
-  )
-
-
-    #change input, if pattern recognition is manual
-    observeEvent(input$is_manual, {
-      updateTabsetPanel(inputId = "input_switcher", selected = ifelse(input$is_manual, "manual", "automatic"))
-    })
-    
-    #select ID column
-    observeEvent(input_df(), {
-      updateSelectInput(session, "idcol", choices = colnames(input_df() ) )
-    })
-    
-    # select HLA columns
-    observeEvent(input_df(), {
-      updateCheckboxGroupInput(session, "hlacol", choices = colnames(input_df() ) )
-    })
     
     middle_table <- eventReactive( input$submit, {
       formatInputTable(input_df(), manual = input$is_manual, id.col = input$idcol,  hla.cols = input$hlacol , flag.forbidden = T)  |>
@@ -208,25 +194,28 @@ uploadServer2 <- function(id){
       readInputFile(input_file())
     })
     
-    output$file_feedback <- renderUI(giveFeedBack(is.data.frame(input_df())))
+    file_check <- reactive(is.data.frame(input_df()))
+    output$file_feedback <- renderUI(giveFeedBack(file_check()))
     
     return(input_df)
   })
 }
+
+
 ```
 
 
 ```{r}
-giveFeedBack <- function(cond, pass_message = "check passed", failmessage = "check failed"){
-  if(cond){
-    tagList(
-      tags$p(paste(pass_message , style = "color:green"))
-    )
-  } else {
-    tagList(
-      tags$p(paste(fail_message , style = "color:red"))
-    )
-  }
+giveFeedBack <- function(cond, pass_message = "check passed", fail_message = "check failed"){
+    if(cond){
+      tagList(
+        tags$p(pass_message , style = "color:green;")
+      )
+    } else {
+      tagList(
+        tags$p(fail_message , style = "color:red;")
+      )
+    }
 }
 ```
 
