@@ -170,19 +170,7 @@ selectColumnsServer2 <- function(id, input_df = NULL){
   
 }
 
-promiscuityApp2()
 
-```
-
-
-```{r}
-
-    
-    middle_table <- eventReactive( input$submit, {
-      formatInputTable(input_df(), manual = input$is_manual, id.col = input$idcol,  hla.cols = input$hlacol , flag.forbidden = T)  |>
-        joinGenotypePromiscuity(promiscuity) |>
-        dplyr::mutate_if(is.numeric, signif, 4)
-    })
 ```
 
 
