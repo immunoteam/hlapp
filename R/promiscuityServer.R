@@ -8,12 +8,13 @@ promiscuityServer <- function(id){
     
     out_prom <- resultsServer("results", middle_table, main_session = session)
     
-    #main_cols <- reactive(colnames(input_df()))
-    #output$main_col_feedback <- renderPrint(main_cols())
-    output$result_df <- DT::renderDT(head(out_prom()[[1]]),
-                                   rownames = FALSE,
-                                   extensions = "Buttons", 
-                                   options = DToptions)
+    # display results
+    output$result_df <- DT::renderDT(out_prom()[[1]],
+                                     rownames = FALSE,
+                                     extensions = "Buttons", 
+                                     options = DToptions)
+
+    
   })
 }
 
