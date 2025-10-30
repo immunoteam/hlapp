@@ -208,22 +208,28 @@ uploadServer2 <- function(id){
       readInputFile(input_file())
     })
     
-    output$file_feedback <- renderUI({
-      if (!is.data.frame(input_df())) {
-        tagList(
-          tags$p("❌ Error reading file. Please check the format.", style = "color:red;")
-        )
-      } else {
-        tagList(
-          tags$p("✅ File read successfully!", style = "color:green;")
-        )
-      }
-    })
+    output$file_feedback <- renderUI(giveFeedBack(is.data.frame(input_df())))
     
     return(input_df)
   })
 }
 ```
+
+
+```{r}
+giveFeedBack <- function(cond, pass_message = "check passed", failmessage = "check failed"){
+  if(cond){
+    tagList(
+      tags$p(paste(pass_message , style = "color:green"))
+    )
+  } else {
+    tagList(
+      tags$p(paste(fail_message , style = "color:red"))
+    )
+  }
+}
+```
+
 
 
 # Backend, non reactives
