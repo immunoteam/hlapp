@@ -10,7 +10,7 @@ promiscuityUI <- function(id){
         bslib::nav_panel( "1. Upload file", 
                           #fileInput(ns("file"), label = " Upload HLA genotype file", accept = c(".tsv", ".csv", ".xlsx"))
                           #uploadUI(id)
-                          uploadUI2(ns("upload"))
+                          uploadUI(ns("upload"))
         ), 
         bslib::nav_panel( "Select input columns", 
                          #selectUI(id)
