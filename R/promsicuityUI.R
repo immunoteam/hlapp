@@ -1,7 +1,6 @@
 # new promiscuity UI
 
 promiscuityUI <- function(id){
-  
   ns <- NS(id)
   
   shiny::fluidPage(
@@ -10,19 +9,26 @@ promiscuityUI <- function(id){
       bslib::navset_tab(
         bslib::nav_panel( "1. Upload file", 
                           #fileInput(ns("file"), label = " Upload HLA genotype file", accept = c(".tsv", ".csv", ".xlsx"))
-                          uploadUI(id)
+                          #uploadUI(id)
+                          uploadUI2(ns("upload"))
         ), 
         bslib::nav_panel( "Select input columns", 
-                         selectUI(id)
+                         #selectUI(id)
+                         selectColumnsUI2(ns("columns"))
         ),
         bslib::nav_panel("Choose output", 
-                         chooseUI(id)
+                         #chooseUI(id)
         )
       )
     ),
     
     ### OUTPUT PANELS
-  resultsUI(id)
+    h3("input_colnames"), 
+    shiny::verbatimTextOutput(ns("main_col_feedback")),
+    
+    h3("results placeholder"),
+    DT::DTOutput(ns("df_head"))
+    #resultsUI(id)
   )
 }
   

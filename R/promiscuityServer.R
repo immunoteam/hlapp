@@ -1,90 +1,16 @@
 
 
-promiscuityServer <- function(id) {
+promiscuityServer <- function(id){
   moduleServer(id, function(input, output, session) {
     
-    #options for datatable output
-    DToptions <- list(dom = "Bfrtrip" ,
-                      buttons = c("excel", "csv", "copy"), 
-                      scrollX = T,
-                      scrollY = 400, 
-                      paging = F) 
+    input_df <- uploadServer2("upload")
     
-    #change input, if patter recognotion is manual
-    observeEvent(input$is_manual, {
-      updateTabsetPanel(inputId = "input_switcher", selected = ifelse(input$is_manual, "manual", "automatic"))
-    })
-    
-    # get the input data into a data table, 
-    in_df <- reactive({
-      req(input$file)
-      readInputFile(input$file)
-    })
-    
-    #feedback on uploaded file
-    output$file_message <- renderUI({
-      if (!is.data.frame(in_df())) {
-        tagList(
-          tags$p("❌ Error reading file. Please check the format.", style = "color:red;")
-        )
-      } else {
-        tagList(
-          tags$p("✅ File read successfully!", style = "color:green;")
-        )
-      }
-    })
-    
-
+    selectColumnsServer2("columns", input_df)
     
     
     
-    ##### SELECT MODUL ------------------------
-    
-    observeEvent(in_df(), {
-      updateSelectInput(session, "idvar", choices = colnames(in_df() ) )
-    })
-    observeEvent(in_df(), {
-      updateCheckboxGroupInput(session, "hlavar", choices = colnames(in_df() ) )
-    })
-    
-    
-    ### ------------------ OUTPUT PART -----------------
-    # create the two output tables
-    middle_table <- eventReactive( input$submit, {
-      formatInputTable(in_df(), manual = input$is_manual, id.col = input$idvar,  hla.cols = input$hlavar , flag.forbidden = T)  |>
-        joinGenotypePromiscuity(promiscuity) |>
-        dplyr::mutate_if(is.numeric, signif, 4)
-    })
-    
-    out_prom <- eventReactive(input$submit, {
-      hlaFromMiddleTable(middle_table(), types = input$type)
-    })
-    
-    # output respones for uploaded file
-    out_text <- reactive(ifelse(is.null(input$file), 
-                                "Please upload a .xlsx, .tsv or .csv file",
-                                "File received")  )
-    
-    output$middle_table <- DT::renderDataTable({
-      req(middle_table())
-      DT::datatable(middle_table(), 
-                    rownames = FALSE,
-                    extensions = "Buttons", 
-                    options = DToptions)
-    })
-    
-    output$prom_table <- DT::renderDataTable({
-      DT::datatable(out_prom()[[1]], 
-                    rownames = TRUE,
-                    extensions = "Buttons", 
-                    options = DToptions)
-    })
-    
-    output$download_all <- downloadHandler(
-      filename = "promiscuity.csv",
-      content = function(file){
-        utils::write.csv(out_prom()[[2]], file, row.names = T, quote = T)
-      }
-    )
+    main_cols <- reactive(colnames(input_df()))
+    output$main_col_feedback <- renderPrint(main_cols())
+    output$df_head <- DT::renderDT(head(input_df()))
   })
 }
