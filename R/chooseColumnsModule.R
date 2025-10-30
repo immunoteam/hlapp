@@ -15,7 +15,7 @@ selectColumnsUI <- function(id){
   )
 }
 
-selectColumnsServer <- function(id, input_df = NULL){
+selectColumnsServer <- function(id, input_df = NULL, main_session){
   moduleServer(id, function(input, output, session) {
     
     # get the column names of input_df

@@ -2,11 +2,7 @@
 promiscuityServer <- function(id){
   moduleServer(id, function(input, output, session) {
     
-    input_df <- uploadServer("upload")
-    
-    observeEvent(input$upload_next, {
-      updateTabsetPanel(session, "main_tabs", selected = "2. Select input columns")
-    })
+    input_df <- uploadServer("upload", main_session = session)
     
     middle_table <- selectColumnsServer("columns", input_df)
     

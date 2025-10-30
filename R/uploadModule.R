@@ -11,7 +11,7 @@ uploadUI <- function(id){
   )
 }
 
-uploadServer <- function(id){
+uploadServer <- function(id, main_session){
   moduleServer(id, function(input, output, session) {
     #take the selected file, if any, if no file is selected, dont do anything
     input_file <- reactive({
@@ -30,7 +30,9 @@ uploadServer <- function(id){
       shiny::updateActionButton(session, "upload_next", disabled = !file_check())
     })
     
-
+    observeEvent(input$upload_next, {
+      updateTabsetPanel(main_session, "main_tabs", selected = "select")
+    })
     
     return(input_df)
   })
