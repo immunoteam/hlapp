@@ -7,10 +7,10 @@ promiscuityServer <- function(id){
     
     middle_table <- selectColumnsServer("columns", input_df)
     
-    
+    out_prom <- resultsServer("results", middle_table)
     
     #main_cols <- reactive(colnames(input_df()))
     #output$main_col_feedback <- renderPrint(main_cols())
-    output$df_head <- DT::renderDT(head(middle_table()))
+    output$df_head <- DT::renderDT(head(out_prom()[[1]]))
   })
 }
