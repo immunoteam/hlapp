@@ -17,7 +17,14 @@ promiscuityUI <- function(id){
         ),
         shiny::tabPanel("3. Choose output", value = "result",
                          resultsUI(ns("results"))
-        )
+        ), 
+        # disacle tabset navigation
+        tags$script(HTML("
+          $(document).ready(function() {
+          $('ul.nav > li').addClass('disabled');
+          $('ul.nav > li').css('pointer-events', 'none');
+          });
+          "))
       )
     ),
     
