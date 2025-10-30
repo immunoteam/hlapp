@@ -3,7 +3,7 @@
 promiscuityServer <- function(id){
   moduleServer(id, function(input, output, session) {
     
-    input_df <- uploadServer2("upload")
+    input_df <- uploadServer("upload")
     
     selectColumnsServer2("columns", input_df)
     
