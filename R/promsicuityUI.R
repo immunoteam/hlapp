@@ -31,7 +31,10 @@ promiscuityUI <- function(id){
     HTML("&nbsp;&nbsp;&nbsp;"),
     hr(size = 1),
     ### OUTPUT PANELS
-    DT::DTOutput(ns("result_df"))
+    DT::DTOutput(ns("result_df")),
+    HTML("&nbsp;&nbsp;&nbsp;"),
+    hr(size = 1),
+    p("If you experience any issues, or if you want to give feedback on this software, please visit https://github.com/immunoteam/promiscuity_app")
   )
 }
   
