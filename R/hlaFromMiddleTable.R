@@ -41,10 +41,10 @@ hlaFromMiddleTable <- function(middle_table, types){
   # subset ind table to user selection  
   if (length(ind_types) > 0) {
     prom_ind_sel <- prom_ind_all |> 
-      select(any_of(c("ID")), contains( paste0("_", gsub("i", "_", ind_types) ) ) )
+      dplyr::select(any_of(c("ID")), contains( paste0("_", gsub("i", "_", ind_types) ) ) )
   } else {
     prom_ind_sel <- prom_ind_all |> 
-      select(any_of(c("ID")) )
+      dplyr::select(any_of(c("ID")) )
   }
   
   prom_avg_all <-  middle_table |>
@@ -55,14 +55,14 @@ hlaFromMiddleTable <- function(middle_table, types){
   
   if (length(avg_types) > 0){
     prom_avg_sel <- prom_avg_all |>
-      select(any_of("ID"), contains( paste0("_", gsub("a", "", avg_types) ) ) )
+      dplyr::select(any_of("ID"), contains( paste0("_", gsub("a", "", avg_types) ) ) )
   } else {
     prom_avg_sel <- prom_avg_all |>
-      select(any_of("ID") )
+      dplyr::select(any_of("ID") )
   }
   
-  prom_sel <- full_join(prom_ind_sel, prom_avg_sel, by = join_by(ID))
-  prom_all <- full_join(prom_ind_all, prom_avg_all, by = join_by(ID))
+  prom_sel <- dplyr::full_join(prom_ind_sel, prom_avg_sel, by = join_by(ID))
+  prom_all <- dplyr::full_join(prom_ind_all, prom_avg_all, by = join_by(ID))
   
   return(list(prom_sel = prom_sel, prom_all = prom_all))
 }

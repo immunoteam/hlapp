@@ -7,7 +7,7 @@ joinGenotypePromiscuity <- function(x, y, add.locus = T) {
   if (add.locus) x$Locus <- substr(x$HLA, 1, 2) %>% gsub("\\d", "", .)
   
   res <- dplyr::left_join(x, y, dplyr::join_by(HLA) ) |>
-    mutate(ID = paste0("pt_", ID)) 
+    mutate(ID = paste0("id_", ID)) 
   
   res <- dplyr::filter(res, Locus %in% c("A", "B", "C", "DP", "DQ", "DR")) # only allow sepected types
   
