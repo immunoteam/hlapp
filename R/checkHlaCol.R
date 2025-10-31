@@ -38,15 +38,40 @@ transformHlaCol <- function( col , delim = "," ) {
 }
 
 checkHlaCol<- function(col, delim = ",") {
-  
   recognised <-transformHlaCol(col, delim = delim) |>
     unlist() 
   
   length(recognised) > 0
 }
 
-
+# get the names of HLA columns
 checkDfForHlaCols <- function(df) {
   res <- apply(head(df), 2, checkHlaCol)
   names(res[res])
+}
+
+
+# get the names of ID columns
+checkIdCol <- function(col){
+  length(col) == length(unique(col))
+}
+
+checkDfForIdCols <- function(df) {
+  res <- apply(head(df), 2, checkIdCol)
+  names(res[res])
+}
+
+
+### Combined function that takes one df and returns id and hla cols
+checkDfCols <- function(df){
+  
+  # get potential columns
+  hlacols <- checkDfForHlaCols(df)
+  idcols <- checkDfForIdCols(df)
+  
+  # remove hla columns from id
+  idcols <- idcols[idcols %in% hlacols]
+  
+  return(list(idcols = idcols, hlacols = hlacols))
+  
 }
