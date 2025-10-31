@@ -1,7 +1,7 @@
 selectColumnsUI <- function(id){
   ns <- NS(id)
   fluidRow(
-    #shiny::verbatimTextOutput(ns("sub_col_feedback")), # for testing
+    p("Select the column of subject ID, then the columns of HLA genotype!"),
     bslib::layout_columns(
       shiny::selectInput(ns("idcol"), "ID column:", choices = character(1) ),
       shiny::uiOutput(ns("id_check"))
@@ -12,7 +12,8 @@ selectColumnsUI <- function(id){
     ),
     bslib::layout_columns(
       shiny::actionButton(ns("select_back"), "Go back", disabled = FALSE),
-      shiny::actionButton(ns("select_next"), "Next ➡️", disabled = TRUE)
+      shiny::actionButton(ns("select_next"), "Next ➡️", disabled = TRUE),
+      col_widths = c(2, -6, 2, -2)
     )
     
     #, DT::dataTableOutput(ns("mid_tab")),
@@ -24,7 +25,6 @@ selectColumnsServer <- function(id, input_df = NULL, main_session){
     
     # get the column names of input_df
     cols <- reactive(colnames(input_df()))
-    # output$sub_col_feedback <- renderPrint(cols()) # for testing
     
     # update the column with patient IDs, when input_df is changed
     observeEvent(cols(), {
@@ -71,7 +71,6 @@ selectColumnsServer <- function(id, input_df = NULL, main_session){
     observeEvent(input$select_next, {
       updateTabsetPanel(main_session, "main_tabs", selected = "result")
     })
-    
     
     return(middle_table)
   })

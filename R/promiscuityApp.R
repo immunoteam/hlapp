@@ -6,7 +6,7 @@ promiscuityApp <- function(...){
     theme = bslib::bs_theme(version = 5, bootswatch = "flatly"),
     tags$head(tags$meta(name = "robots", content = "noindex, nofollow")), # this line prevents search bots to read the content of the app
     shiny::titlePanel("HLA Promiscuity tool"),
-    hr(size = 10),
+    HTML("&nbsp;&nbsp;&nbsp;&nbsp;"),
     loginUI("login"),
     shiny::textOutput("login_feedback"),
     uiOutput("promUI")

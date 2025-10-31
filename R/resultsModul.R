@@ -4,14 +4,15 @@
 resultsUI <- function(id){
   ns <- NS(id)
   shiny::tagList(
-    shiny::h3("Select values to be calculated:"),
+    shiny::p("Select the promiscuity values you want to be calculated"),
     bslib::layout_columns(
       shiny::checkboxGroupInput(ns("res_ind"), "Allele promiscuity", choices = character()),
       shiny::checkboxGroupInput(ns("res_avg"), "Locus promiscuity", choices = character())
     ),
     bslib::layout_columns(
       shiny::actionButton(ns("result_back"), "Go back", disabled = FALSE),
-      shiny::actionButton(ns("result_next"), "Get results!", disabled = FALSE)
+      shiny::actionButton(ns("result_next"), "Get results!", disabled = FALSE),
+      col_widths = c(2, -6, 2, -2)
     )
   )
 }

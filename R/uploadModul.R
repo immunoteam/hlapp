@@ -7,7 +7,10 @@ uploadUI <- function(id){
                      label = "Upload HLA genotype file:", 
                      accept = c(".tsv", ".csv", ".xlsx") ),
     shiny::uiOutput(ns("file_feedback")),
-    shiny::actionButton(ns("upload_next"), "Next ➡️", disabled = TRUE)
+    bslib::layout_columns(
+      shiny::actionButton(ns("upload_next"), "Next ➡️", disabled = TRUE),
+      col_widths = c(2, -10)
+    )
   )
 }
 
