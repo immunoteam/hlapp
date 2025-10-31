@@ -3,8 +3,10 @@ library(shiny)
 promiscuityApp <- function(...){
   
   ui <- shiny::fluidPage(
+    theme = bslib::bs_theme(version = 5, bootswatch = "flatly"),
     tags$head(tags$meta(name = "robots", content = "noindex, nofollow")), # this line prevents search bots to read the content of the app
-    shiny::titlePanel("Promiscuity calculation"),
+    shiny::titlePanel("HLA Promiscuity tool"),
+    hr(size = 10),
     loginUI("login"),
     shiny::textOutput("login_feedback"),
     uiOutput("promUI")
@@ -15,7 +17,7 @@ promiscuityApp <- function(...){
     login_status <- loginServer("login") #ask for login credentials
     # Give feedback on login
     output$login_feedback <- renderText(ifelse(login_status(),
-                                               "Succesful Login!",
+                                               "",
                                                "Failed Login, Please try angain!"))
     
     # render Promiscuuity UI if login is passed
