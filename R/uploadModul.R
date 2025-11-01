@@ -22,18 +22,22 @@ uploadServer <- function(id, main_session){
       input$file
     })
     
-    input_df <- reactive({
-      readInputFile(input_file())
+    input_tmp <- reactive({ # store input in tmp object first
+      readInputFile(input_file()) 
     })
     
-    file_check <- reactive(is.data.frame(input_df()))
+    file_check <- reactive(is.data.frame(input_tmp())) # check if inout could be read in as a data frame
     output$file_feedback <- renderUI(giveFeedBack(file_check()))
     
-    observeEvent(file_check(), {
+    observeEvent(file_check(), { # allow moving to next step if input is a data frame
       shiny::updateActionButton(session, "upload_next", disabled = !file_check())
     })
     
-    observeEvent(input$upload_next, {
+    input_df <- eventReactive(input$upload_next,  { # if next is clicked store inout data frame
+      input_tmp()
+    })
+    
+    observeEvent(input$upload_next, { #if next is clicked, move to select panel
       updateTabsetPanel(main_session, "main_tabs", selected = "select")
     })
     

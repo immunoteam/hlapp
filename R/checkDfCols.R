@@ -70,7 +70,7 @@ checkDfCols <- function(df){
   idcols <- checkDfForIdCols(df)
   
   # remove hla columns from id
-  idcols <- idcols[idcols %in% hlacols]
+  idcols <- idcols[!idcols %in% hlacols]
   
   return(list(idcols = idcols, hlacols = hlacols))
   

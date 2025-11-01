@@ -2,6 +2,7 @@ selectColumnsUI <- function(id){
   ns <- NS(id)
   fluidRow(
     p("Select the column of subject ID, then the columns of HLA genotype!"),
+    # verbatimTextOutput(ns("test")),
     bslib::layout_columns(
       shiny::selectInput(ns("idcol"), "ID column:", choices = character(1) ),
       shiny::uiOutput(ns("id_check"))
@@ -24,11 +25,13 @@ selectColumnsServer <- function(id, input_df = NULL, main_session){
   moduleServer(id, function(input, output, session) {
     
     # get the column names of input_df
-    cols <- reactive(colnames(input_df()))
+    cols <- reactive(  checkDfCols(input_df() ) )
+    
+    # output$test <- renderPrint(cols())
     
     # update the column with patient IDs, when input_df is changed
     observeEvent(cols(), {
-      updateSelectInput(session, "idcol", choices = cols() ) 
+     updateSelectInput(session, "idcol", choices = cols()[[1]] ) 
     })
     
     # check if ID values are unique, and give feedback
@@ -39,8 +42,8 @@ selectColumnsServer <- function(id, input_df = NULL, main_session){
     output$id_check <- renderUI(giveFeedBack(id_check())) # feedback for unique ids
     
     # update hla column options when id col is selected
-    observeEvent(input$idcol, {
-      updateCheckboxGroupInput(session, "hlacol", choices = cols()[cols() != input$idcol] ) 
+    observeEvent(cols(), {
+      updateCheckboxGroupInput(session, "hlacol", choices = cols()[[2]] ) 
     })
     
     
