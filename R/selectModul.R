@@ -4,13 +4,25 @@ selectColumnsUI <- function(id){
     p("Select the column of subject ID, then the columns of HLA genotype!"),
     # verbatimTextOutput(ns("test")),
     bslib::layout_columns(
-      shiny::selectInput(ns("idcol"), "ID column:", choices = character(1) ),
-      shiny::uiOutput(ns("id_check"))
+      bslib::card(
+        tags$div( style = "display: inline-flex; align-items: center; gap: 8px;",
+          h6("Select column of sample IDs:"), 
+          bslib::tooltip(bsicons::bs_icon("info-circle"), "Values in the columns has to be unique in each row!"),
+        ),
+        shiny::selectInput(ns("idcol"), NULL, choices = character(1) ),
+        shiny::uiOutput(ns("id_check"))  
+      ),
+      bslib::card( 
+        tags$div( style = "display: inline-flex; align-items: center; gap: 8px;",
+                  h6("Select columns of HLA data you want to analyze:"), 
+                  bslib::tooltip(bsicons::bs_icon("info-circle"), "HLA column tooltip"),
+        ),
+        shiny::checkboxGroupInput(ns("hlacol"), NULL, choices = character() ),
+        shiny::uiOutput(ns("hla_check"))
+      )
     ),
-    bslib::layout_columns(
-      shiny::checkboxGroupInput(ns("hlacol"), "HLA genotype columns:", choices = character() ),
-      shiny::uiOutput(ns("hla_check")),
-    ),
+    
+    #navbuttons ui
     bslib::layout_columns(
       shiny::actionButton(ns("select_back"), "Go back", disabled = FALSE),
       shiny::actionButton(ns("select_next"), "Next ➡️", disabled = TRUE),

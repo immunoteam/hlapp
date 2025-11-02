@@ -3,9 +3,13 @@
 uploadUI <- function(id){
   ns <- NS(id)
   tagList(
-    shiny::fileInput(ns("file"), 
-                     label = "Upload HLA genotype file:", 
-                     accept = c(".tsv", ".csv", ".xlsx") ),
+    tags$div( style = "display: inline-flex; align-items: center; gap: 8px;",
+      shiny::fileInput(ns("file"), 
+                       label = "Upload HLA genotype file:", 
+                       accept = c(".tsv", ".csv", ".xlsx") ),
+      bslib::tooltip(bsicons::bs_icon("info-circle"), 
+                     ".xlsx, .tsv or .csv file containing a table.\nThe file should not contain any additional lines, only the table.\nData for one patient/sample has to be stored in one row. "),
+    ),
     shiny::uiOutput(ns("file_feedback")),
     bslib::layout_columns(
       shiny::actionButton(ns("upload_next"), "Next ➡️", disabled = TRUE),

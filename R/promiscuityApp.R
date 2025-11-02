@@ -3,7 +3,7 @@ library(shiny)
 promiscuityApp <- function(...){
   
   ui <- shiny::fluidPage(
-    theme = bslib::bs_theme(version = 5, bootswatch = "flatly"),
+    theme = bslib::bs_theme(version = 5, bootswatch = "flatly", "card-border-width" = "0",  "card-box-shadow" = "none"),
     tags$head(tags$meta(name = "robots", content = "noindex, nofollow")), # this line prevents search bots to read the content of the app
     shiny::titlePanel("HLA Promiscuity tool"),
     HTML("&nbsp;&nbsp;&nbsp;&nbsp;"),
