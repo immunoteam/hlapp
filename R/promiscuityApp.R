@@ -8,7 +8,7 @@ promiscuityApp <- function(...){
     shiny::titlePanel("HLA Promiscuity tool"),
     HTML("&nbsp;&nbsp;&nbsp;&nbsp;"),
     loginUI("login"),
-    shiny::textOutput("login_feedback"),
+    #shiny::textOutput("login_feedback"),
     uiOutput("promUI")
   )
   
@@ -16,9 +16,7 @@ promiscuityApp <- function(...){
     
     login_status <- loginServer("login") #ask for login credentials
     # Give feedback on login
-    output$login_feedback <- renderText(ifelse(login_status(),
-                                               "",
-                                               "Failed Login, Please try angain!"))
+    # output$login_feedback <- renderText(ifelse(login_status(), "", "Failed Login, Please try angain!"))
     
     # render Promiscuuity UI if login is passed
     output$promUI <- renderUI({

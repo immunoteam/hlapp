@@ -36,13 +36,10 @@ loginServer <- function(id){
     
     # feedback message for user about login
     log_mess <-eventReactive(input$Login, {
-      paste(
-        "LOGIN:input received",
-        ifelse(login_pass(), "login succesful", "login failed")
-      )
+        ifelse(login_pass(), "", "Failed Login, Please try angain!")
     })
     
-    output$login_message <- renderText(log_mess()) # render login message
+   output$login_message <- renderText(log_mess()) # render login message
     
     observeEvent(input$Login, {
       user_data$loggedIn <- login_pass() # update login status
