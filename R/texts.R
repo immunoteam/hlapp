@@ -24,9 +24,9 @@ texts <- list(
     select_main = "Detected columns that potentially contain sample IDs and HLA genotype data. Please select the columns you want to use.",
     select_id = "Select column of sample IDs:",
     select_id_tooltip = "IDs should be unique to each sample", 
-    select_id_pass = "Column(s) identified as potential ID column",
+    select_id_pass = "Column(s) identified as potential ID column:",
     select_id_fail = "ERROR: Could not detect a potential ID column. (Column of unique, non-HLA genotype values)",
-    select_hla_pass = "Column(s) identified as potential IHLA genotype columns",
+    select_hla_pass = "Column(s) identified as potential HLA genotype columns:",
     select_hla_fail = "ERROR: Could not detect any columns with recognised HLA allele data",  
     select_hla = "Select columns of HLA data you want to analyze.",
     select_hla_tooltip = "In each row, selected columns should only contain hla data of one sample/patient.\n One column can contain multiple alleles, separated with a comma.", 
@@ -35,6 +35,8 @@ texts <- list(
     # result modul
     result_title = "3. Choose output",
     result_main = "Select the promiscuity values you want to be calculated",
+    results_avail_pass = "Recognised HLA loci in the selected columns:",
+    results_avail_fail = "ERROR: No HLA molecules were recognized in the selected columns",
   
   app_footer = "If you experience any issues, or if you want to give feedback on this software, please visit https://github.com/immunoteam/promiscuity_app"
 )

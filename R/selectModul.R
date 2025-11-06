@@ -23,7 +23,6 @@ selectColumnsUI <- function(id){
         shiny::uiOutput(ns("hla_pre_check")),
         shiny::checkboxGroupInput(ns("hlacol"), NULL, choices = character() ),
         shiny::uiOutput(ns("select_check") )
-        ,verbatimTextOutput(ns("test"))
       )
     ),
     
@@ -33,7 +32,7 @@ selectColumnsUI <- function(id){
       shiny::actionButton(ns("select_next"), "Next ➡️", disabled = TRUE),
       col_widths = c(2, -6, 2, -2)
     )
-    
+    # ,verbatimTextOutput(ns("test")) # for testing
     
   )
 }
@@ -100,7 +99,7 @@ selectColumnsServer <- function(id, input_df = NULL, main_session){
     })
     
     ### TESTING
-    output$test  <- renderPrint(list(input$idcol, length(input$hlacol), select_check()))
+    # output$test  <- renderPrint(list(input$idcol, length(input$hlacol), select_check()))
     
     return(middle_table)
   })

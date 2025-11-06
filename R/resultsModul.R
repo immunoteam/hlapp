@@ -5,6 +5,7 @@ resultsUI <- function(id){
   ns <- NS(id)
   shiny::tagList(
     shiny::p(texts$result_main),
+    shiny::uiOutput(ns("avail_feedback")),
     bslib::layout_columns(
       shiny::checkboxGroupInput(ns("res_ind"), "Allele promiscuity", choices = character()),
       shiny::checkboxGroupInput(ns("res_avg"), "Locus promiscuity", choices = character())
@@ -23,18 +24,26 @@ resultsServer <- function(id, middle_table, main_session){
     #get the available loci
     avail_loci <- reactive(sort(unique(middle_table()[["Locus"]])))
     
-    #update the checkbox inputs
-    observeEvent(avail_loci(), {
+    # check if any locus are recognized
+    avail_check <- reactive(length(avail_loci()) > 0)
+    output$avail_feedback <- renderUI(giveFeedBack(avail_check(), texts$results_avail_pass, texts$results_avail_fail ) )
+    
+    
+    #update the checkbox input
+    observeEvent(avail_check(), {
       
-      ind_values <- paste0(avail_loci(), "i")
-      avg_values <- paste0(avail_loci(), "a")
+      if(avail_check()){
+        ind_values <- paste0(avail_loci(), "i")
+        avg_values <- paste0(avail_loci(), "a")
+        
+        shiny::updateCheckboxGroupInput(session, "res_ind",
+                                        choiceNames = avail_loci(),
+                                        choiceValues = ind_values) # add ()?
+        shiny::updateCheckboxGroupInput(session, "res_avg",
+                                        choiceNames = avail_loci(),
+                                        choiceValues = avg_values) # add ()?  
+      }
       
-      shiny::updateCheckboxGroupInput(session, "res_ind",
-                                      choiceNames = avail_loci(),
-                                      choiceValues = ind_values) # add ()?
-      shiny::updateCheckboxGroupInput(session, "res_avg",
-                                      choiceNames = avail_loci(),
-                                      choiceValues = avg_values) # add ()?
     })
     
     
