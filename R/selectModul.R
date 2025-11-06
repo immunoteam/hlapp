@@ -9,9 +9,8 @@ selectColumnsUI <- function(id){
           p(texts$select_id), 
           bslib::tooltip(bsicons::bs_icon("info-circle"), texts$select_id_tooltip),
         ),
+        shiny::uiOutput(ns("id_check") ) ), # repurposed, now checks if there are ANY colums that qualify as IDs, prior to selection 
         shiny::selectInput(ns("idcol"), NULL, choices = character(1) ),
-        shiny::uiOutput(ns("id_check"))  
-      ),
       bslib::card( 
         tags$div( style = "display: inline-flex; align-items: center; gap: 8px;",
                   p(texts$select_hla), 
@@ -46,12 +45,11 @@ selectColumnsServer <- function(id, input_df = NULL, main_session){
      updateSelectInput(session, "idcol", choices = cols()[[1]] ) 
     })
     
-    # check if ID values are unique, and give feedback
-    id_check <- eventReactive(input$idcol, {
-      ids <- input_df()[[input$idcol]]
-      length(ids) == dplyr::n_distinct(ids)
+    # check if there is at least on column, that qualifies as ID column
+    id_check <- eventReactive(cols(), {
+      length(cols()[[1]] ) > 0 
     })
-    output$id_check <- renderUI(giveFeedBack(id_check())) # feedback for unique ids
+    output$id_check <- renderUI(giveFeedBack(id_check(), texts$select_id_pass, texts$select_id_fail  ) ) # feedback for unique ids
     
     # update hla column options when id col is selected
     observeEvent(cols(), {
