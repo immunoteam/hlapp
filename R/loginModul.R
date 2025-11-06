@@ -16,13 +16,13 @@ loginServer <- function(id){
     output$login_ui <- renderUI({
       if (!user_data$loggedIn) {
         tagList(
-          h5("To acces the tool, please enter your credentials!"),
+          h5(texts$login_title),
           textInput( NS(id, "userName"), "User Name:"),
           passwordInput( NS(id, "passwd"), "Password:"),
-          actionButton( NS(id, "Login"), "LogIn"),
+          actionButton( NS(id, "Login"), "Enter"),
           textOutput( NS(id, "login_message")),
           header = HTML("&nbsp;&nbsp;"),
-          p("If you want to get access, please contact koppany.gergely@brc.hu"), 
+          p(texts$login_footer), 
         )
       } else {
         return(NULL)  # do not show interface if already logged in

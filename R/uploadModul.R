@@ -3,12 +3,13 @@
 uploadUI <- function(id){
   ns <- NS(id)
   tagList(
+    p(texts$upload_main),
     tags$div( style = "display: inline-flex; align-items: center; gap: 8px;",
       shiny::fileInput(ns("file"), 
-                       label = "Upload HLA genotype file:", 
+                       label = "", 
                        accept = c(".tsv", ".csv", ".xlsx") ),
       bslib::tooltip(bsicons::bs_icon("info-circle"), 
-                     ".xlsx, .tsv or .csv file containing a table.\nThe file should not contain any additional lines, only the table.\nData for one patient/sample has to be stored in one row. "),
+                     texts$upload_tooltip),
     ),
     shiny::uiOutput(ns("file_feedback")),
     bslib::layout_columns(
@@ -31,7 +32,7 @@ uploadServer <- function(id, main_session){
     })
     
     file_check <- reactive(is.data.frame(input_tmp())) # check if inout could be read in as a data frame
-    output$file_feedback <- renderUI(giveFeedBack(file_check()))
+    output$file_feedback <- renderUI(giveFeedBack(file_check(), texts$upload_feedback_pass, texts$upload_feedback_fail ) )
     
     observeEvent(file_check(), { # allow moving to next step if input is a data frame
       shiny::updateActionButton(session, "upload_next", disabled = !file_check())

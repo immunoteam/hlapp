@@ -1,0 +1,34 @@
+# messages and display texts for the application
+
+texts <- list(
+
+  main_title = "HLA Promiscuity tool",
+    
+  # login UI
+  login_title = "To acces the tool, please enter your credentials!",
+  login_footer = "If you want to get access, please contact koppany.gergely@brc.hu",
+  
+  # App ui
+    # main
+    
+    # upload modul
+    upload_title = "1. Upload file",  
+    upload_main = "Upload your file with HLA genotypes. File should only contain a table with column names.",
+    upload_label = "Upload your file with HLA genotypes", # not used 
+    upload_tooltip = ".xlsx, .tsv or .csv file containing a table.\nThe file should not contain any additional lines, only the table.\nData for one patient/sample has to be stored in one row. ", 
+    upload_feedback_pass = "Table read succesfully.",   
+    upload_feedback_fail = "ERROR: Could not read table. Make sure your file only contains a table and no additional lines.",
+  
+    # select modul
+    select_title = "2. Select input columns", 
+    select_main = "Detected columns that potentially contain sample IDs and HLA genotype data. Please select the columns you want to use.",
+    select_id = "Select column of sample IDs:",
+    select_id_tooltip = "IDs should be unique to each sample", 
+    select_hla = "Select columns of HLA data you want to analyze.",
+    select_hla_tooltip = "In each row, selected columns should only contain hla data of one sample/patient.\n One column can contain multiple alleles, separated with a comma.", 
+    # result modul
+    result_title = "3. Choose output",
+    result_main = "Select the promiscuity values you want to be calculated",
+  
+  app_footer = "If you experience any issues, or if you want to give feedback on this software, please visit https://github.com/immunoteam/promiscuity_app"
+)

@@ -4,7 +4,7 @@
 resultsUI <- function(id){
   ns <- NS(id)
   shiny::tagList(
-    shiny::p("Select the promiscuity values you want to be calculated"),
+    shiny::p(texts$result_main),
     bslib::layout_columns(
       shiny::checkboxGroupInput(ns("res_ind"), "Allele promiscuity", choices = character()),
       shiny::checkboxGroupInput(ns("res_avg"), "Locus promiscuity", choices = character())

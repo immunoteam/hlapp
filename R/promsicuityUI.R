@@ -7,16 +7,16 @@ promiscuityUI <- function(id){
     shiny::fluidRow(
       shiny::tabsetPanel( id = ns("main_tabs"), 
                           header = HTML("&nbsp;&nbsp;"),
-        shiny::tabPanel( "1. Upload file", value = "upload",
+        shiny::tabPanel( texts$upload_title, value = "upload",
                           #fileInput(ns("file"), label = " Upload HLA genotype file", accept = c(".tsv", ".csv", ".xlsx"))
                           #uploadUI(id)
                           uploadUI(ns("upload"))
         ), 
-        shiny::tabPanel( "2. Select input columns", value = "select",
+        shiny::tabPanel( texts$select_title, value = "select",
                          #selectUI(id)
                          selectColumnsUI(ns("columns"))
         ),
-        shiny::tabPanel("3. Choose output", value = "result",
+        shiny::tabPanel( texts$result_title, value = "result",
                          resultsUI(ns("results"))
         ), 
         # disacle tabset navigation
@@ -34,7 +34,7 @@ promiscuityUI <- function(id){
     DT::DTOutput(ns("result_df")),
     HTML("&nbsp;&nbsp;&nbsp;"),
     hr(size = 1),
-    p("If you experience any issues, or if you want to give feedback on this software, please visit https://github.com/immunoteam/promiscuity_app")
+    p(texts$app_footer)
   )
 }
   

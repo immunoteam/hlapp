@@ -1,21 +1,21 @@
 selectColumnsUI <- function(id){
   ns <- NS(id)
   fluidRow(
-    p("Select the column of subject ID, then the columns of HLA genotype!"),
+    p(texts$select_main),
     # verbatimTextOutput(ns("test")),
     bslib::layout_columns(
       bslib::card(
         tags$div( style = "display: inline-flex; align-items: center; gap: 8px;",
-          h6("Select column of sample IDs:"), 
-          bslib::tooltip(bsicons::bs_icon("info-circle"), "Values in the columns has to be unique in each row!"),
+          p(texts$select_id), 
+          bslib::tooltip(bsicons::bs_icon("info-circle"), texts$select_id_tooltip),
         ),
         shiny::selectInput(ns("idcol"), NULL, choices = character(1) ),
         shiny::uiOutput(ns("id_check"))  
       ),
       bslib::card( 
         tags$div( style = "display: inline-flex; align-items: center; gap: 8px;",
-                  h6("Select columns of HLA data you want to analyze:"), 
-                  bslib::tooltip(bsicons::bs_icon("info-circle"), "HLA column tooltip"),
+                  p(texts$select_hla), 
+                  bslib::tooltip(bsicons::bs_icon("info-circle"), texts$select_hla_tooltip),
         ),
         shiny::checkboxGroupInput(ns("hlacol"), NULL, choices = character() ),
         shiny::uiOutput(ns("hla_check"))
