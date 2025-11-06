@@ -12,7 +12,7 @@ resultsUI <- function(id){
     ),
     bslib::layout_columns(
       shiny::actionButton(ns("result_back"), "Go back", disabled = FALSE),
-      shiny::actionButton(ns("result_next"), "Get results!", disabled = FALSE),
+      shiny::actionButton(ns("result_next"), "Get results!", disabled = TRUE),
       col_widths = c(2, -6, 2, -2)
     )
   )
@@ -58,6 +58,11 @@ resultsServer <- function(id, middle_table, main_session){
       updateTabsetPanel(main_session, "main_tabs", selected = "select")
     })
     
+    
+    res_check <- reactive(length(res_types()) > 0)
+    observeEvent(res_check(), {
+      shiny::updateActionButton(session, "result_next", disabled = !res_check())
+    })
     
     
     return(out_prom)
