@@ -39,6 +39,7 @@ selectColumnsUI <- function(id){
 
 selectColumnsServer <- function(id, input_df = NULL, main_session){
   moduleServer(id, function(input, output, session) {
+    ns <- NS(id)
     
     # get the column names of input_df
     cols <- reactive(  checkDfCols(input_df() ) )
@@ -64,7 +65,6 @@ selectColumnsServer <- function(id, input_df = NULL, main_session){
     })
     
 
-    
     # HLA COLUMN
     # update hla column options when id col is selected
     observeEvent(cols(), {
@@ -91,11 +91,20 @@ selectColumnsServer <- function(id, input_df = NULL, main_session){
     # SERVER RESULT ---------------------------------------
     # return middle table 
     middle_table <- eventReactive(input$select_next, {
-      formatInputTable(input_df(), manual = TRUE, 
+      
+      #shinyjs::disable(ns("select_next")) # does not work for some reason
+      
+     # Sys.sleep(5) # for testing
+      out <- formatInputTable(input_df(), manual = TRUE, 
                        id.col = input$idcol, hla.cols = input$hlacol,
                        flag.forbidden = T ) |>
         joinGenotypePromiscuity(promiscuity) |>
         dplyr::mutate_if(is.numeric, signif, 4)
+      
+      
+     # shinyjs::enable(ns("select_next"))
+      
+      out
     })
     
     ### TESTING
