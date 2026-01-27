@@ -7,3 +7,4 @@ renv/
 .Renviron
 *.Rproj
 promiscuityApp.Rproj
+test_data/private/
