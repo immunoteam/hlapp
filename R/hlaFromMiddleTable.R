@@ -64,5 +64,5 @@ hlaFromMiddleTable <- function(middle_table, types){
   prom_sel <- dplyr::full_join(prom_ind_sel, prom_avg_sel, by = join_by(ID))
   prom_all <- dplyr::full_join(prom_ind_all, prom_avg_all, by = join_by(ID))
   
-  return(list(prom_sel = prom_sel, prom_all = prom_all))
+  return(prom_sel) # use of prom_all is deprecatetd
 }

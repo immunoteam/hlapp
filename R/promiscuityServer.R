@@ -9,7 +9,7 @@ promiscuityServer <- function(id){
     out_prom <- resultsServer("results", middle_table, main_session = session)
     
     # display results
-    output$result_df <- DT::renderDT(out_prom()[[1]],
+    output$result_df <- DT::renderDT(out_prom(),
                                      rownames = FALSE,
                                      extensions = "Buttons", 
                                      options = DToptions)

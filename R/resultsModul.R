@@ -8,8 +8,10 @@ resultsUI <- function(id){
     shiny::uiOutput(ns("avail_feedback")),
     bslib::layout_columns(
       shiny::checkboxGroupInput(ns("res_ind"), "Allele promiscuity", choices = character()),
-      shiny::checkboxGroupInput(ns("res_avg"), "Locus promiscuity", choices = character())
+      shiny::checkboxGroupInput(ns("res_avg"), "Locus promiscuity", choices = character()), 
+      shiny::radioButtons(ns("res_homo"), "Detect homozygosity", choiceNames = c("yes", "no"), choiceValues = c(TRUE, FALSE)) # get homozygosity
     ),
+   # shiny::verbatimTextOutput(ns("testing")), # uncomment for easy testing
     bslib::layout_columns(
       shiny::actionButton(ns("result_back"), "Go back", disabled = FALSE),
       shiny::actionButton(ns("result_next"), "Get results!", disabled = TRUE),
@@ -43,15 +45,29 @@ resultsServer <- function(id, middle_table, main_session){
                                         choiceNames = avail_loci(),
                                         choiceValues = avg_values) # add ()?  
       }
+    })
+    
+    
+    #calculate selected  promiscuity values
+    res_types <- reactive(c(input$res_ind, input$res_avg)) # merge the values from the two checkboxes
+    out_prom <- eventReactive(input$result_next ,{ # only calculate if result_next button is clicked
+      hlaFromMiddleTable(middle_table(), res_types())
+    })
+    
+    # calculate heterogeneity 
+    out_homo <- eventReactive(input$result_next ,{ # only calculate if result_next button is clicked
+      if (input$res_homo) {
+        detectHomozygotes(middle_table()) |> as.data.frame()
+      } else {
+        # a data frame only consisting of the ID column
+        middle_table() |>
+          dplyr::select(ID) |>
+          unique() |> as.data.frame()
+      }
       
     })
     
-    
-    #calculate selected values
-    res_types <- reactive(c(input$res_ind, input$res_avg)) # merge the values from the two checkboxes
-    out_prom <- eventReactive(input$result_next ,{
-      hlaFromMiddleTable(middle_table(), res_types())
-    })
+ 
     
     #nav buttons
     observeEvent(input$result_back, {
@@ -65,6 +81,10 @@ resultsServer <- function(id, middle_table, main_session){
     })
     
     
-    return(out_prom)
+    # merge all results tables
+    all_results <- reactive(   dplyr::left_join(out_prom(), out_homo(), by = dplyr::join_by(ID))  )
+    
+    #output$testing <- renderPrint(out_prom()) # uncomment for easy testing
+    return(all_results)
   })
 }
