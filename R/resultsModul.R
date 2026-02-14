@@ -82,7 +82,8 @@ resultsServer <- function(id, middle_table, main_session){
     
     
     # merge all results tables
-    all_results <- reactive(   dplyr::left_join(out_prom(), out_homo(), by = dplyr::join_by(ID))  )
+    #all_results <- reactive(   dplyr::left_join(out_prom(), out_homo(), by = dplyr::join_by(ID))  )
+    all_results <- reactive(  purrr::reduce(list( out_prom(), out_homo() ), full_join, by = dplyr::join_by(ID) ) )
     
     #output$testing <- renderPrint(out_prom()) # uncomment for easy testing
     return(all_results)
