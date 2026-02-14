@@ -16,3 +16,14 @@ detectHomozygotes <- function(middle_table){
 
     return(out)
 }
+
+
+#' function to create an empty placeholder from middle_table
+#' 
+#' @param middle_table middle table
+
+makePlaceHolder <- function(middle_table) {
+  middle_table |>
+    dplyr::select(ID) |>
+    unique() 
+}

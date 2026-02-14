@@ -50,6 +50,7 @@ resultsServer <- function(id, middle_table, main_session){
     
     #calculate selected  promiscuity values
     res_types <- reactive(c(input$res_ind, input$res_avg)) # merge the values from the two checkboxes
+    
     out_prom <- eventReactive(input$result_next ,{ # only calculate if result_next button is clicked
       hlaFromMiddleTable(middle_table(), res_types())
     })
@@ -60,15 +61,12 @@ resultsServer <- function(id, middle_table, main_session){
         detectHomozygotes(middle_table()) |> as.data.frame()
       } else {
         # a data frame only consisting of the ID column
-        middle_table() |>
-          dplyr::select(ID) |>
-          unique() |> as.data.frame()
+        makePlaceHolder(middle_table())
       }
       
     })
     
  
-    
     #nav buttons
     observeEvent(input$result_back, {
       updateTabsetPanel(main_session, "main_tabs", selected = "select")
@@ -82,7 +80,6 @@ resultsServer <- function(id, middle_table, main_session){
     
     
     # merge all results tables
-    #all_results <- reactive(   dplyr::left_join(out_prom(), out_homo(), by = dplyr::join_by(ID))  )
     all_results <- reactive(  purrr::reduce(list( out_prom(), out_homo() ), full_join, by = dplyr::join_by(ID) ) )
     
     #output$testing <- renderPrint(out_prom()) # uncomment for easy testing
