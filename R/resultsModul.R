@@ -1,13 +1,19 @@
 
 # modul for selecting and calculating results
 
+########### UI ################xxx
+
 resultsUI <- function(id){
   ns <- NS(id)
   shiny::tagList(
     shiny::p(texts$result_main),
     shiny::uiOutput(ns("avail_feedback")),
     bslib::layout_columns(
-      shiny::checkboxGroupInput(ns("res_ind"), "Allele promiscuity", choices = character()),
+      shiny::div(
+        p()
+        shiny::checkboxInput(ns("res_ind_all"),  "Select / Deselect all", value = FALSE),
+        shiny::checkboxGroupInput(ns("res_ind"), "Allele promiscuity", choices = character())
+        ),
       shiny::checkboxGroupInput(ns("res_avg"), "Locus promiscuity", choices = character()), 
       shiny::radioButtons(ns("res_homo"), "Detect homozygosity", choiceNames = c("yes", "no"), choiceValues = c(TRUE, FALSE)) # get homozygosity
     ),
@@ -20,6 +26,9 @@ resultsUI <- function(id){
   )
 }
 
+########## SERVER ################
+
+###### Control input UI ######
 resultsServer <- function(id, middle_table, main_session){
   moduleServer(id, function(input, output, session) {
     
@@ -31,7 +40,7 @@ resultsServer <- function(id, middle_table, main_session){
     output$avail_feedback <- renderUI(giveFeedBack(avail_check(), texts$results_avail_pass, texts$results_avail_fail ) )
     
     
-    #update the checkbox input
+    #update the checkbox input based on available values 
     observeEvent(avail_check(), {
       
       if(avail_check()){
@@ -47,6 +56,17 @@ resultsServer <- function(id, middle_table, main_session){
       }
     })
     
+    # update checked boxes adter select all / deselect all is clicked
+    observeEvent(input$res_ind_all, {
+      ind_values <- paste0(avail_loci(), "i")
+      if (input$res_ind_all) {
+        updateCheckboxGroupInput( session, "res_ind", selected = ind_values)
+      } else {
+        updateCheckboxGroupInput(session, "res_ind", selected = character(0))
+      }
+    })
+    
+###### Generate results ###### 
     
     #calculate selected  promiscuity values
     res_types <- reactive(c(input$res_ind, input$res_avg)) # merge the values from the two checkboxes
@@ -63,7 +83,6 @@ resultsServer <- function(id, middle_table, main_session){
         # a data frame only consisting of the ID column
         makePlaceHolder(middle_table())
       }
-      
     })
     
  
