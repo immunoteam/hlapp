@@ -10,11 +10,15 @@ resultsUI <- function(id){
     shiny::uiOutput(ns("avail_feedback")),
     bslib::layout_columns(
       shiny::div(
-        p()
+        p("Allele promiscuity"),
         shiny::checkboxInput(ns("res_ind_all"),  "Select / Deselect all", value = FALSE),
-        shiny::checkboxGroupInput(ns("res_ind"), "Allele promiscuity", choices = character())
+        shiny::checkboxGroupInput(ns("res_ind"), NULL, choices = character())
         ),
-      shiny::checkboxGroupInput(ns("res_avg"), "Locus promiscuity", choices = character()), 
+      shiny::div(
+        p("Locus promiscuity"),
+        shiny::checkboxInput(ns("res_avg_all"),  "Select / Deselect all", value = FALSE),
+        shiny::checkboxGroupInput(ns("res_avg"), NULL, choices = character())  
+      ),
       shiny::radioButtons(ns("res_homo"), "Detect homozygosity", choiceNames = c("yes", "no"), choiceValues = c(TRUE, FALSE)) # get homozygosity
     ),
    # shiny::verbatimTextOutput(ns("testing")), # uncomment for easy testing
@@ -63,6 +67,15 @@ resultsServer <- function(id, middle_table, main_session){
         updateCheckboxGroupInput( session, "res_ind", selected = ind_values)
       } else {
         updateCheckboxGroupInput(session, "res_ind", selected = character(0))
+      }
+    })
+    
+    observeEvent(input$res_avg_all, {
+      avg_values <- paste0(avail_loci(), "a")
+      if (input$res_avg_all) {
+        updateCheckboxGroupInput( session, "res_avg", selected = avg_values)
+      } else {
+        updateCheckboxGroupInput(session, "res_avg", selected = character(0))
       }
     })
     
