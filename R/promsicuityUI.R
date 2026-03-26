@@ -22,8 +22,9 @@ promiscuityUI <- function(id){
         # disacle tabset navigation
         tags$script(HTML("
           $(document).ready(function() {
-          $('ul.nav > li').addClass('disabled');
-          $('ul.nav > li').css('pointer-events', 'none');
+          $('#prom_tabs ul.nav > li')
+            .addClass('disabled')
+            .css('pointer-events', 'none');
           });
           "))
       )
@@ -31,10 +32,8 @@ promiscuityUI <- function(id){
     HTML("&nbsp;&nbsp;&nbsp;"),
     hr(size = 1),
     ### OUTPUT PANELS
-    DT::DTOutput(ns("result_df")),
-    HTML("&nbsp;&nbsp;&nbsp;"),
-    hr(size = 1),
-    p(texts$app_footer)
+    DT::DTOutput(ns("result_df"))
+    
   )
 }
   

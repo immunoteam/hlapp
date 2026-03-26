@@ -9,8 +9,15 @@ HLApp <- function(...){
     shiny::titlePanel(texts$main_title),
     HTML("&nbsp;&nbsp;&nbsp;&nbsp;"),
     loginUI("login"),
-    #shiny::textOutput("login_feedback"),
-    uiOutput("promUI")
+    bslib::page_navbar(
+      bslib::nav_panel("PromiscuityApp", value = "prom", uiOutput("promUI")), 
+      bslib::nav_panel("SubmotifApp", value = "submotif", p("placeholder for submotif app")), 
+      
+      footer = fluidRow(HTML("&nbsp;&nbsp;&nbsp;"),
+                        hr(size = 1),
+                        p(texts$app_footer))
+    )
+    
   )
   
   server <- function(input, output, session) {
