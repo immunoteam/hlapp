@@ -43,7 +43,7 @@ uploadServer <- function(id, main_session){
     })
     
     observeEvent(input$upload_next, { #if next is clicked, move to select panel
-      updateTabsetPanel(main_session, "main_tabs", selected = "select")
+      updateTabsetPanel(main_session, "prom_tabs", selected = "select")
     })
     
     return(input_df)

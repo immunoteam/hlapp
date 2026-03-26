@@ -103,7 +103,7 @@ resultsServer <- function(id, middle_table, main_session){
  
     #nav buttons
     observeEvent(input$result_back, {
-      updateTabsetPanel(main_session, "main_tabs", selected = "select")
+      updateTabsetPanel(main_session, "prom_tabs", selected = "select")
     })
     
     

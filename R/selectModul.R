@@ -86,11 +86,11 @@ selectColumnsServer <- function(id, input_df = NULL, main_session){
     
     #nav buttons
     observeEvent(input$select_back, {
-      updateTabsetPanel(main_session, "main_tabs", selected = "upload")
+      updateTabsetPanel(main_session, "prom_tabs", selected = "upload")
     })
     
     observeEvent(input$select_next, {
-      updateTabsetPanel(main_session, "main_tabs", selected = "result")
+      updateTabsetPanel(main_session, "prom_tabs", selected = "result")
     })
 
     # NEXT nav button - only active if select_check is passed

@@ -5,7 +5,7 @@ promiscuityUI <- function(id){
   
   shiny::fluidPage(
     shiny::fluidRow(
-      shiny::tabsetPanel( id = ns("main_tabs"), 
+      shiny::tabsetPanel( id = ns("prom_tabs"), 
                           header = HTML("&nbsp;&nbsp;"),
         shiny::tabPanel( texts$upload_title, value = "upload",
                           #fileInput(ns("file"), label = " Upload HLA genotype file", accept = c(".tsv", ".csv", ".xlsx"))
