@@ -24,7 +24,7 @@ resultsUI <- function(id){
    # shiny::verbatimTextOutput(ns("testing")), # uncomment for easy testing
     bslib::layout_columns(
       shiny::actionButton(ns("result_back"), "Go back", disabled = FALSE),
-      shiny::actionButton(ns("result_next"), "Get results!", disabled = TRUE),
+      shiny::uiOutput(ns("results_next_ui")),
       col_widths = c(2, -6, 2, -2)
     )
   )
@@ -35,6 +35,7 @@ resultsUI <- function(id){
 ###### Control input UI ######
 resultsServer <- function(id, middle_table, main_session){
   moduleServer(id, function(input, output, session) {
+    ns <- session$ns 
     
     #get the available loci
     avail_loci <- reactive(sort(unique(middle_table()[["Locus"]])))
@@ -85,6 +86,7 @@ resultsServer <- function(id, middle_table, main_session){
     res_types <- reactive(c(input$res_ind, input$res_avg)) # merge the values from the two checkboxes
     
     out_prom <- eventReactive(input$result_next ,{ # only calculate if result_next button is clicked
+      #Sys.sleep(3)# for testing
       hlaFromMiddleTable(middle_table(), res_types())
     })
     
@@ -105,10 +107,17 @@ resultsServer <- function(id, middle_table, main_session){
     })
     
     
+    
+    # RESULTS nav button - only active if select_check is passed
     res_check <- reactive(length(res_types()) > 0)
-    observeEvent(res_check(), {
-      shiny::updateActionButton(session, "result_next", disabled = !res_check())
-    })
+    
+    output$results_next_ui  <- renderUI(
+      if (!res_check()) {
+        shiny::actionButton(ns("result_next"), "Get results!", disabled = TRUE)
+      } else {
+        bslib::input_task_button(ns("result_next"), label = "Get results!", status = "primary" , spinner = TRUE, state = "ready")
+      }
+    )
     
     
     # merge all results tables
