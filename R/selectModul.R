@@ -21,6 +21,7 @@ selectColumnsUI <- function(id){
                   bslib::tooltip(bsicons::bs_icon("info-circle"), texts$select_hla_tooltip),
         ),
         shiny::uiOutput(ns("hla_pre_check")),
+        shiny::checkboxInput(ns("hlacol_all"), "Select / Deselect all", value = FALSE), 
         shiny::checkboxGroupInput(ns("hlacol"), NULL, choices = character() ),
         shiny::uiOutput(ns("select_check") )
       )
@@ -74,6 +75,14 @@ selectColumnsServer <- function(id, input_df = NULL, main_session){
     output$hla_pre_check <- renderUI(giveFeedBack(hla_pre_check(), texts$select_hla_pass, texts$select_hla_fail)) # feedback for recognised HLA loci
     output$select_check <- renderUI(giveFeedBack(select_check() , texts$select_check_pass , texts$select_check_fail ))
     
+    # Update select cool, when selesct /deselect is checked. 
+    observeEvent(input$hlacol_all, {
+      if (input$hlacol_all) {
+        updateCheckboxGroupInput( session, "hlacol", selected = cols()[[2]])
+      } else {
+        updateCheckboxGroupInput(session, "hlacol", selected = character(0))
+      }
+    })
     #nav buttons
     observeEvent(input$select_back, {
       updateTabsetPanel(main_session, "main_tabs", selected = "upload")
