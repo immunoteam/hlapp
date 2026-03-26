@@ -30,7 +30,11 @@ selectColumnsUI <- function(id){
     #nav buttons ui
     bslib::layout_columns(
       shiny::actionButton(ns("select_back"), "Go back", disabled = FALSE),
-      shiny::actionButton(ns("select_next"), "Next ➡️", disabled = TRUE),
+      #shiny::actionButton(ns("select_next"), "Next ➡️", disabled = TRUE),
+      # Task button with spinner
+      bslib::input_task_button(id= ns("select_next"), label = "Next ➡️",
+                               status = "primary", icon = icon("cogs"),spinner = TRUE
+                               ),
       col_widths = c(2, -6, 2, -2)
     )
     # ,verbatimTextOutput(ns("test")) # for testing
@@ -89,9 +93,9 @@ selectColumnsServer <- function(id, input_df = NULL, main_session){
     })
     
    
-    observeEvent(list(select_check(), running()), {
+    observeEvent(list(select_check(), task_done()), {
       
-      disable_if <- running() | (!select_check())
+      disable_if <- (!task_done()) | (!select_check())
       
       shiny::updateActionButton(session, "select_next", disabled =  disable_if)
     })
@@ -102,29 +106,31 @@ selectColumnsServer <- function(id, input_df = NULL, main_session){
     
     # SERVER RESULT ---------------------------------------
     # return middle table 
-    running <- reactiveVal(FALSE)
+    middle_table <-reactiveVal(NULL)
+    task_done <- reactiveVal(TRUE)
     
-    middle_table <- eventReactive(input$select_next, {
+    observeEvent(input$select_next, {
       
       #shinyjs::disable(ns("select_next")) # does not work for some reason
       
-     # Sys.sleep(5) # for testing
+      
+      Sys.sleep(3) # for testing
       out <- formatInputTable(input_df(), manual = TRUE, 
                        id.col = input$idcol, hla.cols = input$hlacol,
                        flag.forbidden = T ) |>
         joinGenotypePromiscuity(promiscuity) |>
         dplyr::mutate_if(is.numeric, signif, 4)
-      
+      Sys.sleep(2)
       
      # shinyjs::enable(ns("select_next"))
       
-      out
+      middle_table(out)
     })
     
     ### TESTING
-     output$test  <- renderPrint(list(running(), 
+     output$test  <- renderPrint(list(task_done(), 
                                       select_check(),
-                                      (paste("disable if:", running() | (!select_check()))  )
+                                      (paste("disable if:", task_done() | (!select_check()))  )
                                       ) 
                                  )
     
