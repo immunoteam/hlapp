@@ -1,6 +1,6 @@
 library(shiny)
 
-promiscuityApp <- function(...){
+HLApp <- function(...){
   
   ui <- shiny::fluidPage(
     #theme = bs_theme(version = 5),  # Bootstrap 5 theme
