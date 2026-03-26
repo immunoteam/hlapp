@@ -19,7 +19,7 @@ resultsUI <- function(id){
         shiny::checkboxInput(ns("res_avg_all"),  "Select / Deselect all", value = FALSE),
         shiny::checkboxGroupInput(ns("res_avg"), NULL, choices = character())  
       ),
-      shiny::radioButtons(ns("res_homo"), "Detect homozygosity", choiceNames = c("yes", "no"), choiceValues = c(TRUE, FALSE)) # get homozygosity
+      shiny::radioButtons(ns("res_homo"), "Detect homozygosity", choiceNames = c("yes", "no"), choiceValues = c(TRUE, FALSE), selected = FALSE) # get homozygosity
     ),
    # shiny::verbatimTextOutput(ns("testing")), # uncomment for easy testing
     bslib::layout_columns(
