@@ -2,14 +2,14 @@ selectColumnsUI <- function(id){
   ns <- NS(id)
   fluidRow(
     p(texts$select_main),
-    # verbatimTextOutput(ns("test")),
+    verbatimTextOutput(ns("test")),
     bslib::layout_columns(
       
       #id column ui
       bslib::card(
         tags$div( style = "display: inline-flex; align-items: center; gap: 8px;",
           p(texts$select_id), 
-          bslib::tooltip(bsicons::bs_icon("info-circle"), texts$select_id_tooltip),
+          bslib::tooltip(bsicons::bs_icon("info-circle"), texts$select_id_tooltip)
         ),
         shiny::uiOutput(ns("id_pre_check") ) , # repurposed, now checks if there are ANY colums that qualify as IDs, prior to selection 
         shiny::selectInput(ns("idcol"), NULL, choices = character(1) ) ),
@@ -18,7 +18,7 @@ selectColumnsUI <- function(id){
       bslib::card( 
         tags$div( style = "display: inline-flex; align-items: center; gap: 8px;",
                   p(texts$select_hla), 
-                  bslib::tooltip(bsicons::bs_icon("info-circle"), texts$select_hla_tooltip),
+                  bslib::tooltip(bsicons::bs_icon("info-circle"), texts$select_hla_tooltip)
         ),
         shiny::uiOutput(ns("hla_pre_check")),
         shiny::checkboxInput(ns("hlacol_all"), "Select / Deselect all", value = FALSE), 
@@ -89,8 +89,11 @@ selectColumnsServer <- function(id, input_df = NULL, main_session){
     })
     
    
-    observeEvent(select_check(), {
-      shiny::updateActionButton(session, "select_next", disabled = !select_check())
+    observeEvent(list(select_check(), running()), {
+      
+      disable_if <- running() | (!select_check())
+      
+      shiny::updateActionButton(session, "select_next", disabled =  disable_if)
     })
     
     observeEvent(input$select_next, {
@@ -99,6 +102,8 @@ selectColumnsServer <- function(id, input_df = NULL, main_session){
     
     # SERVER RESULT ---------------------------------------
     # return middle table 
+    running <- reactiveVal(FALSE)
+    
     middle_table <- eventReactive(input$select_next, {
       
       #shinyjs::disable(ns("select_next")) # does not work for some reason
@@ -117,7 +122,11 @@ selectColumnsServer <- function(id, input_df = NULL, main_session){
     })
     
     ### TESTING
-    # output$test  <- renderPrint(list(input$idcol, length(input$hlacol), select_check()))
+     output$test  <- renderPrint(list(running(), 
+                                      select_check(),
+                                      (paste("disable if:", running() | (!select_check()))  )
+                                      ) 
+                                 )
     
     return(middle_table)
   })
