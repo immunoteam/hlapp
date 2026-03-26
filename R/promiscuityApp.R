@@ -3,8 +3,8 @@ library(shiny)
 promiscuityApp <- function(...){
   
   ui <- shiny::fluidPage(
-    theme = bs_theme(version = 5),  # Bootstrap 5 theme
-    #theme = bslib::bs_theme(version = 5, bootswatch = "flatly", "card-border-width" = "0",  "card-box-shadow" = "none"),
+    #theme = bs_theme(version = 5),  # Bootstrap 5 theme
+    theme = bslib::bs_theme(version = 5, bootswatch = "flatly", "card-border-width" = "0",  "card-box-shadow" = "none"),
     tags$head(tags$meta(name = "robots", content = "noindex, nofollow")), # this line prevents search bots to read the content of the app
     shiny::titlePanel(texts$main_title),
     HTML("&nbsp;&nbsp;&nbsp;&nbsp;"),
