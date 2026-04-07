@@ -10,8 +10,8 @@ HLApp <- function(...){
     HTML("&nbsp;&nbsp;&nbsp;&nbsp;"),
     loginUI("login"),
     bslib::page_navbar(
-      bslib::nav_panel("PromiscuityApp", value = "prom", uiOutput("promUI") ), 
-      bslib::nav_panel("SubmotifApp", value = "submotif", uiOutput("submUI") ), 
+      bslib::nav_panel("PromiscuityApp", value = "prom", uiOutput("promUI")), 
+      bslib::nav_panel("SubmotifApp", value = "submotif", p("placeholder for submotif app")), 
       
       footer = fluidRow(HTML("&nbsp;&nbsp;&nbsp;"),
                         hr(size = 1),
@@ -26,8 +26,6 @@ HLApp <- function(...){
     # Give feedback on login
     # output$login_feedback <- renderText(ifelse(login_status(), "", "Failed Login, Please try angain!"))
     
-    
-    #### PROMISCUITY
     # render Promiscuuity UI if login is passed
     output$promUI <- renderUI({
       req(login_status())
@@ -40,21 +38,6 @@ HLApp <- function(...){
         promiscuityServer("promiscuity")  
       }
     })
-    
-    #### SUBMOTIF 
-    # render submotif UI if login is passed
-    output$submUI <- renderUI({
-      req(login_status())
-      submotifUI("submotif")
-    })
-    
-    # load submotifServer if login is passed
-    observeEvent(login_status(), {
-      if (login_status()){
-        submotifServer("submotif")
-      }
-    })
-    
   }
   
   shiny::shinyApp(ui, server, ...)
