@@ -13,9 +13,14 @@ Depends:
     R (>= 3.5)
 LazyData: true
 Imports: 
+    Cairo,
     dplyr,
+    grImport,
+    grImport2,
     magrittr,
+    motifStack,
     pkgload,
+    png,
     purrr,
     shiny,
     tidyr
