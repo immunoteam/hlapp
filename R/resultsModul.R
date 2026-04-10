@@ -19,7 +19,9 @@ resultsUI <- function(id){
         shiny::checkboxInput(ns("res_avg_all"),  "Select / Deselect all", value = FALSE),
         shiny::checkboxGroupInput(ns("res_avg"), NULL, choices = character())  
       ),
-      shiny::radioButtons(ns("res_homo"), "Detect homozygosity", choiceNames = c("yes", "no"), choiceValues = c(TRUE, FALSE), selected = FALSE) # get homozygosity
+      shiny::radioButtons(ns("res_homo"), "Detect homozygosity", choiceNames = c("yes", "no"), choiceValues = c(TRUE, FALSE), selected = FALSE), # get homozygosity
+      shiny::radioButtons(ns("res_evdiv"), "Calculate evolutionary divergence", choiceNames = c("yes", "no"), choiceValues = c(TRUE, FALSE), selected = FALSE) # get evolutionary divergence
+      
     ),
    # shiny::verbatimTextOutput(ns("testing")), # uncomment for easy testing
     bslib::layout_columns(
@@ -100,6 +102,16 @@ resultsServer <- function(id, middle_table, main_session){
       }
     })
     
+    # calculate evolutionary divergence
+    out_evdiv <- eventReactive(input$result_next ,{ # only calculate if result_next button is clicked
+      if (input$res_evdiv) {
+        evolutionaryDivergence(middle_table()) |> as.data.frame()
+      } else {
+        # a data frame only consisting of the ID column
+        makePlaceHolder(middle_table())
+      }
+    })
+    
  
     #nav buttons
     observeEvent(input$result_back, {
@@ -121,7 +133,7 @@ resultsServer <- function(id, middle_table, main_session){
     
     
     # merge all results tables
-    all_results <- reactive(  purrr::reduce(list( out_prom(), out_homo() ), full_join, by = dplyr::join_by(ID) ) )
+    all_results <- reactive(  purrr::reduce(list( out_prom(), out_homo(), out_evdiv() ), full_join, by = dplyr::join_by(ID) ) )
     
     #output$testing <- renderPrint(out_prom()) # uncomment for easy testing
     return(all_results)
