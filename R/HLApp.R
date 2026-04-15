@@ -12,6 +12,7 @@ HLApp <- function(...){
     bslib::page_navbar(
       bslib::nav_panel("PromiscuityApp", value = "prom", uiOutput("promUI") ), 
       bslib::nav_panel("SubmotifApp", value = "submotif", uiOutput("submUI") ), 
+      bslib::nav_panel("HLA translate", value = "translate", uiOutput("transUI") ), 
       
       footer = fluidRow(HTML("&nbsp;&nbsp;&nbsp;"),
                         hr(size = 1),
@@ -52,6 +53,21 @@ HLApp <- function(...){
     observeEvent(login_status(), {
       if (login_status()){
         submotifServer("submotif")
+      }
+    })
+    
+    
+    #### TRANSLATE 
+    # render submotif UI if login is passed
+    output$transUI <- renderUI({
+      req(login_status())
+      translateUI("translate")
+    })
+    
+    # load submotifServer if login is passed
+    observeEvent(login_status(), {
+      if (login_status()){
+        translateServer("translate")
       }
     })
     
