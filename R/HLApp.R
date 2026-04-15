@@ -9,7 +9,7 @@ HLApp <- function(...){
     shiny::titlePanel(texts$main_title),
     HTML("&nbsp;&nbsp;&nbsp;&nbsp;"),
     loginUI("login"),
-    bslib::page_navbar(
+    bslib::page_navbar( navbar_options =  bslib::navbar_options(collapsible = F),
       bslib::nav_panel("PromiscuityApp", value = "prom", uiOutput("promUI") ), 
       bslib::nav_panel("SubmotifApp", value = "submotif", uiOutput("submUI") ), 
       bslib::nav_panel("HLA translate", value = "translate", uiOutput("transUI") ), 
