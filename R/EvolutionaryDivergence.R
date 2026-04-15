@@ -10,7 +10,7 @@ evolutionaryDivergence <- function(middle_table){
     dplyr::mutate(Locus = ifelse(Locus %in% c("DP", "DQ", "DR"), substr(HLA, 1, 4), Locus) )
   
   out <-  x |>
-    dplyr::group_by(ID, Locus) |>
+    dplyr::group_by(ID, Locus) #|>
     #[calculation]
     
   return(out)
