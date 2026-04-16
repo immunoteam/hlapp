@@ -5,14 +5,24 @@ translateUI <- function(id){
   ns <- NS(id)
   
   fluidPage(
-    textOutput(ns("placeholder"))
+    textOutput(ns("placeholder")), 
+    shiny::verbatimTextOutput(ns("prom_res"))
   )
 }
 
-translateServer <- function(id) {
+translateServer <- function(id, prom_result = NULL) {
   moduleServer(id, function(input, output, session) {
     ns <- session$ns
     
+    observe({
+      req(prom_result())
+      
+      data <- prom_result()()  # THIS updates automatically
+      # do something with data
+      output$prom_res <- shiny::renderPrint(head(data))
+    })
     output$placeholder <- renderText("Placeholder for Translate App")
+    
+    
   })
 }

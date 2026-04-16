@@ -36,9 +36,11 @@ HLApp <- function(...){
     })
     
     # load promiscuity server if login is passed
+    prom_result <- reactiveVal(NULL)
+    
     observeEvent(login_status(), {
       if (login_status()) {
-        promiscuityServer("promiscuity")  
+        prom_result(promiscuityServer("promiscuity"))  
       }
     })
     
@@ -58,16 +60,16 @@ HLApp <- function(...){
     
     
     #### TRANSLATE 
-    # render submotif UI if login is passed
+    # render translate UI if login is passed
     output$transUI <- renderUI({
       req(login_status())
       translateUI("translate")
     })
     
-    # load submotifServer if login is passed
+    # load translateServer if login is passed
     observeEvent(login_status(), {
       if (login_status()){
-        translateServer("translate")
+        translateServer("translate", prom_result)
       }
     })
     
