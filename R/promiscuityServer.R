@@ -14,7 +14,7 @@ promiscuityServer <- function(id){
                                      extensions = "Buttons", 
                                      options = DToptions)
     
-    return(out_prom)
+    return(middle_table)
   })
 }
 
