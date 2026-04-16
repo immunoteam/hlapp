@@ -8,8 +8,8 @@ translateUI <- function(id){
     textAreaInput(ns("alleles"), label = "Enter alleles", rows = 6, value = ""), 
     actionButton(ns("load_alleles"), label = "Load alleles from PromsicuityApp"), 
     checkboxGroupInput(ns("formats"), label = "Allele formats", choices = c("netMHCpan", "MHCnuggets","mixMHCpred") ),
-    shiny::verbatimTextOutput(ns("test")),
-    shiny::verbatimTextOutput(ns("prom_res"))
+    #shiny::verbatimTextOutput(ns("test")),
+    DT::DTOutput(ns("prom_res"))
   )
 }
 
@@ -38,8 +38,8 @@ translateServer <- function(id, prom_result = NULL) {
     })
       
     
-    output$prom_res <- shiny::renderPrint( head(translated_df()) ) 
-    output$test<- shiny::renderPrint( used_alleles() ) 
+    output$prom_res <- DT::renderDT( translated_df() ) 
+    #output$test<- shiny::renderPrint( used_alleles() ) 
     
   })
 }
