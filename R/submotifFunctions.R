@@ -21,11 +21,7 @@ getAvailableClusters <- function(submotif_results, allele_data,  allele){
 
 makeNmdsPlot <- function(allele_data, allele, cluster){
 
-  nmds_coords <- allele_data[[allele]]$nmds
-  cluster_info <- allele_data[[allele]]$clusters
-
-  nmds_df <- as.data.frame(nmds_coords)
-  nmds_df$cluster <- cluster_info$Peptide_Cluster
+  nmds_df <- as.data.frame(allele_data$nmds)
 
   cluster_selected <- as.numeric(cluster)
   highlighted <- nmds_df$cluster == cluster_selected
@@ -39,20 +35,6 @@ makeNmdsPlot <- function(allele_data, allele, cluster){
        main = paste("NMDS plot -", allele))
 
   return(p)
-}
-
-
-makeMotif <- function(allele, cluster, submotif_results){
-  cluster_name <- paste0("cluster_", cluster, "_logo")
-  motif <-  submotif_results[[allele]][[cluster_name]]$motif
-
-  return(motif)
-}
-
-getClusterInfo <- function(allele, cluster, allele_data){
-  cluster_selected <- as.numeric(cluster)
-  cluster_info <- allele_data[[allele]]$clusters
-  return(cluster_info)
 }
 
 getEntropyValues <- function(allele, cluster, submotif_results){

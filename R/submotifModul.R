@@ -13,7 +13,7 @@ submotifUI <- function(id) {
 
     sidebarLayout(
       sidebarPanel(
-        radioButtons(ns("type"), "Select HLA type:", choiceNames = c("HLA-I", "HLA-II"), choiceValues = c("I", "II")),
+        radioButtons(ns("type"), "Select HLA type:", choiceNames = c("HLA-I", "HLA-II"), choiceValues = c("HLA_I", "HLA_II")),
         uiOutput(ns("allele_ui")),
         uiOutput(ns("cluster_ui")),
         hr(),
@@ -54,56 +54,51 @@ submotifServer <- function(id) {
   moduleServer(id, function(input, output, session) {
     ns <- session$ns
 
-    allele_data <- eventReactive(input$type, {
-      req(input$type)
-      if(input$type == "I"){
-        hla_i_allele_data
-      } else {
-        hla_ii_allele_data
-      }
-      })
-    submotifresults <- eventReactive(input$type,{
-      req(input$type)
-      if(input$type == "I"){
-        hla_i_submotifresults
-      } else {
-        hla_ii_submotifresults
-      }
-    })
+    
 
 
     # Get available HLA alleles for allele type
-    available_alleles <- reactive({
+    available_alleles <- eventReactive(input$type, {
       req(input$type)
-      names(allele_data())
+      allele_names[[input$type]]
     })
 
     output$allele_ui <- renderUI({
       req(input$type)
-      selectInput(ns("allele"), "Select an allele:", choices = names(submotifresults()))
+      selectInput(ns("allele"), "Select an allele:", choices = available_alleles() )
     })
+    
+    allele_data <- eventReactive(input$allele, {
+      req(input$allele)
+      get(paste0("allele_", input$allele))
+    }) 
 
     # Dinamikusan elérhető klaszterek az adott allélhoz, peptid-szám szerint rendezetten
     available_clusters <- reactive({ # good practice: separate reactive and static code
       req(input$allele)
-      getAvailableClusters(submotifresults(), allele_data(), input$allele)
+      allele_data()$clusters$Cluster
     })
 
     output$cluster_ui <- renderUI({
       selectInput(ns("cluster"), "Select a cluster:", choices = available_clusters())
     })
+    
+    cluster_data <- eventReactive(c(input$cluster, input$allele), {
+      req(input$cluster, input$allele)
+      get(paste0("cluster_", gsub("HLA_", "", input$type), "_", input$allele, "_", input$cluster))
+    })
 
     # Általános allél motívum
     output$allele_motif <- renderPlot({
       req(input$allele)
-      motif <- allele_data()[[input$allele]]$motif
+      motif <- allele_data()$motif
       motifStack::plot(motif)
     })
 
     # Peptid szám az allélhoz
     output$allele_peptide_count <- renderText({
       req(input$allele)
-      n_peptides <- nrow(allele_data()[[input$allele]]$clusters)
+      n_peptides <- sum(allele_data()$clusters$Peptide_n)
       paste("Total number of peptides:", n_peptides)
     })
 
@@ -113,57 +108,41 @@ submotifServer <- function(id) {
       makeNmdsPlot(allele_data(), input$allele, input$cluster)
     })
 
-    # Szubmotívum logó
-    submotif <- reactive({
-      req(input$cluster) #prevents plot generation upon start
-      makeMotif(input$allele, input$cluster, submotifresults())
-    })
-
     output$submotif_plot <- renderPlot({
-      req(submotif()) #prevents plot generation upon start
-      motifStack::plot(submotif())
+      req(cluster_data()) #prevents plot generation upon start
+      submotif <- cluster_data()$motif
+      motifStack::plot(submotif)
     })
 
     # Letöltési handler a submotif plothoz (PNG)
     output$download_submotif <- downloadHandler(
       filename = function() { downloadFileName(input, "submotif_plot", ".png") },
-      content = function(file) { makePng(file, input, submotif(), method = "motifStack") }
+      content = function(file) { makePng(file, input, cluster_data()$motif, method = "motifStack") }
     )
 
     # Letöltési handler a submotif adat rds-ben
     output$download_submotif_data <- downloadHandler(
       filename = function() { downloadFileName(input, "submotif_plot", ".rds") },
-      content = function(file) {  saveRDS(submotif(), file) }
+      content = function(file) {  saveRDS(cluster_data()$motif, file) }
     )
 
-    # Klaszter peptidszám kiírás
-    cluster_info <- reactive({
-      getClusterInfo(input$allele, input$cluster,  allele_data())
-    })
-
-    peptides_in_cluster <- reactive({
-      req(cluster_info, input$type, input$cluster)
-
-      getClusterPeptides(cluster_info(), type = input$type, cluster = input$cluster)
-    })
-
+    #Peptidek száma
     output$cluster_peptide_count = renderText({
-      req(peptides_in_cluster())
-      n_peptides_in_cluster <- length(peptides_in_cluster())
+      req(cluster_data())
+      n_peptides_in_cluster <- length(cluster_data()$peptides)
       paste("Number of peptides in this cluster:", n_peptides_in_cluster)
     })
 
     # Klaszter peptidjeinek helytakarékos megjelenítése
     show_peptides <- reactiveVal(FALSE) # show peptides as a reactive
-
     observeEvent(input$show_peptides, { #change show petides, when the button is clicked
       show_peptides(!show_peptides())
     })
 
     output$peptide_ui <- renderUI({
-      req(peptides_in_cluster())
+      req(cluster_data())
       # Ha nincsenek peptidek, visszaadunk egy üzenetet
-      if (length(peptides_in_cluster()) == 0) { return("No peptides in this cluster.") }
+      if (length(cluster_data()$peptides) == 0) { return("No peptides in this cluster.") }
 
       tagList(
         actionButton(ns("show_peptides"), "Show Peptides"),
@@ -171,7 +150,7 @@ submotifServer <- function(id) {
           div(
             style = "max-height: 300px; overflow-y: auto; columns: 5;",
             tags$ul(style = "margin: 0; padding-left: 20px;",
-                    lapply(peptides_in_cluster(), tags$li) )
+                    lapply(cluster_data()$peptides, tags$li) )
           )
         }
       )
@@ -180,22 +159,17 @@ submotifServer <- function(id) {
     # Peptid lista letöltése txt-ben
     output$download_peptide_list <- downloadHandler(
       filename = function() {  downloadFileName(input, "peptide_list_", ".txt")  },
-      content = function(file) {  writeLines(peptides_in_cluster(), con = file) }
+      content = function(file) {  writeLines(cluster_data()$peptides, con = file) }
     )
 
     # Entrópia görbe
-    entropy_values <- reactive({
-      req(input$cluster)
-      getEntropyValues(input$allele, input$cluster, submotifresults())
-    })
-
     output$entropy_plot = renderPlot({
       req(input$cluster) #prevents plot render when input$cluster is missing upon startup
 
-      plot(entropy_values(), type = "o", col = "darkgreen",
+      plot(cluster_data()$entropy$H, type = "o", col = "darkgreen",
            xlab = "Position", ylab = "Entropy", pch = 16,
            main = paste("Entropy -", input$allele, "Cluster", input$cluster))
-      abline(h = getRedLine(input$allele, input$cluster, submotifresults()), col = "red", lty = 2)
+      abline(h = cluster_data()$red_line, col = "red", lty = 2)
     })
 
     # Entrópia plot letöltése PNG-ben
@@ -203,10 +177,10 @@ submotifServer <- function(id) {
       filename = function() { downloadFileName(input, "entropy_plot_", ".png") },
       content = function(file) {
         png(file)
-        plot(entropy_values(), type = "o", col = "darkgreen",
+        plot(cluster_data()$entropy$H, type = "o", col = "darkgreen",
              xlab = "Position", ylab = "Entropy", pch = 16,
              main = paste("Entropy -", input$allele, "Cluster", input$cluster))
-        abline(h = getRedLine(input$allele, input$cluster, submotifresults()), col = "red", lty = 2)
+        abline(h = cluster_data()$red_line, col = "red", lty = 2)
         dev.off()
       }
     )
@@ -214,8 +188,11 @@ submotifServer <- function(id) {
     # Entrópia adat letöltése RDS-ben
     output$download_entropy_data <- downloadHandler(
       filename = function() { downloadFileName(input, "entropy_data_", ".rds") },
-      content = function(file) { saveRDS(entropy_values(), file) }
+      content = function(file) { saveRDS(cluster_data()$entropy$H, file) }
     )
+    
+    
+    #observe
   })
 }
 

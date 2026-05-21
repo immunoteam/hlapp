@@ -6,9 +6,13 @@ load("data/hla_i_allele_data.rda")
 # keep only used data
 allele_i <- lapply(hla_i_allele_data, function(x){
   motif <- x$motif
-  nmds <- x$nmds
+  
+  nmds <- as.data.frame(x$nmds)
+  nmds$cluster <- x$clusters$Peptide_Cluster
+  
   clusters <- x$clusters |> dplyr::count(Peptide_Cluster) |> 
     dplyr::rename(Cluster = Peptide_Cluster, Peptide_n = n) |> 
+    dplyr::arrange(desc(Peptide_n)) |>
     as.data.frame()
 
   return(list(motif = motif, nmds = nmds, clusters = clusters))
@@ -50,10 +54,13 @@ load("data/hla_ii_allele_data.rda")
 # keep only used data
 allele_ii <- lapply(hla_ii_allele_data, function(x){
   motif <- x$motif
-  nmds <- x$nmds
+  nmds <- as.data.frame(x$nmds)
+  nmds$cluster <- x$clusters$Peptide_Cluster
+  
   clusters <- x$clusters |> dplyr::count(Peptide_Cluster) |> 
     dplyr::rename(Cluster = Peptide_Cluster, Peptide_n = n) |> 
-    as.data.frame()
+    as.data.frame() |> 
+    dplyr::arrange(desc(Peptide_n))
   
   return(list(motif = motif, nmds = nmds, clusters = clusters))
 })
@@ -94,7 +101,7 @@ saveListElements <- function(x){
   listnames <- names(x)
   
   for(i in listnames){
-    filename = paste0("data/motifs/", i, ".rda")
+    filename = paste0("data/", i, ".rda")
     #message(filename)
     assign(i, value = x[[i]])
     save(list = i, file = filename)
@@ -107,9 +114,18 @@ saveListElements(submotif_i)
 saveListElements(submotif_ii)
 
 
+#save list of ellele names
+allele_names <- list(HLA_I = gsub("allele_", "", names(allele_i)), 
+                     HLA_II = gsub("allele_", "", names(allele_ii))
+                     ) 
+
+save(allele_names, file ="data/allele_names.rda")
+
 ## test loading all
 files <- list.files("data/motifs", full.names = T)
 
 for(file in files){
   load(file)
 }
+
+
