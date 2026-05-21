@@ -1,6 +1,6 @@
 
 promiscuityServer <- function(id){
-  moduleServer(id, function(input, output, session) {
+  shiny::moduleServer(id, function(input, output, session) {
     
     input_df <- uploadServer("upload", main_session = session)
     
