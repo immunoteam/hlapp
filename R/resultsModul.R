@@ -4,18 +4,18 @@
 ########### UI ################xxx
 
 resultsUI <- function(id){
-  ns <- NS(id)
+  ns <- shiny::NS(id)
   shiny::tagList(
     shiny::p(texts$result_main),
     shiny::uiOutput(ns("avail_feedback")),
     bslib::layout_columns(
       shiny::div(
-        p("Allele promiscuity"),
+        shiny::p("Allele promiscuity"),
         shiny::checkboxInput(ns("res_ind_all"),  "Select / Deselect all", value = FALSE),
         shiny::checkboxGroupInput(ns("res_ind"), NULL, choices = character())
         ),
       shiny::div(
-        p("Locus promiscuity"),
+        shiny::p("Locus promiscuity"),
         shiny::checkboxInput(ns("res_avg_all"),  "Select / Deselect all", value = FALSE),
         shiny::checkboxGroupInput(ns("res_avg"), NULL, choices = character())  
       ),
@@ -36,19 +36,19 @@ resultsUI <- function(id){
 
 ###### Control input UI ######
 resultsServer <- function(id, middle_table, main_session){
-  moduleServer(id, function(input, output, session) {
+  shiny::moduleServer(id, function(input, output, session) {
     ns <- session$ns 
     
     #get the available loci
-    avail_loci <- reactive(sort(unique(middle_table()[["Locus"]])))
+    avail_loci <- shiny::reactive(sort(unique(middle_table()[["Locus"]])))
     
     # check if any locus are recognized
-    avail_check <- reactive(length(avail_loci()) > 0)
-    output$avail_feedback <- renderUI(giveFeedBack(avail_check(), texts$results_avail_pass, texts$results_avail_fail ) )
+    avail_check <- shiny::reactive(length(avail_loci()) > 0)
+    output$avail_feedback <- shiny::renderUI(giveFeedBack(avail_check(), texts$results_avail_pass, texts$results_avail_fail ) )
     
     
     #update the checkbox input based on available values 
-    observeEvent(avail_check(), {
+    shiny::observeEvent(avail_check(), {
       
       if(avail_check()){
         ind_values <- paste0(avail_loci(), "i")
@@ -64,36 +64,36 @@ resultsServer <- function(id, middle_table, main_session){
     })
     
     # update checked boxes adter select all / deselect all is clicked
-    observeEvent(input$res_ind_all, {
+    shiny::observeEvent(input$res_ind_all, {
       ind_values <- paste0(avail_loci(), "i")
       if (input$res_ind_all) {
-        updateCheckboxGroupInput( session, "res_ind", selected = ind_values)
+        shiny::updateCheckboxGroupInput( session, "res_ind", selected = ind_values)
       } else {
-        updateCheckboxGroupInput(session, "res_ind", selected = character(0))
+        shiny::updateCheckboxGroupInput(session, "res_ind", selected = character(0))
       }
     })
     
-    observeEvent(input$res_avg_all, {
+    shiny::observeEvent(input$res_avg_all, {
       avg_values <- paste0(avail_loci(), "a")
       if (input$res_avg_all) {
-        updateCheckboxGroupInput( session, "res_avg", selected = avg_values)
+        shiny::updateCheckboxGroupInput( session, "res_avg", selected = avg_values)
       } else {
-        updateCheckboxGroupInput(session, "res_avg", selected = character(0))
+        shiny::updateCheckboxGroupInput(session, "res_avg", selected = character(0))
       }
     })
     
 ###### Generate results ###### 
     
     #calculate selected  promiscuity values
-    res_types <- reactive(c(input$res_ind, input$res_avg)) # merge the values from the two checkboxes
+    res_types <- shiny::reactive(c(input$res_ind, input$res_avg)) # merge the values from the two checkboxes
     
-    out_prom <- eventReactive(input$result_next ,{ # only calculate if result_next button is clicked
+    out_prom <- shiny::eventReactive(input$result_next ,{ # only calculate if result_next button is clicked
       #Sys.sleep(3)# for testing
       hlaFromMiddleTable(middle_table(), res_types())
     })
     
     # calculate heterogeneity 
-    out_homo <- eventReactive(input$result_next ,{ # only calculate if result_next button is clicked
+    out_homo <- shiny::eventReactive(input$result_next ,{ # only calculate if result_next button is clicked
       if (input$res_homo) {
         detectHomozygotes(middle_table()) |> as.data.frame()
       } else {
@@ -103,7 +103,7 @@ resultsServer <- function(id, middle_table, main_session){
     })
     
     # calculate evolutionary divergence
-    out_evdiv <- eventReactive(input$result_next ,{ # only calculate if result_next button is clicked
+    out_evdiv <- shiny::eventReactive(input$result_next ,{ # only calculate if result_next button is clicked
       if (input$res_evdiv) {
         evolutionaryDivergence(middle_table()) |> as.data.frame()
       } else {
@@ -114,16 +114,16 @@ resultsServer <- function(id, middle_table, main_session){
     
  
     #nav buttons
-    observeEvent(input$result_back, {
-      updateTabsetPanel(main_session, "prom_tabs", selected = "select")
+    shiny::observeEvent(input$result_back, {
+      shiny::updateTabsetPanel(main_session, "prom_tabs", selected = "select")
     })
     
     
     
     # RESULTS nav button - only active if select_check is passed
-    res_check <- reactive(length(res_types()) > 0)
+    res_check <- shiny::reactive(length(res_types()) > 0)
     
-    output$results_next_ui  <- renderUI(
+    output$results_next_ui  <- shiny::renderUI(
       if (!res_check()) {
         shiny::actionButton(ns("result_next"), "Get results!", disabled = TRUE)
       } else {
@@ -133,9 +133,9 @@ resultsServer <- function(id, middle_table, main_session){
     
     
     # merge all results tables
-    all_results <- reactive(  purrr::reduce(list( out_prom(), out_homo(), out_evdiv() ), full_join, by = dplyr::join_by(ID) ) )
+    all_results <- shiny::reactive(  purrr::reduce(list( out_prom(), out_homo(), out_evdiv() ), full_join, by = dplyr::join_by(ID) ) )
     
-    #output$testing <- renderPrint(out_prom()) # uncomment for easy testing
+    #output$testing <- shiny::renderPrint(out_prom()) # uncomment for easy testing
     return(all_results)
   })
 }
