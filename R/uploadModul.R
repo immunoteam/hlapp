@@ -1,10 +1,10 @@
 #uploadModule
 
 uploadUI <- function(id){
-  ns <- NS(id)
-  tagList(
-    p(texts$upload_main),
-    tags$div( style = "display: inline-flex; align-items: center; gap: 8px;",
+  ns <- shiny::NS(id)
+  shiny::tagList(
+    shiny::p(texts$upload_main),
+    shiny::tags$div( style = "display: inline-flex; align-items: center; gap: 8px;",
       shiny::fileInput(ns("file"), 
                        label = "", 
                        accept = c(".tsv", ".csv", ".xlsx") ),
@@ -20,30 +20,30 @@ uploadUI <- function(id){
 }
 
 uploadServer <- function(id, main_session){
-  moduleServer(id, function(input, output, session) {
+  shiny::moduleServer(id, function(input, output, session) {
     #take the selected file, if any, if no file is selected, dont do anything
-    input_file <- reactive({
-      validate(need(input$file, message = F))
+    input_file <- shiny::reactive({
+      shiny::validate(shiny::need(input$file, message = F))
       input$file
     })
     
-    input_tmp <- reactive({ # store input in tmp object first
+    input_tmp <- shiny::reactive({ # store input in tmp object first
       readInputFile(input_file()) 
     })
     
-    file_check <- reactive(is.data.frame(input_tmp())) # check if inout could be read in as a data frame
-    output$file_feedback <- renderUI(giveFeedBack(file_check(), texts$upload_feedback_pass, texts$upload_feedback_fail ) )
+    file_check <- shiny::reactive(is.data.frame(input_tmp())) # check if inout could be read in as a data frame
+    output$file_feedback <- shiny::renderUI(giveFeedBack(file_check(), texts$upload_feedback_pass, texts$upload_feedback_fail ) )
     
-    observeEvent(file_check(), { # allow moving to next step if input is a data frame
+    shiny::observeEvent(file_check(), { # allow moving to next step if input is a data frame
       shiny::updateActionButton(session, "upload_next", disabled = !file_check())
     })
     
-    input_df <- eventReactive(input$upload_next,  { # if next is clicked store inout data frame
+    input_df <- shiny::eventReactive(input$upload_next,  { # if next is clicked store inout data frame
       input_tmp()
     })
     
-    observeEvent(input$upload_next, { #if next is clicked, move to select panel
-      updateTabsetPanel(main_session, "prom_tabs", selected = "select")
+    shiny::observeEvent(input$upload_next, { #if next is clicked, move to select panel
+      shiny::updateTabsetPanel(main_session, "prom_tabs", selected = "select")
     })
     
     return(input_df)
