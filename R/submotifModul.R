@@ -18,14 +18,14 @@ submotifUI <- function(id) {
         uiOutput(ns("cluster_ui")),
         hr(),
         h4("General allele information"),
-        plotOutput(ns("allele_motif")),
+        uiOutput(ns("allele_motif")),
         textOutput(ns("allele_peptide_count")),
         plotOutput(ns("nmds_plot"), height = "400px")
       ),
 
       mainPanel(
         h4("Submotif and Entropy"),
-        plotOutput(ns("submotif_plot")),
+        uiOutput(ns("submotif_plot")),
 
         # Download button for the submotif plot
         downloadButton(ns("download_submotif"), "Download Submotif Plot"),
@@ -93,11 +93,17 @@ submotifServer <- function(id) {
     )
 
     # Általános allél motívum
-    output$allele_motif <- renderPlot({
+    output$allele_motif <- renderUI({
       req(input$allele)
-      motif <- allele_data()$motif
-      motifStack::plot(motif)
+      
+      file_name <- paste0( input$allele, ".svg"  )
+      
+      tags$img(
+        src = file.path("motif", file_name),
+        style = "width:100%; max-width:900px;"
+      )
     })
+    
 
     # Peptid szám az allélhoz
     output$allele_peptide_count <- renderText({
