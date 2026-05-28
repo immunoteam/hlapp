@@ -2,4 +2,7 @@
 ^renv\.lock$
 ^.*\.Rproj$
 ^\.Rproj\.user$
-^data-raw$
+^planning/
+^\.git/
+^\.github/
+README.md

@@ -3,7 +3,6 @@
 # App entry points
 export("HLApp_ui")
 export("HLApp_server")
-export("HLApp")
 
 # UI Modules
 export("loginUI")
@@ -36,9 +35,9 @@ export("allele_names")
 
 # Imports from other packages
 import("shiny")
-importFrom("dplyr", "filter", "group_by", "mutate", "mutate_if", "pivot_wider", "select", "summarise")
-importFrom("tidyr", "separate")
-importFrom("magrittr", "%>%", "%|%")
+importFrom("dplyr", "filter", "group_by", "mutate", "mutate_if", "select", "summarise")
+importFrom("tidyr", "separate", "pivot_wider")
+importFrom("magrittr", "%>%")
 importFrom("purrr", "map", "map_chr", "map_df")
 importFrom("DT", "datatable", "renderDT")
 importFrom("bslib", "bs_theme", "page_navbar", "nav_panel", "navbar_options", "tooltip", "layout_columns")
