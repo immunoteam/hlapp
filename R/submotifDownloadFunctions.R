@@ -9,9 +9,9 @@ makePng<- function(file, input, plotobject, method = "motifStack") {
   png(file)
 
   if(method == "motifStack"){
-    motifStack::plot(plotobject)
+   # motifStack::plot(plotobject)
   } else {
-    plot(plotobject)
+  #  plot(plotobject)
   }
 
   dev.off()

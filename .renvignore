@@ -1,0 +1,7 @@
+# .renvignore
+planning/
+tests/
+.git/
+.github/
+www/
+data/
