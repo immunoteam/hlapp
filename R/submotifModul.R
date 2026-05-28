@@ -1,9 +1,5 @@
 # module of HLA I part of the submotif app
 
-#library(Cairo) # removing this does not brake the app
-#library(plotrix) # removing this does not break the app
-#library(motifStack)
-loadNamespace("motifStack")
 
 submotifUI <- function(id) {
   ns <- NS(id)
@@ -128,14 +124,14 @@ submotifServer <- function(id) {
 
     # Letöltési handler a submotif plothoz (PNG)
     output$download_submotif <- downloadHandler(
-      filename = function() { downloadFileName(input, "submotif_plot", ".png") },
-      content = function(file) { makePng(file, input, cluster_data()$motif, method = "motifStack") }
+      #filename = function() { downloadFileName(input, "submotif_plot", ".png") },
+      #content = function(file) { makePng(file, input, cluster_data()$motif, method = "motifStack") }
     )
 
     # Letöltési handler a submotif adat rds-ben
     output$download_submotif_data <- downloadHandler(
-      filename = function() { downloadFileName(input, "submotif_plot", ".rds") },
-      content = function(file) {  saveRDS(cluster_data()$motif, file) }
+      #filename = function() { downloadFileName(input, "submotif_plot", ".rds") },
+      #content = function(file) {  saveRDS(cluster_data()$motif, file) }
     )
 
     #Peptidek száma
