@@ -3,6 +3,6 @@ planning/
 tests/
 .git/
 .github/
-www/
+inst/
 data/
 README.md
