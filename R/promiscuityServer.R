@@ -14,6 +14,8 @@ promiscuityServer <- function(id){
                                      extensions = "Buttons", 
                                      options = DToptions)
     
+    #output$functionalDivTable <- DT::renderDT(out_prom()$funcdiv)
+    
     return(middle_table)
   })
 }
