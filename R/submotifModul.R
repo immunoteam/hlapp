@@ -84,11 +84,7 @@ submotifServer <- function(id) {
     cluster_data <- eventReactive(list(input$type, input$allele, input$cluster),{
         req(input$type, input$allele, input$cluster)
       
-        read_cluster(
-          input$type,
-          input$allele,
-          input$cluster
-        )
+        read_cluster( input$type, input$allele, input$cluster)
       }
     )
 
@@ -117,11 +113,17 @@ submotifServer <- function(id) {
       req(input$allele, input$cluster)
       makeNmdsPlot(allele_data(), input$allele, input$cluster)
     })
-
-    output$submotif_plot <- renderPlot({
-      req(cluster_data()) #prevents plot generation upon start
-      submotif <- cluster_data()$motif
-      motifStack::plot(submotif)
+    
+    # Submotif lplot
+    output$submotif_plot <- renderUI({
+      req(input$allele, input$cluster)
+      
+      file_name <- paste0(input$allele, "_cluster", input$cluster, ".svg"  )
+      
+      tags$img(
+        src = file.path("submotif", file_name),
+        style = "width:100%; max-width:900px;"
+      )
     })
 
     # Letöltési handler a submotif plothoz (PNG)
