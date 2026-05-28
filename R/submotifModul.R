@@ -54,9 +54,6 @@ submotifServer <- function(id) {
   moduleServer(id, function(input, output, session) {
     ns <- session$ns
 
-    
-
-
     # Get available HLA alleles for allele type
     available_alleles <- eventReactive(input$type, {
       req(input$type)
@@ -70,8 +67,9 @@ submotifServer <- function(id) {
     
     allele_data <- eventReactive(input$allele, {
       req(input$allele)
-      get(paste0("allele_", input$allele))
-    }) 
+      read_allele(input$allele)
+      
+    })
 
     # Dinamikusan elérhető klaszterek az adott allélhoz, peptid-szám szerint rendezetten
     available_clusters <- reactive({ # good practice: separate reactive and static code
@@ -83,10 +81,16 @@ submotifServer <- function(id) {
       selectInput(ns("cluster"), "Select a cluster:", choices = available_clusters())
     })
     
-    cluster_data <- eventReactive(c(input$cluster, input$allele), {
-      req(input$cluster, input$allele)
-      get(paste0("cluster_", gsub("HLA_", "", input$type), "_", input$allele, "_", input$cluster))
-    })
+    cluster_data <- eventReactive(list(input$type, input$allele, input$cluster),{
+        req(input$type, input$allele, input$cluster)
+      
+        read_cluster(
+          input$type,
+          input$allele,
+          input$cluster
+        )
+      }
+    )
 
     # Általános allél motívum
     output$allele_motif <- renderPlot({
