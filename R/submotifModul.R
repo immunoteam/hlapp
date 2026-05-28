@@ -9,7 +9,7 @@ submotifUI <- function(id) {
 
     sidebarLayout(
       sidebarPanel(
-        radioButtons(ns("type"), "Select HLA type:", choiceNames = c("HLA-I", "HLA-II"), choiceValues = c("HLA_I", "HLA_II")),
+        radioButtons(ns("type"), "Select HLA devtype:", choiceNames = c("HLA-I", "HLA-II"), choiceValues = c("HLA_I", "HLA_II")),
         uiOutput(ns("allele_ui")),
         uiOutput(ns("cluster_ui")),
         hr(),
