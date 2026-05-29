@@ -1,5 +1,6 @@
 # data acces functions
 
+
 read_allele <- function(allele){
   path <- file.path("data", "allele", 
                     paste0("allele_", allele, ".rds")

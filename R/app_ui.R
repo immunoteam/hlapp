@@ -1,4 +1,5 @@
-# R/app_ui.R
+#' main ui
+#' @export
 HLApp_ui <- function() {
   shiny::fluidPage(
     theme = bslib::bs_theme(version = 5, bootswatch = "flatly", "card-border-width" = "0", "card-box-shadow" = "none"),
