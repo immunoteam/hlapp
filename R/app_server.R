@@ -1,5 +1,9 @@
 
 #' main server
+#' @param input input
+#' @param output output
+#' @param session session
+#' 
 #' @export
 HLApp_server <- function(input, output, session) {
   login_status <- loginServer("login")

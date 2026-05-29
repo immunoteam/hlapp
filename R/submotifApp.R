@@ -3,8 +3,8 @@
 submotifApp <- function() {
 
   ui <- shiny::fluidPage(
-    tags$head(
-      tags$meta(name = "robots", content = "noindex, nofollow")
+    shiny::tags$head(
+      shiny::tags$meta(name = "robots", content = "noindex, nofollow")
       ),
 
     shiny::uiOutput("submotifUI")
