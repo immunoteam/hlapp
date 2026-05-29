@@ -9,3 +9,4 @@
 ^\.renvignore$
 ^LICENSE\.md$
 ^rsconnect/
+^app\.R$

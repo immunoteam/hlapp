@@ -86,7 +86,7 @@ submotifServer <- function(id) {
     cluster_data <- shiny::eventReactive(list(input$type, input$allele, input$cluster),{
         shiny::req(input$type, input$allele, input$cluster)
       
-        read_cluster( input$type, input$allele, input$cluster)
+        read_cluster(input$type, input$allele, input$cluster)
       }
     )
 
