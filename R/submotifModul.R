@@ -49,6 +49,12 @@ submotifUI <- function(id) {
 submotifServer <- function(id) {
   moduleServer(id, function(input, output, session) {
     ns <- session$ns
+    
+    shiny::addResourcePath(
+      "www",
+      system.file("app/www", package = "promiscuityApp")
+    )
+    
 
     # Get available HLA alleles for allele type
     available_alleles <- eventReactive(input$type, {
@@ -91,7 +97,7 @@ submotifServer <- function(id) {
       file_name <- paste0( input$allele, ".svg"  )
       
       tags$img(
-        src = file.path("motif", file_name),
+        src = file.path("www/motif", file_name),
         style = "width:100%; max-width:900px;"
       )
     })
@@ -110,29 +116,29 @@ submotifServer <- function(id) {
       makeNmdsPlot(allele_data(), input$allele, input$cluster)
     })
     
-    # Submotif lplot
+    # Submotif plot
     output$submotif_plot <- renderUI({
       req(input$allele, input$cluster)
       
       file_name <- paste0(input$allele, "_cluster", input$cluster, ".svg"  )
       
       tags$img(
-        src = file.path("submotif", file_name),
+        src = file.path("www/submotif", file_name),
         style = "width:100%; max-width:900px;"
       )
     })
 
     # Letöltési handler a submotif plothoz (PNG)
-    output$download_submotif <- downloadHandler(
+    #output$download_submotif <- downloadHandler(
       #filename = function() { downloadFileName(input, "submotif_plot", ".png") },
       #content = function(file) { makePng(file, input, cluster_data()$motif, method = "motifStack") }
-    )
+    #)
 
     # Letöltési handler a submotif adat rds-ben
-    output$download_submotif_data <- downloadHandler(
+    #output$download_submotif_data <- downloadHandler(
       #filename = function() { downloadFileName(input, "submotif_plot", ".rds") },
       #content = function(file) {  saveRDS(cluster_data()$motif, file) }
-    )
+    #)
 
     #Peptidek száma
     output$cluster_peptide_count = renderText({
