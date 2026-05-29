@@ -10,6 +10,8 @@ rmForbiddenCombinations(x, hla.col = "HLA", flag = F)
 \item{x}{dataframe containing acolumn of HLA molecule genotypes}
 
 \item{hla.col}{name of the column containig hla - genotype}
+
+\item{flag}{logical, if problematic alleles whould be flagged or removed}
 }
 \value{
 a filtered data.frame, with the same coluns as x

@@ -1,8 +1,8 @@
 #' funczion to translate the IDs form middle table into the required formats of commonly used prediction algorithms
 #' 
-#' @param middle_table middle_table
+#' @param alleles alleles to be translated
 #' @param formats character cóvector, name of the algorithms, thats formats needs to be returned
-
+#' @param hla_names data table to be used as reference
 translateIDs <- function(alleles, formats , hla_names = NULL){
   # select chosen format columns
   req(is.character(formats), all(formats %in% c("netMHCpan", "MHCnuggets","mixMHCpred") ) )

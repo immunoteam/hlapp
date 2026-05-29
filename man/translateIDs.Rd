@@ -7,9 +7,11 @@
 translateIDs(alleles, formats, hla_names = NULL)
 }
 \arguments{
+\item{alleles}{alleles to be translated}
+
 \item{formats}{character cóvector, name of the algorithms, thats formats needs to be returned}
 
-\item{middle_table}{middle_table}
+\item{hla_names}{data table to be used as reference}
 }
 \description{
 funczion to translate the IDs form middle table into the required formats of commonly used prediction algorithms

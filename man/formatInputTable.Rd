@@ -4,22 +4,16 @@
 \alias{formatInputTable}
 \title{format patient HLA genotype into a optimal format for promiscuity calculation}
 \usage{
-formatInputTable(
-  x,
-  flag.forbidden = T,
-  manual = T,
-  id.col = "ID",
-  hla.cols = NULL
-)
+formatInputTable(x, id.col = "ID", hla.cols = NULL, flag.forbidden = T)
 }
 \arguments{
 \item{x}{the data frame containing patient data. should contain select.cols}
 
-\item{select.cols}{a char. vector of two. the first element should be the name of the column containing patient ID, and the second element should be the name of the column that contains the HLA genotype of interest.}
+\item{id.col}{name of id column}
 
-\item{delim}{character value to separate the individual HLA alleles by}
+\item{hla.cols}{hla clumns}
 
-\item{rm.forbidden}{whether to remove forbidden HLAQ alpha-beta combinations for the table. TRUE by default.}
+\item{flag.forbidden}{whether to remove forbidden HLAQ alpha-beta combinations for the table. TRUE by default.}
 }
 \value{
 a data frame

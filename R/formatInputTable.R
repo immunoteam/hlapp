@@ -4,6 +4,7 @@
 #'
 #'@param x string containing allele names, separated by ", "
 #'@param locus DP or DQ
+#'@param delim deliminator, , by default
 #'
 replaceComplex <- function(x, locus, delim = ","){
   if(!locus %in% c("DQ", "DP")) stop("complex locus must be DP or DQ")
@@ -30,10 +31,10 @@ replaceComplex <- function(x, locus, delim = ","){
 #'
 #'@param x dataframe containing acolumn of HLA molecule genotypes
 #'@param hla.col name of the column containig hla - genotype
+#'@param flag logical, if problematic alleles whould be flagged or removed
 #'
 #'@return a filtered data.frame, with the same coluns as x
-rmForbiddenCombinations <- function(x, 
-                                    hla.col = "HLA", flag = F ){
+rmForbiddenCombinations <- function(x,  hla.col = "HLA", flag = F ){
   
   x <- x |> 
     dplyr::mutate(AB_comb  = paste(substr(.data[[hla.col]] , 1, 6), 
@@ -52,7 +53,11 @@ rmForbiddenCombinations <- function(x,
 }
 
 
-# formatting manual input - add DQ combination that is robust enough
+#' formatting manual input - add DQ combination that is robust enough
+#' @param x the data frame containing patient data. should contain select.cols
+#' @param hla.cols hla clumns
+#' @param id.col name of id column
+#' @param delim deliminator within coulumn. currently ","
 formatManualTable <- function(x, id.col, hla.cols, delim = ","){
   x <- x |>
     dplyr::select(all_of(c(id.col, hla.cols))) |>
@@ -78,13 +83,12 @@ formatManualTable <- function(x, id.col, hla.cols, delim = ","){
 #' format patient HLA genotype into a optimal format for promiscuity calculation
 #' 
 #' @param x the data frame containing patient data. should contain select.cols
-#' @param select.cols a char. vector of two. the first element should be the name of the column containing patient ID, and the second element should be the name of the column that contains the HLA genotype of interest.
-#' @param delim character value to separate the individual HLA alleles by
-#' @param rm.forbidden whether to remove forbidden HLAQ alpha-beta combinations for the table. TRUE by default.
+#' @param hla.cols hla clumns
+#' @param id.col name of id column
+#' @param flag.forbidden whether to remove forbidden HLAQ alpha-beta combinations for the table. TRUE by default.
 #' 
 #' @return a data frame
-formatInputTable <- function(x, flag.forbidden = T, 
-                             manual = T, id.col = "ID", hla.cols = NULL){
+formatInputTable <- function(x, id.col = "ID", hla.cols = NULL, flag.forbidden = T){
   
   #turn input table a long format
   x <- formatManualTable(x, id.col, hla.cols)

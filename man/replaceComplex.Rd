@@ -10,6 +10,8 @@ replaceComplex(x, locus, delim = ",")
 \item{x}{string containing allele names, separated by ", "}
 
 \item{locus}{DP or DQ}
+
+\item{delim}{deliminator, , by default}
 }
 \description{
 function to take DQ and DP alleles from a comma separated string and form them into complexes

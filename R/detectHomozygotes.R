@@ -1,6 +1,6 @@
 #' function that detect hla homozygote patients 
 #' 
-#' @param middletable middle table in long format, output of selectModul
+#' @param middle_table middle table in long format, output of selectModul
 
 detectHomozygotes <- function(middle_table){
 

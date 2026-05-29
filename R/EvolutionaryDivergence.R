@@ -1,6 +1,6 @@
 #' function that calculates divergence
 #' 
-#' @param middletable middle table in long format, output of selectModul
+#' @param middle_table middle table in long format, output of selectModul
 
 evolutionaryDivergence <- function(middle_table){
   

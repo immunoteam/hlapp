@@ -7,7 +7,7 @@
 detectHomozygotes(middle_table)
 }
 \arguments{
-\item{middletable}{middle table in long format, output of selectModul}
+\item{middle_table}{middle table in long format, output of selectModul}
 }
 \description{
 function that detect hla homozygote patients

@@ -11,7 +11,7 @@ joinGenotypePromiscuity(x, y, add.locus = T)
 
 \item{y}{data frame containig HLA promiscuity values. Output of the fromFilterPromVector function}
 
-\item{hla.col}{column of x. Contains HLA genotype}
+\item{add.locus}{TRUE}
 }
 \description{
 function to join the HLA genotype and promiscuity

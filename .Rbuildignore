@@ -2,10 +2,7 @@
 ^renv\.lock$
 ^.*\.Rproj$
 ^\.Rproj\.user$
-^planning/
-^test_data/
+^planning($|/)
+^test_data($|/)
 ^\.git/
 ^\.github/
-^README.md$
-^\.renvignore$
-^LICENSE\.md$

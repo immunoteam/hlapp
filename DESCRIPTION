@@ -15,8 +15,6 @@ Imports:
     bsicons,
     DT,
     dplyr,
-    magrittr,
-    png,
     purrr,
     readxl,
     shiny,
