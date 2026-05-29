@@ -7,3 +7,5 @@
 ^\.git/
 ^\.github/
 ^\.renvignore$
+^LICENSE\.md$
+^rsconnect/

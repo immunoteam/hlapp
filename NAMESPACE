@@ -2,3 +2,11 @@
 
 export(HLApp_server)
 export(HLApp_ui)
+importFrom(grDevices,dev.off)
+importFrom(grDevices,png)
+importFrom(graphics,abline)
+importFrom(magrittr,"%>%")
+importFrom(rlang,.data)
+importFrom(utils,head)
+importFrom(utils,read.csv)
+importFrom(utils,read.delim)

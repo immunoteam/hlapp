@@ -18,7 +18,9 @@ Imports:
     purrr,
     readxl,
     shiny,
-    tidyr
+    tidyr, 
+    rlang,
+    magrittr,
 Suggests: 
     testthat (>= 3.0.0)
 Config/testthat/edition: 3
