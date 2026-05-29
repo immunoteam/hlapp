@@ -34,7 +34,6 @@ replaceComplex <- function(x, locus, delim = ","){
 #'@return a filtered data.frame, with the same coluns as x
 rmForbiddenCombinations <- function(x, 
                                     hla.col = "HLA", flag = F ){
-  require(dplyr)
   
   x <- x |> 
     dplyr::mutate(AB_comb  = paste(substr(.data[[hla.col]] , 1, 6), 

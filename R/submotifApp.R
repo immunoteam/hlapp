@@ -1,5 +1,4 @@
 # submotif app
-library(shiny)
 
 submotifApp <- function() {
 
