@@ -96,9 +96,9 @@ selectColumnsServer <- function(id, input_df = NULL, main_session){
     # NEXT nav button - only active if select_check is passed
     output$select_next_ui  <- renderUI(
       if (!select_check()) {
-        shiny::actionButton(ns("select_next"), "Next ➡️", disabled = TRUE)
+        shiny::actionButton(ns("select_next"), "Next ->", disabled = TRUE)
       } else {
-        bslib::input_task_button(ns("select_next"), label = "Next ➡️", status = "primary" , spinner = TRUE, state = "ready")
+        bslib::input_task_button(ns("select_next"), label = "Next ️-> ", status = "primary" , spinner = TRUE, state = "ready")
       }
     )
 

@@ -13,7 +13,7 @@ uploadUI <- function(id){
     ),
     shiny::uiOutput(ns("file_feedback")),
     bslib::layout_columns(
-      shiny::actionButton(ns("upload_next"), "Next ➡️", disabled = TRUE),
+      shiny::actionButton(ns("upload_next"), "Next ️->", disabled = TRUE),
       col_widths = c(2, -10)
     )
   )
