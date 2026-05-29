@@ -15,8 +15,6 @@ read_cluster <- function(type, allele, cluster) {
     "cluster",
     paste0(
       "cluster_",
-      gsub("HLA_", "", type),
-      "_",
       allele,
       "_",
       cluster,

@@ -30,7 +30,7 @@ export("downloadFileName")
 # Data
 export("texts")
 export("forbidden_DQ_combinations")
-export("hla_names")
+export("promiscuity")
 export("allele_names")
 
 # Imports from other packages
