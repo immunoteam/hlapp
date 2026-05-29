@@ -1,0 +1,10 @@
+shiny
+bslib
+bsicons
+DT
+dplyr
+purrr
+readxl
+tidyr
+rlang
+magrittr
