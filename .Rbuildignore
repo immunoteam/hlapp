@@ -3,6 +3,7 @@
 ^.*\.Rproj$
 ^\.Rproj\.user$
 ^planning/
+^test_data/
 ^\.git/
 ^\.github/
 README.md

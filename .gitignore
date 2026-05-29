@@ -8,5 +8,5 @@ renv/
 *.Rproj
 promiscuityApp.Rproj
 test_data/private/
-inst/
+inst/www/
 
