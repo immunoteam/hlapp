@@ -6,6 +6,6 @@
 ^test_data/
 ^\.git/
 ^\.github/
-README.md
-.renvignore
+^README.md$
+^\.renvignore$
 ^LICENSE\.md$

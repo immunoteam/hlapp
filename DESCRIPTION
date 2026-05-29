@@ -16,7 +16,6 @@ Imports:
     DT,
     dplyr,
     magrittr,
-    pkgload,
     png,
     purrr,
     readxl,

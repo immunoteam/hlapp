@@ -36,4 +36,4 @@ If you want to make changes to the app, follow the instructions below.
 
     -   promiscuityUI - script for UI, to allow modularity, inputIDs, and outputIDs have to be defined within the NS() function. eg: instead of `inputID = "slide"` , `inputID = NS(id, "slide")` has to be used
 
-All other scripts contain other non-reactive functions. These mostly work as they would in a normal environment. One difference is that these scripts should not call Library() or require(). Instead any functions that are not from base or shiny should be called like this: `package_name::function_name()`
+All other scripts contain other non-reactive functions. These mostly work as they would in a normal environment. One difference is that these scripts should not call library() or require(). Instead any functions that are not from base or shiny should be called like this: `package_name::function_name()`
