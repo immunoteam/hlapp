@@ -1,5 +1,7 @@
 
+pkgload::load_all()
+
 shiny::shinyApp(
-  ui = promiscuityApp::HLApp_ui(),
-  server = promiscuityApp::HLApp_server
+  ui = HLApp_ui(),
+  server = HLApp_server
 )
