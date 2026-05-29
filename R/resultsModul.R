@@ -136,6 +136,6 @@ resultsServer <- function(id, middle_table, main_session){
     all_results <- shiny::reactive(  purrr::reduce(list( out_prom(), out_homo(), out_evdiv() ), full_join, by = dplyr::join_by(ID) ) )
     
     #output$testing <- shiny::renderPrint(out_prom()) # uncomment for easy testing
-    return(list(prom = all_results, funcdiv = data.frame() ) )
+    return(all_results)
   })
 }
