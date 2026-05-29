@@ -1,19 +1,19 @@
-# submotif app
+# submotif app - for backward compatibility
 
 submotifApp <- function() {
 
-  ui <- fluidPage(
+  ui <- shiny::fluidPage(
     tags$head(
       tags$meta(name = "robots", content = "noindex, nofollow")
       ),
 
-    uiOutput("submotifUI")
+    shiny::uiOutput("submotifUI")
   )
 
 
   server <- function(input, output) {
 
-    output$submotifUI <- renderUI({
+    output$submotifUI <- shiny::renderUI({
       submotifUI("submotif")
     })
 
@@ -22,7 +22,7 @@ submotifApp <- function() {
 
   }
 
-  shinyApp(ui = ui, server = server)
+  shiny::shinyApp(ui = ui, server = server)
 }
 
 
