@@ -3,42 +3,51 @@
 
 submotifUI <- function(id) {
   ns <- shiny::NS(id)
-
-  shiny::fluidPage(
-    shiny::titlePanel("HLA-I submotif collection"),
-
-    shiny::sidebarLayout(
-      shiny::sidebarPanel(
-        shiny::radioButtons(ns("type"), "Select HLA devtype:", choiceNames = c("HLA-I", "HLA-II"), choiceValues = c("HLA_I", "HLA_II")),
-        shiny::uiOutput(ns("allele_ui")),
-        shiny::uiOutput(ns("cluster_ui")),
-        shiny::hr(),
-        shiny::h4("General allele information"),
-        shiny::uiOutput(ns("allele_motif")),
-        shiny::textOutput(ns("allele_peptide_count")),
-        shiny::plotOutput(ns("nmds_plot"), height = "400px")
-      ),
-
-      shiny::mainPanel(
-        shiny::h4("Submotif and Entropy"),
-        shiny::uiOutput(ns("submotif_plot")),
-
-        # Download button for the submotif plot
-        shiny::downloadButton(ns("download_submotif"), "Download Submotif Plot"),
-        shiny::downloadButton(ns("download_submotif_data"), "Download Submotif Data (RDS)"),
-
-        shiny::textOutput(ns("cluster_peptide_count")),
-
-        # Új: peptidek helytakarékos megjelenítése egy accordionPanel-ben
-        shiny::uiOutput(ns("peptide_ui")),  # AccordionPanel vagy toggle gomb a peptidekhez
-
-        shiny::downloadButton(ns("download_peptide_list"), "Download Peptide List (TXT)"),
-
-        shiny::plotOutput(ns("entropy_plot")),
-        shiny::downloadButton(ns("download_entropy_plot"), "Download Entropy Plot (PNG)"),
-        shiny::downloadButton(ns("download_entropy_data"), "Download Entropy Data (RDS)")
+   shiny::tabsetPanel(
+     
+    shiny::tabPanel( "Explore", value = "explore",
+      shiny::fluidPage(
+        shiny::titlePanel("HLA-I submotif collection"),
+    
+        shiny::sidebarLayout(
+          shiny::sidebarPanel(
+            shiny::radioButtons(ns("type"), "Select HLA devtype:", choiceNames = c("HLA-I", "HLA-II"), choiceValues = c("HLA_I", "HLA_II")),
+            shiny::uiOutput(ns("allele_ui")),
+            shiny::uiOutput(ns("cluster_ui")),
+            shiny::hr(),
+            shiny::h4("General allele information"),
+            shiny::uiOutput(ns("allele_motif")),
+            shiny::textOutput(ns("allele_peptide_count")),
+            shiny::plotOutput(ns("nmds_plot"), height = "400px")
+          ),
+    
+          shiny::mainPanel(
+            shiny::h4("Submotif and Entropy"),
+            shiny::uiOutput(ns("submotif_plot")),
+    
+            # Download button for the submotif plot
+            shiny::downloadButton(ns("download_submotif"), "Download Submotif Plot"),
+            shiny::downloadButton(ns("download_submotif_data"), "Download Submotif Data (RDS)"),
+    
+            shiny::textOutput(ns("cluster_peptide_count")),
+    
+            # Új: peptidek helytakarékos megjelenítése egy accordionPanel-ben
+            shiny::uiOutput(ns("peptide_ui")),  # AccordionPanel vagy toggle gomb a peptidekhez
+    
+            shiny::downloadButton(ns("download_peptide_list"), "Download Peptide List (TXT)"),
+    
+            shiny::plotOutput(ns("entropy_plot")),
+            shiny::downloadButton(ns("download_entropy_plot"), "Download Entropy Plot (PNG)"),
+            shiny::downloadButton(ns("download_entropy_data"), "Download Entropy Data (RDS)")
+          )
+        )
       )
-    )
+    ), 
+    shiny::tabPanel( "Compare", value = "compare",
+            shiny::fluidPage(
+              shiny::titlePanel("Compare Motifs")
+            )
+                     )
   )
 }
 
