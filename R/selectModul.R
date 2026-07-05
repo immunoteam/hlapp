@@ -111,7 +111,7 @@ selectColumnsServer <- function(id, input_df = NULL, main_session){
       req(input$select_next)
 
       #Sys.sleep(3) # for testing
-      out <- formatInputTable(input_df(), manual = TRUE, 
+      out <- formatInputTable(input_df(),  
                        id.col = input$idcol, hla.cols = input$hlacol,
                        flag.forbidden = T ) |>
         joinGenotypePromiscuity(promiscuity) |>

@@ -5,6 +5,6 @@ account: c2bia7-gergely-kopp0ny
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 15098189
-bundleId:
+bundleId: 12224703
 url: https://c2bia7-gergely-kopp0ny.shinyapps.io/promiscuityapp/
 version: 1

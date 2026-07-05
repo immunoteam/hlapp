@@ -28,13 +28,13 @@ hlaFromMiddleTable <- function(middle_table, types){
   #remove not alloowed loci from middle table
   middle_table <- middle_table |>
     dplyr::filter(flag == "") |>
-    select(!any_of("flag"))
+    dplyr::select(!any_of("flag"))
   
   
   # get individual promiscuity values - one row for each patient, one column for each 
   prom_ind_all <- middle_table |> 
     dplyr::group_by(ID, Locus) |>
-    dplyr::mutate(Locus = paste(Locus, row_number(), sep = "_" ) ) |>
+    dplyr::mutate(Locus = paste(Locus, dplyr::row_number(), sep = "_" ) ) |>
     dplyr::ungroup() |>
     tidyr::pivot_wider(names_from = all_of("Locus"), values_from = all_of(c("HLA", "Promiscuity")))
   

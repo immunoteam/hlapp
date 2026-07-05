@@ -50,11 +50,6 @@ submotifServer <- function(id) {
   shiny::moduleServer(id, function(input, output, session) {
     ns <- session$ns
     
-    shiny::addResourcePath(
-      "www",
-      system.file("app/www", package = "promiscuityApp")
-    )
-    
 
     # Get available HLA alleles for allele type
     available_alleles <- shiny::eventReactive(input$type, {
@@ -97,7 +92,7 @@ submotifServer <- function(id) {
       file_name <- paste0( input$allele, ".svg"  )
       
       shiny::tags$img(
-        src = file.path("www/motif", file_name),
+        src = file.path("img/motif", file_name),
         style = "width:100%; max-width:900px;"
       )
     })
@@ -123,7 +118,7 @@ submotifServer <- function(id) {
       file_name <- paste0(input$allele, "_cluster", input$cluster, ".svg"  )
       
       shiny::tags$img(
-        src = file.path("www/submotif", file_name),
+        src = file.path("img/submotif", file_name),
         style = "width:100%; max-width:900px;"
       )
     })

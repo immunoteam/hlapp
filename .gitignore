@@ -8,7 +8,9 @@ renv/
 *.Rproj
 promiscuityApp.Rproj
 test_data/private/
-inst/www/
+inst/
 data/
 www/
+**/allele/
+**/clsuter/
 
