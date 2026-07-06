@@ -32,7 +32,11 @@ promiscuityUI <- function(id){
     HTML("&nbsp;&nbsp;&nbsp;"),
     hr(size = 1),
     ### OUTPUT PANELS
-    DT::DTOutput(ns("result_df"))
+    DT::DTOutput(ns("result_df")),
+    
+    actionButton(ns("funcdiv_button"), label = "Compare functional divergence", disabled = TRUE), 
+    
+    shiny::verbatimTextOutput(ns("clickedval"))
     
   )
 }

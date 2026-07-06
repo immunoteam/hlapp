@@ -12,9 +12,28 @@ promiscuityServer <- function(id){
     output$result_df <- DT::renderDT(out_prom(),
                                      rownames = FALSE,
                                      extensions = "Buttons", 
-                                     options = DToptions)
+                                     options = DToptions, 
+                                     selection = list(mode = 'single', target = 'cell'))
     
-    #output$functionalDivTable <- DT::renderDT(out_prom()$funcdiv)
+    
+    
+    observeEvent(input$result_df_cell_clicked,{
+      click <- input$result_df_cell_clicked
+      
+      output$clickedval <- renderPrint(
+        list(col_name, row_name)
+        )
+      
+      #get the column name 
+      col_name <- colnames(out_prom())[as.integer(click$col+1)]
+      #get row name
+      row_name <- out_prom()$ID[as.integer(click$row)]
+      
+      grepl("Functional", col_name)
+        updateActionButton(session, "funcdiv_button", disabled = !grepl("_A", col_name))
+      
+      
+    })
     
     return(middle_table)
   })
