@@ -1,5 +1,5 @@
 
-promiscuityServer <- function(id){
+promiscuityServer <- function(id, app_session){
   shiny::moduleServer(id, function(input, output, session) {
     
     input_df <- uploadServer("upload", prom_session = session)
@@ -34,7 +34,7 @@ promiscuityServer <- function(id){
     
     observeEvent(input$funcdiv_button, {
       # Handle button click
-      shiny::updateTabsetPanel(app_session, "prom_tabs", selected = "select")
+      shiny::updateNavbarPage(app_session, inputId = "app_navbar", selected = "submotif")
       # Add your functionality here
     })
     

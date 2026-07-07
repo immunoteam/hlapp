@@ -17,7 +17,7 @@ HLApp_server <- function(input, output, session) {
   
   shiny::observeEvent(login_status(), {
     if (login_status()) {
-      prom_result(promiscuityServer("promiscuity"))
+      prom_result(promiscuityServer("promiscuity", app_session = session))
     }
   })
   
