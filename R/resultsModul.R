@@ -36,7 +36,7 @@ resultsUI <- function(id){
 ########## SERVER ################
 
 ###### Control input UI ######
-resultsServer <- function(id, middle_table, main_session){
+resultsServer <- function(id, middle_table, prom_session){
   shiny::moduleServer(id, function(input, output, session) {
     ns <- session$ns 
     
@@ -124,7 +124,7 @@ resultsServer <- function(id, middle_table, main_session){
  
     #nav buttons
     shiny::observeEvent(input$result_back, {
-      shiny::updateTabsetPanel(main_session, "prom_tabs", selected = "select")
+      shiny::updateTabsetPanel(prom_session, "prom_tabs", selected = "select")
     })
     
     

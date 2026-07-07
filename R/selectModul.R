@@ -38,7 +38,7 @@ selectColumnsUI <- function(id){
   )
 }
 
-selectColumnsServer <- function(id, input_df = NULL, main_session){
+selectColumnsServer <- function(id, input_df = NULL, prom_session){
   moduleServer(id, function(input, output, session) {
     ns <- session$ns
     
@@ -86,11 +86,11 @@ selectColumnsServer <- function(id, input_df = NULL, main_session){
     
     #nav buttons
     observeEvent(input$select_back, {
-      updateTabsetPanel(main_session, "prom_tabs", selected = "upload")
+      updateTabsetPanel(prom_session, "prom_tabs", selected = "upload")
     })
     
     observeEvent(input$select_next, {
-      updateTabsetPanel(main_session, "prom_tabs", selected = "result")
+      updateTabsetPanel(prom_session, "prom_tabs", selected = "result")
     })
 
     # NEXT nav button - only active if select_check is passed

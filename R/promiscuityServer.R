@@ -2,11 +2,11 @@
 promiscuityServer <- function(id){
   shiny::moduleServer(id, function(input, output, session) {
     
-    input_df <- uploadServer("upload", main_session = session)
+    input_df <- uploadServer("upload", prom_session = session)
     
-    middle_table <- selectColumnsServer("columns", input_df, main_session = session)
+    middle_table <- selectColumnsServer("columns", input_df, prom_session = session)
     
-    out_prom <- resultsServer("results", middle_table, main_session = session)
+    out_prom <- resultsServer("results", middle_table, prom_session = session)
     
     # display results
     output$result_df <- DT::renderDT(out_prom(),
@@ -30,8 +30,12 @@ promiscuityServer <- function(id){
       row_name <- out_prom()$ID[as.integer(click$row)]
       
       updateActionButton(session, "funcdiv_button", disabled = !grepl("Func_div_", col_name))
-      
-      
+    })
+    
+    observeEvent(input$funcdiv_button, {
+      # Handle button click
+      shiny::updateTabsetPanel(app_session, "prom_tabs", selected = "select")
+      # Add your functionality here
     })
     
     return(middle_table)

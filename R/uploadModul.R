@@ -19,7 +19,7 @@ uploadUI <- function(id){
   )
 }
 
-uploadServer <- function(id, main_session){
+uploadServer <- function(id, prom_session){
   shiny::moduleServer(id, function(input, output, session) {
     #take the selected file, if any, if no file is selected, dont do anything
     input_file <- shiny::reactive({
@@ -43,7 +43,7 @@ uploadServer <- function(id, main_session){
     })
     
     shiny::observeEvent(input$upload_next, { #if next is clicked, move to select panel
-      shiny::updateTabsetPanel(main_session, "prom_tabs", selected = "select")
+      shiny::updateTabsetPanel(prom_session, "prom_tabs", selected = "select")
     })
     
     return(input_df)
