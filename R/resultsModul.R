@@ -20,7 +20,8 @@ resultsUI <- function(id){
         shiny::checkboxGroupInput(ns("res_avg"), NULL, choices = character())  
       ),
       shiny::radioButtons(ns("res_homo"), "Detect homozygosity", choiceNames = c("yes", "no"), choiceValues = c(TRUE, FALSE), selected = FALSE), # get homozygosity
-      shiny::radioButtons(ns("res_evdiv"), "Calculate evolutionary divergence", choiceNames = c("yes", "no"), choiceValues = c(TRUE, FALSE), selected = FALSE) # get evolutionary divergence
+      shiny::radioButtons(ns("res_evdiv"), "Calculate evolutionary divergence", choiceNames = c("yes", "no"), choiceValues = c(TRUE, FALSE), selected = FALSE), # get evolutionary divergence
+      shiny::radioButtons(ns("res_funcdiv"), "Calculate functional divergence", choiceNames = c("yes", "no"), choiceValues = c(TRUE, FALSE), selected = FALSE) # get evolutionary divergence
       
     ),
    # shiny::verbatimTextOutput(ns("testing")), # uncomment for easy testing
@@ -112,12 +113,19 @@ resultsServer <- function(id, middle_table, main_session){
       }
     })
     
+    out_funcdiv <-  shiny::eventReactive(input$result_next ,{ # only calculate if result_next button is clicked
+      if (input$res_funcdiv) {
+        functionalDivergence(middle_table()) |> as.data.frame()
+      } else {
+        # a data frame only consisting of the ID column
+        makePlaceHolder(middle_table())
+      }
+    })
  
     #nav buttons
     shiny::observeEvent(input$result_back, {
       shiny::updateTabsetPanel(main_session, "prom_tabs", selected = "select")
     })
-    
     
     
     # RESULTS nav button - only active if select_check is passed
@@ -133,7 +141,7 @@ resultsServer <- function(id, middle_table, main_session){
     
     
     # merge all results tables
-    all_results <- shiny::reactive(  purrr::reduce(list( out_prom(), out_homo(), out_evdiv() ), full_join, by = dplyr::join_by(ID) ) )
+    all_results <- shiny::reactive(  purrr::reduce(list( out_prom(), out_homo(), out_evdiv(), out_funcdiv() ), full_join, by = dplyr::join_by(ID) ) )
     
     #output$testing <- shiny::renderPrint(out_prom()) # uncomment for easy testing
     return(all_results)

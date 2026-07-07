@@ -29,8 +29,7 @@ promiscuityServer <- function(id){
       #get row name
       row_name <- out_prom()$ID[as.integer(click$row)]
       
-      grepl("Functional", col_name)
-        updateActionButton(session, "funcdiv_button", disabled = !grepl("_A", col_name))
+      updateActionButton(session, "funcdiv_button", disabled = !grepl("Func_div_", col_name))
       
       
     })
