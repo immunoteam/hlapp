@@ -44,8 +44,8 @@ promiscuityServer <- function(id, app_session, subm_session){
 # data table render options
 DToptions <- list(dom = "Bfrtrip" ,
                   buttons = list(
-                    list(extend = "excel", text = "Save as Excel"),
-                    list(extend = "csv", text = "Save as CSV"),
+                    list(extend = "excel", text = "Save as Excel", filename = "promiscuityApp_results"),
+                    list(extend = "csv", text = "Save as CSV", filename = "promiscuityApp_results"),
                     list(extend = "copy", text = "Copy to Clipboard")
                   ), 
                   scrollX = T,
