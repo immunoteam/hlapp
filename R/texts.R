@@ -15,7 +15,7 @@ texts <- list(
     upload_title = "1. Upload file",  
     upload_main = "Upload your file with HLA genotypes. File should only contain a table with column names.",
     upload_label = "Upload your file with HLA genotypes", # not used 
-    upload_tooltip = ".xlsx, .tsv or .csv file containing a table.\nThe file should not contain any additional lines, only the table.\nData for one patient/sample has to be stored in one row. ", 
+    upload_tooltip = ".xlsx, .xlx, .txt, .tsv or .csv file containing a table.\nThe file should not contain any additional lines, only the table.\nData for one patient/sample has to be stored in one row. ", 
     upload_feedback_pass = "Table read succesfully.",   
     upload_feedback_fail = "ERROR: Could not read table. Make sure your file only contains a table and no additional lines.",
   
