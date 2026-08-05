@@ -134,16 +134,19 @@ submotifServer <- function(id) {
       )
     })
 
-    # Letöltési handler a submotif plothoz (PNG)
-    #output$download_submotif <- shiny::downloadHandler(
-      #filename = function() { downloadFileName(input, "submotif_plot", ".png") },
-      #content = function(file) { makePng(file, input, cluster_data()$motif, method = "motifStack") }
-    #)
+    # Download handler for submotif plot (SVG)
+    output$download_submotif <- shiny::downloadHandler(
+      filename = function() { downloadFileName(input, "submotif_plot", ".svg") },
+      content = function(file) {
+        svg_path <- file.path("www/img/submotif", paste0(input$allele, "_cluster", input$cluster, ".svg"))
+        file.copy(svg_path, file)
+      }
+    )
 
-    # Letöltési handler a submotif adat rds-ben
-    #output$download_submotif_data <- shiny::downloadHandler(
-      #filename = function() { downloadFileName(input, "submotif_plot", ".rds") },
-      #content = function(file) {  saveRDS(cluster_data()$motif, file) }
+    # Download handler for submotif cluster data (RDS)
+   # output$download_submotif_data <- shiny::downloadHandler(
+    #  filename = function() { downloadFileName(input, "submotif_data", ".rds") },
+     # content = function(file) { saveRDS(cluster_data(), file) }
     #)
 
     #Peptidek száma
