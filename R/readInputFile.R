@@ -9,8 +9,10 @@ readInputFile <-function(file){
   out <- try(
     switch (ext,
             tsv = read.delim(file$datapath ),
+            txt = read.delim(file$datapath ),
             csv = read.csv(file$datapath), 
             xlsx = as.data.frame(readxl::read_excel(file$datapath)),
+            xls = as.data.frame(readxl::read_excel(file$datapath)),
             validate("Invalid file. Must be a .csv, .tsv or .xlsx")
     ) 
   )

@@ -7,7 +7,7 @@ uploadUI <- function(id){
     shiny::tags$div( style = "display: inline-flex; align-items: center; gap: 8px;",
       shiny::fileInput(ns("file"), 
                        label = "", 
-                       accept = c(".tsv", ".csv", ".xlsx") ),
+                       accept = c(".tsv", ".csv", ".xlsx", ".txt", ".xls") ),
       bslib::tooltip(bsicons::bs_icon("info-circle"), 
                      texts$upload_tooltip),
     ),
