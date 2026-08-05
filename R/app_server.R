@@ -15,12 +15,6 @@ HLApp_server <- function(input, output, session) {
   
   prom_result <- shiny::reactiveVal(NULL)
   
-  shiny::observeEvent(login_status(), {
-    if (login_status()) {
-      prom_result(promiscuityServer("promiscuity", app_session = session))
-    }
-  })
-  
   output$submUI <- shiny::renderUI({
     shiny::req(login_status())
     submotifUI("submotif")
@@ -28,7 +22,8 @@ HLApp_server <- function(input, output, session) {
   
   shiny::observeEvent(login_status(), {
     if (login_status()) {
-      submotifServer("submotif")
+      subm_session <- submotifServer("submotif")
+      prom_result(promiscuityServer("promiscuity", app_session = session, subm_session = subm_session))
     }
   })
   

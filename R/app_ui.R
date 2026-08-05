@@ -3,6 +3,7 @@
 HLApp_ui <- function() {
   shiny::fluidPage(
     theme = bslib::bs_theme(version = 5, bootswatch = "flatly", "card-border-width" = "0", "card-box-shadow" = "none"),
+    shinyjs::useShinyjs(),
     shiny::tags$head(shiny::tags$meta(name = "robots", content = "noindex, nofollow")),
     shiny::titlePanel(texts$main_title),
     shiny::HTML("&nbsp;&nbsp;&nbsp;&nbsp;"),

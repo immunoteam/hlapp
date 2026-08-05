@@ -34,7 +34,7 @@ promiscuityUI <- function(id){
     ### OUTPUT PANELS
     DT::DTOutput(ns("result_df")),
     
-    actionButton(ns("funcdiv_button"), label = "Compare functional divergence", disabled = TRUE), 
+    actionButton(ns("funcdiv_button"), label = "Compare functional divergence", disabled = FALSE), # switch to disabled once done with testing
     
     shiny::verbatimTextOutput(ns("clickedval"))
     

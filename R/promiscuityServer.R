@@ -1,5 +1,5 @@
 
-promiscuityServer <- function(id, app_session){
+promiscuityServer <- function(id, app_session, subm_session){
   shiny::moduleServer(id, function(input, output, session) {
     
     input_df <- uploadServer("upload", prom_session = session)
@@ -33,9 +33,8 @@ promiscuityServer <- function(id, app_session){
     })
     
     observeEvent(input$funcdiv_button, {
-      # Handle button click
       shiny::updateNavbarPage(app_session, inputId = "app_navbar", selected = "submotif")
-      # Add your functionality here
+      bslib::nav_select("submotif_tab", selected = "compare", session = subm_session)
     })
     
     return(middle_table)
