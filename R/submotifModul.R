@@ -165,7 +165,12 @@ submotifServer <- function(id) {
       if (length(cluster_data()$peptides) == 0) { return("No peptides in this cluster.") }
 
       shiny::tagList(
-        shiny::actionButton(ns("show_peptides"), "Show/Hide peptides"),
+        if(show_peptides()){
+          shiny::actionButton(ns("show_peptides"), "Hide peptides")
+        } else {
+          shiny::actionButton(ns("show_peptides"), "Show peptides")
+        }
+        ,
         if (show_peptides()) { # show only when showpeptides is TRUE
           shiny::div(
             style = "max-height: 300px; overflow-y: auto; columns: 5;",
