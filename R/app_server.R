@@ -23,6 +23,11 @@ HLApp_server <- function(input, output, session) {
     submotifUI("submotif")
   })
   
+  output$submCompUI <- shiny::renderUI({
+    shiny::req(login_status())
+    submotifCompUI("submotif_comp")
+  })
+  
   output$transUI <- shiny::renderUI({
     shiny::req(login_status())
     translateUI("translate")
@@ -32,6 +37,7 @@ HLApp_server <- function(input, output, session) {
   shiny::observeEvent(login_status(), {
     if (login_status()) {
       subm_session <- submotifServer("submotif")
+      submotifCompServer("submotif_comp")
       prom_result(promiscuityServer("promiscuity", app_session = session, subm_session = subm_session))
       translateServer("translate", prom_result)
     }

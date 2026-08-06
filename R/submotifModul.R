@@ -4,10 +4,6 @@
 submotifUI <- function(id) {
   ns <- shiny::NS(id)
   
-  bslib::navset_tab(id = ns("submotif_tab"),
-
-    bslib::nav_panel("Explore", value = "explore",
-          shiny::verbatimTextOutput(ns("test")), # for testing
       shiny::fluidPage(
         shiny::titlePanel("HLA-I submotif collection"),
     
@@ -44,13 +40,8 @@ submotifUI <- function(id) {
           )
         )
       )
-    ),
-    bslib::nav_panel("Compare", value = "compare",
-            shiny::fluidPage(
-              shiny::titlePanel("Compare Motifs")
-            )
-    )
-  )
+    
+  
 }
 
 

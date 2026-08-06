@@ -11,7 +11,8 @@ HLApp_ui <- function() {
     bslib::page_navbar(id = "app_navbar",
       navbar_options = bslib::navbar_options(collapsible = FALSE),
       bslib::nav_panel("PromiscuityApp", value = "prom", shiny::uiOutput("promUI")),
-      bslib::nav_panel("SubmotifApp", value = "submotif", shiny::uiOutput("submUI")),
+      bslib::nav_panel("Submotif explorer", value = "submotif", shiny::uiOutput("submUI")),
+      bslib::nav_panel("Submotif comparison", value = "submotif_comp", shiny::uiOutput("submCompUI")),
       bslib::nav_panel("HLA translate", value = "translate", shiny::uiOutput("transUI")),
       footer = shiny::fluidRow(
         shiny::HTML("&nbsp;&nbsp;&nbsp;"),
