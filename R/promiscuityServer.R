@@ -12,7 +12,7 @@ DToptions <- list(dom = "Bfrtrip" ,
 
 
 
-promiscuityServer <- function(id, app_session, subm_session){
+promiscuityServer <- function(id, app_session, compare_values){
   shiny::moduleServer(id, function(input, output, session) {
     
     input_df <- uploadServer("upload", prom_session = session)
@@ -33,21 +33,23 @@ promiscuityServer <- function(id, app_session, subm_session){
     observeEvent(input$result_df_cell_clicked,{
       click <- input$result_df_cell_clicked
       
-      output$clickedval <- renderPrint(
-        list(col_name, row_name)
-        )
-      
       #get the column name 
       col_name <- colnames(out_prom())[as.integer(click$col+1)]
       #get row name
       row_name <- out_prom()$ID[as.integer(click$row)]
       
+      output$clickedval <- renderPrint(
+        list(col_name, row_name)
+        )
+      
       updateActionButton(session, "funcdiv_button", disabled = !grepl("Func_div_", col_name))
+      
+      compare_values$click_col <- col_name
+      compare_values$click_row <- row_name
     })
     
     observeEvent(input$funcdiv_button, {
       shiny::updateNavbarPage(app_session, inputId = "app_navbar", selected = "submotif_comp")
-      bslib::nav_select("submotif_tab", selected = "compare", session = subm_session)
     })
     
     return(middle_table)

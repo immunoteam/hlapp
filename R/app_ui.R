@@ -8,6 +8,7 @@ HLApp_ui <- function() {
     shiny::titlePanel(texts$main_title),
     shiny::HTML("&nbsp;&nbsp;&nbsp;&nbsp;"),
     loginUI("login"),
+   # verbatimTextOutput("testing"),
     bslib::page_navbar(id = "app_navbar",
       navbar_options = bslib::navbar_options(collapsible = FALSE),
       bslib::nav_panel("PromiscuityApp", value = "prom", shiny::uiOutput("promUI")),

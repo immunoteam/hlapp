@@ -9,7 +9,7 @@ HLApp_server <- function(input, output, session) {
   # values
   login_status <- loginServer("login")
   prom_result <- shiny::reactiveVal(NULL)
-  compare_funcdiv <- reactiveVal(FALSE)
+  compare_values <- reactiveValues()
   
   # ui-s
   output$promUI <- shiny::renderUI({
@@ -37,10 +37,15 @@ HLApp_server <- function(input, output, session) {
   shiny::observeEvent(login_status(), {
     if (login_status()) {
       subm_session <- submotifServer("submotif")
-      submotifCompServer("submotif_comp")
-      prom_result(promiscuityServer("promiscuity", app_session = session, subm_session = subm_session))
+      submotifCompServer("submotif_comp", compare_values)
+      prom_result(promiscuityServer("promiscuity", app_session = session, compare_values))
       translateServer("translate", prom_result)
     }
   })
+  
+ # output$testing <- renderPrint({
+ #    reactiveValuesToList(compare_values)
+ # })
+
   
 }
