@@ -36,18 +36,17 @@ submotifCompServer <- function(id, compare_values) {
     
     observeEvent(alleles(), {
       req(alleles())
-      #req(length(alleles()) >= 2)
       updateSelectInput(session, "allele_1_sel", selected = alleles()[1])
       updateSelectInput(session, "allele_2_sel", selected = alleles()[2])
     })
     
     output$allele_1 <- renderText({
-      req(alleles())
-      paste("Motif of", alleles()[1])
+      req(input$allele_1_sel)
+      paste("Motif of", input$allele_1_sel)
     })
     
     output$allele_1_motif <- shiny::renderUI({
-      shiny::req(input$allele_2_sel)
+      shiny::req(input$allele_1_sel)
       
       allele <- input$allele_1_sel
       
@@ -61,8 +60,8 @@ submotifCompServer <- function(id, compare_values) {
     
     
     output$allele_2 <- renderText({
-      req(alleles())
-      paste("Motif of", alleles()[2])
+      req(input$allele_2_sel)
+      paste("Motif of", input$allele_2_sel)
     })
     
     output$allele_2_motif <- shiny::renderUI({
