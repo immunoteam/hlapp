@@ -5,9 +5,9 @@ accepted_hla_formats <- paste0(c("A", "B", "C", "DPA1", "DPB1", "DQA1", "DQB1", 
 formatHlaFormat <- function(x) {
   
   # remove * and : from allele names
-  if(any(grepl("\\*|:", x) ) ){
-   # message("Removing * and : from allele names")
-    x <- gsub("\\*|:", "", x)
+  if(any(grepl("\\*|:|_", x) ) ){
+   # message("Removing * and : and _ from allele names")
+    x <- gsub("\\*|:|_", "", x)
   } 
   
   #remove P from the end of the allele name
