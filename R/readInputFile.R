@@ -4,12 +4,12 @@
 #' 
 #' @return the uploaded file as a data frame
 
-readInputFile <-function(file){
+readInputFile <-function(file, delim = ","){
   ext <- tools::file_ext(file$name)
   out <- try(
     switch (ext,
             tsv = read.delim(file$datapath ),
-            txt = read.delim(file$datapath ),
+            txt = read.delim(file$datapath, sep = delim ),
             csv = read.csv(file$datapath), 
             xlsx = as.data.frame(readxl::read_excel(file$datapath)),
             xls = as.data.frame(readxl::read_excel(file$datapath)),
