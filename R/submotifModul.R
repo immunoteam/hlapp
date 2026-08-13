@@ -135,10 +135,12 @@ submotifServer <- function(id) {
     )
 
     # Download handler for submotif cluster data (RDS)
-   # output$download_submotif_data <- shiny::downloadHandler(
-    #  filename = function() { downloadFileName(input, "submotif_data", ".rds") },
-     # content = function(file) { saveRDS(cluster_data(), file) }
-    #)
+    output$download_submotif_data <- shiny::downloadHandler(
+      filename = function() { paste0(input$allele, "_cluster_", input$cluster, "_motif.rds") },
+      content = function(file) { 
+        rds_path <- file.path("data", "cluster_motif", paste0(input$allele, "_cluster_", input$cluster, "_motif.rds")) 
+        file.copy(rds_path, file) }
+    )
 
     #Peptidek száma
     output$cluster_peptide_count = shiny::renderText({
