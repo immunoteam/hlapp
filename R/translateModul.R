@@ -8,8 +8,8 @@ translateUI <- function(id){
     shiny::textAreaInput(ns("alleles"), label = "Enter alleles", rows = 6, value = ""), 
     shiny::actionButton(ns("load_alleles"), label = "Load alleles from PromsicuityApp"), 
     shiny::checkboxGroupInput(ns("formats"), label = "Allele formats", choices = c("netMHCpan", "MHCnuggets","mixMHCpred") ),
-    #shiny::verbatimTextOutput(ns("test")), # for testing
-    DT::DTOutput(ns("prom_res"))
+   # shiny::verbatimTextOutput(ns("test")), # for testing
+    DT::DTOutput(ns("translate_res"))
   )
 }
 
@@ -31,18 +31,27 @@ translateServer <- function(id, prom_result = NULL) {
       shiny::updateTextAreaInput(session , "alleles", value = paste(used_alleles(), collapse = "\n"))
     })
     
+    # transform input to vector
+    alleles_pass <- reactive({
+      req(input$alleles)
+      
+      alleles_vec <- gsub(" ", "", unlist(strsplit(input$alleles, split = "\n") ) )
+      
+      alleles_vec[alleles_vec %in% unlist(allele_names) ]
+    })
+    
     # generate output table
     translated_df <- shiny::reactive({
       shiny::req(input$alleles)
-      translateIDs(alleles = input$alleles, formats = input$formats, hla_names = hla_names )
+      translateIDs(alleles = alleles_pass(),  formats = input$formats)
     })
       
     
-    output$prom_res <- DT::renderDT(translated_df(),
+    output$translate_res <- DT::renderDT(translated_df(),
                                    rownames = FALSE,
                                    extensions = "Buttons", 
                                    options = DToptions)
-    #output$test<- shiny::renderPrint( used_alleles() ) # for testing
+   # output$test<- shiny::renderPrint( alleles_pass() ) # for testing
     
   })
 }
