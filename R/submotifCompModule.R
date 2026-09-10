@@ -10,13 +10,15 @@ submotifCompUI <- function(id) {
         h5("Allele 1"),
         selectInput(ns("allele_1_sel"), label = "Choose allele", choices = allele_names),
         textOutput(ns("allele_1")),
-        uiOutput(ns("allele_1_motif"))
+        uiOutput(ns("allele_1_motif")), 
+        verbatimTextOutput(ns("allele_1_submotifs"))
       ),
       div(
         h5("Allele 2"),
         selectInput(ns("allele_2_sel"), label = "Choose allele", choices = allele_names),
         textOutput(ns("allele_2")),
-        uiOutput(ns("allele_2_motif"))
+        uiOutput(ns("allele_2_motif")), 
+        verbatimTextOutput(ns("allele_2_submotifs"))
       ),
       
     ),
@@ -47,17 +49,13 @@ submotifCompServer <- function(id, compare_values) {
     
     output$allele_1_motif <- shiny::renderUI({
       shiny::req(input$allele_1_sel)
-      
-      allele <- input$allele_1_sel
-      
-      file_name <- paste0( allele, ".svg"  )
-      
-      shiny::tags$img(
-        src = file.path("img/motif", file_name),
-        style = "width:100%; max-width:900px;"
-      )
+      getCompPlot(input$allele_1_sel)
     })
     
+    output$allele_1_submotifs <- renderPrint({
+      req(input$allele_1_sel)
+      getSubmotifText(input$allele_1_sel)
+    })
     
     output$allele_2 <- renderText({
       req(input$allele_2_sel)
@@ -66,15 +64,12 @@ submotifCompServer <- function(id, compare_values) {
     
     output$allele_2_motif <- shiny::renderUI({
       shiny::req(input$allele_2_sel)
-      
-      allele <- input$allele_2_sel
-      
-      file_name <- paste0( allele, ".svg"  )
-      
-      shiny::tags$img(
-        src = file.path("img/motif", file_name),
-        style = "width:100%; max-width:900px;"
-      )
+      getCompPlot(input$allele_2_sel)
+    })
+    
+    output$allele_2_submotifs <- renderPrint({
+      req(input$allele_2_sel)
+      getSubmotifText(input$allele_2_sel)
     })
   })
 }
