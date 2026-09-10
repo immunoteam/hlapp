@@ -23,6 +23,11 @@ selectColumnsUI <- function(id){
         shiny::uiOutput(ns("hla_pre_check")),
         shiny::checkboxInput(ns("hlacol_all"), "Select / Deselect all", value = FALSE), 
         shiny::checkboxGroupInput(ns("hlacol"), NULL, choices = character() ),
+        shiny::radioButtons(ns("delim"), label = "Select delimiter (if multiple alleles are stored in a column)",
+                            choiceNames = c("\",\"", "\"space\"", "\";\""),
+                            choiceValues = c(",", " ", ";"), 
+                            selected = ",",
+                            inline = T),
         shiny::uiOutput(ns("select_check") )
       )
     ),
@@ -113,7 +118,7 @@ selectColumnsServer <- function(id, input_df = NULL, prom_session){
       #Sys.sleep(3) # for testing
       out <- formatInputTable(input_df(),  
                        id.col = input$idcol, hla.cols = input$hlacol,
-                       flag.forbidden = T ) |>
+                       flag.forbidden = T , delim = input$delim) |>
         joinGenotypePromiscuity(promiscuity) |>
         dplyr::mutate_if(is.numeric, signif, 4)
       

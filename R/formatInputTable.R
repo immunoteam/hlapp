@@ -62,9 +62,14 @@ formatManualTable <- function(x, id.col, hla.cols, delim = ","){
   x <- x |>
     dplyr::select(all_of(c(id.col, hla.cols))) |>
     dplyr::rename(ID = .data[[id.col]]) |>
-    tidyr::unite(HLA, all_of(hla.cols), sep = delim) |>
-    dplyr::mutate(HLA = gsub(" ", "", HLA)) # remove spaces from rows
+    tidyr::unite(HLA, all_of(hla.cols), sep = delim) 
   
+  if(delim != " "){
+    x <- dplyr::mutate(x, HLA = gsub(" ", "", HLA)) # remove spaces from rows
+  } else {
+    x <- dplyr::mutate(x, HLA = gsub("  ", " ", HLA)) # if delim is " " remove second spaces from rows
+  }
+    
   # replace DQ and DP genes with complexes
   x <- x |>
     dplyr::rowwise() |>
@@ -88,10 +93,10 @@ formatManualTable <- function(x, id.col, hla.cols, delim = ","){
 #' @param flag.forbidden whether to remove forbidden HLAQ alpha-beta combinations for the table. TRUE by default.
 #' 
 #' @return a data frame
-formatInputTable <- function(x, id.col = "ID", hla.cols = NULL, flag.forbidden = T){
+formatInputTable <- function(x, id.col = "ID", hla.cols = NULL, flag.forbidden = T, delim = ","){
   
   #turn input table a long format
-  x <- formatManualTable(x, id.col, hla.cols)
+  x <- formatManualTable(x, id.col, hla.cols, delim)
   
   # check if HLA allele names contain any * or : if they do, remove them
   
