@@ -39,34 +39,37 @@
 
 
 evolutionaryDivergence <- function(middle_table){
-  load("evolutionary_distances")
+  
+  mean_by = "Class"
+  #mean_by = "Locus"  
   
   x <- middle_table |>
     dplyr::select(ID, HLA, Locus) |>
     tidyr::separate_longer_delim(HLA, "-") |> # separate HLA-II complexes 
     dplyr::mutate(Locus = ifelse(Locus %in% c("DP", "DQ", "DR"), substr(HLA, 1, 4), Locus)) |>
     dplyr::mutate(Class = ifelse(startsWith(Locus, "D"), "II", "I")) |>
-    dplyr::mutate(HLA_ = HLA) |>
-    dplyr::group_by(ID, Class) |>
-    tidyr::expand(HLA, HLA_)
-    
-  #ezt szintén tidyverse-zel kéne, de nem jöttem rá, hogy lehetne :( egy nagyon táblázaton ez így viszonylag sok idő
-    for(i in 1:nrow(x)){
-      x[i,3:4] = t(as.data.frame(sort(paste(x[i,3:4]))))
-    }
+    dplyr::mutate(HLA_ = HLA) |> 
+    dplyr::group_by(ID, Class, Locus) |> # locus added, so only the distances within a locus are calculated
+    tidyr::expand(HLA, HLA_) |>
+    dplyr::rowwise() |>
+    dplyr::mutate(TMP = list(sort(c(HLA, HLA_)) ),
+                  HLA = TMP[1], 
+                  HLA_ = TMP[2]) |>
+    dplyr::ungroup() |>
+    unique() |>
+    dplyr::left_join(evolutionary_distances, by = join_by(HLA == Allele1, HLA_ == Allele2)) |> # add HED values
+    mutate(Distance = as.numeric(ifelse(HLA==HLA_, 1, Distance))) |> 
+    dplyr::select(-TMP)
   
-    x = x[!duplicated(x), ]
-  
-    x = cbind(x, Distance = NA)
-    for(i in 1:nrow(x)){
-      if(x$HLA[i] == x$HLA_[i]) x$Distance[i] = 1 
-      else if(x$HLA[i] %in% evolutionary_distances$Allele1 & x$HLA_[i] %in% evolutionary_distances$Allele2){
-        x$Distance[i] = evolutionary_distances$Distance[(evolutionary_distances$Allele1 == x$HLA[i] & evolutionary_distances$Allele2 == x$HLA_[i])]
-      }
-    }
+  # arrange to export format
+  x |> 
+    dplyr::group_by(ID, .data[[mean_by]]) |> # or class -  switch if needed 
+    dplyr::summarise(HED = mean(Distance, na.rm = T)) |> 
+    tidyr::pivot_wider(names_from = all_of(mean_by) , names_prefix = "HED_", values_from = "HED")
   
   return(x)
 }
+
 
 #' #' function to create an empty placeholder from middle_table
 #' #' 
