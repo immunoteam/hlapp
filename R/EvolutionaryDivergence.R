@@ -28,7 +28,7 @@ evolutionaryDivergence <- function(middle_table){
   # arrange to export format
   out <- x |> 
     dplyr::group_by(ID, .data[[mean_by]]) |> # or class -  switch if needed 
-    dplyr::summarise(HED = mean(Distance, na.rm = T)) |> 
+    dplyr::summarise(HED = mean(Distance, na.rm = T), .groups = "drop") |> 
     tidyr::pivot_wider(names_from = all_of(mean_by) , names_prefix = "HED_", values_from = "HED")
   
   return(out)
