@@ -42,10 +42,10 @@ promiscuityServer <- function(id, app_session, compare_values){
         list(col_name, row_name)
         )
       
-      updateActionButton(session, "funcdiv_button", disabled = !grepl("Func_div_", col_name))
+      updateActionButton(session, "funcdiv_button", disabled = !grepl("FuncDiv_", col_name))
       
       funcdiv_patient <- row_name
-      funcdiv_locus <- gsub("Func_div_", "", col_name)
+      funcdiv_locus <- gsub("FuncDiv_", "", col_name)
       funcdiv_alleles <- middle_table() |> 
         dplyr::filter(ID %in% funcdiv_patient, Locus %in% funcdiv_locus) |> 
         pull(HLA)

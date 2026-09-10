@@ -106,7 +106,7 @@ resultsServer <- function(id, middle_table, prom_session){
     # calculate evolutionary divergence
     out_evdiv <- shiny::eventReactive(input$result_next ,{ # only calculate if result_next button is clicked
       if (input$res_evdiv) {
-        evolutionaryDivergence(middle_table()) |> as.data.frame()
+        evolutionaryDivergence(middle_table() , mean_by = "Class") |> as.data.frame()
       } else {
         # a data frame only consisting of the ID column
         makePlaceHolder(middle_table())
@@ -115,7 +115,7 @@ resultsServer <- function(id, middle_table, prom_session){
     
     out_funcdiv <-  shiny::eventReactive(input$result_next ,{ # only calculate if result_next button is clicked
       if (input$res_funcdiv) {
-        functionalDivergence(middle_table()) |> as.data.frame()
+        functionalDivergence(middle_table(), "Locus") |> as.data.frame()
       } else {
         # a data frame only consisting of the ID column
         makePlaceHolder(middle_table())

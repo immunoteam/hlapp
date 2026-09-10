@@ -2,9 +2,9 @@
 #' 
 #' @param middletable middle table in long format, output of selectModul
 #'
-evolutionaryDivergence <- function(middle_table){
+evolutionaryDivergence <- function(middle_table, 
+                                   mean_by = "Class"){
   
-  mean_by = "Class"
   #mean_by = "Locus"  
   
   x <- middle_table |>
