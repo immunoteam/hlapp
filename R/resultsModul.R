@@ -20,7 +20,7 @@ resultsUI <- function(id){
         shiny::checkboxGroupInput(ns("res_avg"), NULL, choices = character())  
       ),
       shiny::radioButtons(ns("res_homo"), "Detect homozygosity", choiceNames = c("yes", "no"), choiceValues = c(TRUE, FALSE), selected = FALSE), # get homozygosity
-      shiny::radioButtons(ns("res_evdiv"), "Calculate evolutionary divergence", choiceNames = c("yes", "no"), choiceValues = c(TRUE, FALSE), selected = FALSE), # get evolutionary divergence
+      shiny::checkboxGroupInput(ns("res_evdiv"), "Calculate evolutionary divergence", choiceNames = c("HLA-I", "HLA-II"), choiceValues = c("I", "II")), # get evolutionary divergence
       shiny::radioButtons(ns("res_funcdiv"), "Calculate functional divergence", choiceNames = c("yes", "no"), choiceValues = c(TRUE, FALSE), selected = FALSE) # get evolutionary divergence
       
     ),
@@ -30,6 +30,7 @@ resultsUI <- function(id){
       shiny::uiOutput(ns("results_next_ui")),
       col_widths = c(2, -6, 2, -2)
     )
+   , verbatimTextOutput(ns("test"))
   )
 }
 
@@ -105,8 +106,8 @@ resultsServer <- function(id, middle_table, prom_session){
     
     # calculate evolutionary divergence
     out_evdiv <- shiny::eventReactive(input$result_next ,{ # only calculate if result_next button is clicked
-      if (input$res_evdiv) {
-        evolutionaryDivergence(middle_table() , mean_by = "Class") |> as.data.frame()
+      if (length(input$res_evdiv) > 0) {
+        evolutionaryDivergence(middle_table() , mean_by = "Class", selected = input$res_evdiv) |> as.data.frame()
       } else {
         # a data frame only consisting of the ID column
         makePlaceHolder(middle_table())
@@ -129,7 +130,7 @@ resultsServer <- function(id, middle_table, prom_session){
     
     
     # RESULTS nav button - only active if select_check is passed
-    res_check <- shiny::reactive( any( length(res_types()) > 0, input$res_homo, input$res_evdiv, input$res_funcdiv  )  )
+    res_check <- shiny::reactive( any( length(res_types()) > 0, input$res_homo, length(input$res_evdiv) > 0, input$res_funcdiv  )  )
     
     output$results_next_ui  <- shiny::renderUI(
       if (!res_check()) {
@@ -143,7 +144,9 @@ resultsServer <- function(id, middle_table, prom_session){
     # merge all results tables
     all_results <- shiny::reactive(  purrr::reduce(list( out_prom(), out_homo(), out_evdiv(), out_funcdiv() ), full_join, by = dplyr::join_by(ID) ) )
     
-    #output$testing <- shiny::renderPrint(out_prom()) # uncomment for easy testing
+    
+    
+    output$test <- shiny::renderPrint(str(input$res_evdiv)) # uncomment for easy testing
     return(all_results)
   })
 }

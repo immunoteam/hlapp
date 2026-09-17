@@ -2,16 +2,15 @@
 #' 
 #' @param middletable middle table in long format, output of selectModul
 #'
-evolutionaryDivergence <- function(middle_table, 
+evolutionaryDivergence <- function(middle_table, selected,
                                    mean_by = "Class"){
-  
-  #mean_by = "Locus"  
   
   x <- middle_table |>
     dplyr::select(ID, HLA, Locus) |>
     tidyr::separate_longer_delim(HLA, "-") |> # separate HLA-II complexes 
     dplyr::mutate(Locus = ifelse(Locus %in% c("DP", "DQ", "DR"), substr(HLA, 1, 4), Locus)) |>
-    dplyr::mutate(Class = ifelse(startsWith(Locus, "D"), "II", "I")) |>
+    dplyr::mutate(Class = ifelse(startsWith(Locus, "D"), "II", "I")) |> 
+    dplyr::filter(Class %in% selected) |>
     dplyr::mutate(HLA_ = HLA) |> 
     dplyr::group_by(ID, Class, Locus) |> # locus added, so only the distances within a locus are calculated
     tidyr::expand(HLA, HLA_) |>
