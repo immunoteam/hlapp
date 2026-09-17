@@ -23,12 +23,13 @@ selectColumnsUI <- function(id){
         shiny::uiOutput(ns("hla_pre_check")),
         shiny::checkboxInput(ns("hlacol_all"), "Select / Deselect all", value = FALSE), 
         shiny::checkboxGroupInput(ns("hlacol"), NULL, choices = character() ),
+        shiny::uiOutput(ns("select_check") ),
         shiny::radioButtons(ns("delim"), label = "Select delimiter (if multiple alleles are stored in a column)",
                             choiceNames = c("\",\"", "\"space\"", "\";\""),
                             choiceValues = c(",", " ", ";"), 
                             selected = ",",
                             inline = T),
-        shiny::uiOutput(ns("select_check") )
+        shiny::uiOutput(ns("allele_check") )
       )
     ),
     
@@ -38,7 +39,7 @@ selectColumnsUI <- function(id){
       shiny::uiOutput(ns("select_next_ui")),
       col_widths = c(2, -6, 2, -2)  
     ) 
-    # ,verbatimTextOutput(ns("test")) # for testing
+     ,verbatimTextOutput(ns("test")) # for testing
     
   )
 }
@@ -100,13 +101,28 @@ selectColumnsServer <- function(id, input_df = NULL, prom_session){
 
     # NEXT nav button - only active if select_check is passed
     output$select_next_ui  <- renderUI(
-      if (!select_check()) {
+      if (!(select_check() & allele_check() )) {
         shiny::actionButton(ns("select_next"), "Next ->", disabled = TRUE)
       } else {
         bslib::input_task_button(ns("select_next"), label = "Next -> ", status = "primary" , spinner = TRUE, state = "ready")
       }
     )
 
+    #check if middle table contains recognizeable alleles (at least for each sample)
+    
+    allele_check <- reactive( {
+      input_df() |>
+        head(n = 3)|>
+        formatInputTable(id.col = input$idcol, hla.cols = input$hlacol,
+                         flag.forbidden = T , delim = input$delim) |> 
+        group_by(ID) |> 
+        summarise(allele_check = any(HLA %in% unlist(allele_names))) |>
+        pull(allele_check) |> 
+        all()
+    })
+    
+    output$allele_check <- renderUI(giveFeedBack(allele_check() & select_check(), "Alleles recognised",   "No alleles recognised with these settings"))
+    
     
     # SERVER RESULT ---------------------------------------
     # return middle table 
@@ -114,19 +130,21 @@ selectColumnsServer <- function(id, input_df = NULL, prom_session){
     
     observeEvent(input$select_next, {
       req(input$select_next)
-
+      
       #Sys.sleep(3) # for testing
       out <- formatInputTable(input_df(),  
-                       id.col = input$idcol, hla.cols = input$hlacol,
-                       flag.forbidden = T , delim = input$delim) |>
+                              id.col = input$idcol, hla.cols = input$hlacol,
+                              flag.forbidden = T , delim = input$delim) |>
         joinGenotypePromiscuity(promiscuity) |>
         dplyr::mutate_if(is.numeric, signif, 4)
       
       middle_table(out)
     })
     
+    
+    
     ### TESTING
-     #output$test  <- renderPrint(list(select_check() )  )
+     output$test  <- renderPrint(list(select_check(), allele_check() )  )
     
     return(middle_table)
   })
