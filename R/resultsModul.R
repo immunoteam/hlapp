@@ -129,7 +129,7 @@ resultsServer <- function(id, middle_table, prom_session){
     
     
     # RESULTS nav button - only active if select_check is passed
-    res_check <- shiny::reactive(length(res_types()) > 0)
+    res_check <- shiny::reactive( any( length(res_types()) > 0, input$res_homo, input$res_evdiv, input$res_funcdiv  )  )
     
     output$results_next_ui  <- shiny::renderUI(
       if (!res_check()) {
