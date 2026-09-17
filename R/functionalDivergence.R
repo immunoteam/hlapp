@@ -18,7 +18,7 @@ functionalDivergence <- function(middle_table, mean_by = "Locus"){
     dplyr::ungroup() |>
     unique() |>
     dplyr::left_join(func_div_data, by = join_by(HLA == Allele1, HLA_ == Allele2)) |> # add HED values
-    mutate(FuncDiv = as.numeric(ifelse(HLA==HLA_, 1, FuncDiv))) |> 
+    mutate(FuncDiv = as.numeric(ifelse(HLA==HLA_, 0, FuncDiv))) |> 
     dplyr::select(-TMP)
   
   # arrange to export format

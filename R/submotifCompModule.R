@@ -19,10 +19,10 @@ submotifCompUI <- function(id) {
         textOutput(ns("allele_2")),
         uiOutput(ns("allele_2_motif")), 
         verbatimTextOutput(ns("allele_2_submotifs"))
-      ),
-      
+      )
     ),
-    h4("Functional divergence of two alleles is: MISSING")
+    p("Functional divergence between the two alleles is:"),
+    verbatimTextOutput(ns("funcdiv_value"))
   )
   }
 
@@ -68,6 +68,18 @@ submotifCompServer <- function(id, compare_values) {
     output$allele_2_submotifs <- renderPrint({
       req(input$allele_2_sel)
       getSubmotifText(input$allele_2_sel)
+    })
+    
+    output$funcdiv_value <- renderPrint({
+      req(input$allele_1_sel, input$allele_2_sel)
+      
+      sorted <- sort(c(input$allele_1_sel, input$allele_2_sel))
+      
+      funcdiv_val <- func_div_data |>
+        filter(Allele1 == sorted[1], Allele2 == sorted[2]) |>
+        pull(FuncDiv)
+      
+      cat( ifelse(length(funcdiv_val) == 1, funcdiv_val , NA ) )
     })
   })
 }
