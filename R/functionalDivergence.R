@@ -1,9 +1,12 @@
 # calculate functional divergence - this is just a placeholder, to generate dummy output
 
-functionalDivergence <- function(middle_table, mean_by = "Locus"){
+functionalDivergence <- function(middle_table, selected, mean_by = "Locus"){
+  
+  if (!all(selected %in% c("A", "B", "C"))) stop("wrong locus for funcdiv")
   
   x <- middle_table |>
     dplyr::select(ID, HLA, Locus) |>
+    dplyr::filter(Locus %in% selected) |>
     #tidyr::separate_longer_delim(HLA, "-") |> # separate HLA-II complexes 
     #dplyr::mutate(Locus = ifelse(Locus %in% c("DP", "DQ", "DR"), substr(HLA, 1, 4), Locus)) |>
     dplyr::mutate(Class = ifelse(startsWith(Locus, "D"), "II", "I")) |>
