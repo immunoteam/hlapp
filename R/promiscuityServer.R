@@ -15,6 +15,8 @@ DToptions <- list(dom = "Bfrtrip" ,
 promiscuityServer <- function(id, app_session, compare_values){
   shiny::moduleServer(id, function(input, output, session) {
     
+    ns<-session$ns
+    
     input_df <- uploadServer("upload", prom_session = session)
     
     middle_table <- selectColumnsServer("columns", input_df, prom_session = session)
@@ -28,6 +30,14 @@ promiscuityServer <- function(id, app_session, compare_values){
                                      options = DToptions, 
                                      selection = list(mode = 'single', target = 'cell'))
     
+    # render funcdiv button if there is a funcdiv column
+    
+    output$funcdiv_ui <- renderUI({
+      if ( any(grepl("FuncDiv", colnames(out_prom()))) ){
+        
+        actionButton(ns("funcdiv_button"), label = "Compare functional divergence", disabled = TRUE)
+        }
+    })
     
     
     observeEvent(input$result_df_cell_clicked,{
@@ -38,8 +48,6 @@ promiscuityServer <- function(id, app_session, compare_values){
       #get row name
       row_name <- out_prom()$ID[as.integer(click$row)]
       
-      #output$clickedval <- renderPrint(  list(col_name, row_name)      )
-      
       updateActionButton(session, "funcdiv_button", disabled = !grepl("FuncDiv_", col_name))
       
       funcdiv_patient <- row_name
@@ -49,8 +57,6 @@ promiscuityServer <- function(id, app_session, compare_values){
         pull(HLA)
         
       compare_values$alleles <- funcdiv_alleles
-      
-      
     })
     
     observeEvent(input$funcdiv_button, {

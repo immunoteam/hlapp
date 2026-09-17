@@ -4,7 +4,7 @@ submotifCompUI <- function(id) {
   
   fluidPage(
     shiny::titlePanel("HLA submotif comparison"),
-    verbatimTextOutput(ns("testing")),
+    #verbatimTextOutput(ns("testing")),
     bslib::layout_columns(
       div(
         h5("Allele 1"),
@@ -30,9 +30,7 @@ submotifCompServer <- function(id, compare_values) {
   shiny::moduleServer(id, function(input, output, session) {
     ns <- session$ns
     
-    output$testing <- renderPrint({
-      reactiveValuesToList(compare_values)
-    })
+    #output$testing <- renderPrint({ reactiveValuesToList(compare_values)  })
     
     alleles <- reactive( compare_values$alleles )
     

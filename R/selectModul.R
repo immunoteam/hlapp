@@ -2,7 +2,6 @@ selectColumnsUI <- function(id){
   ns <- NS(id)
   fluidRow(
     p(texts$select_main),
-    verbatimTextOutput(ns("test")),
     bslib::layout_columns(
       
       #id column ui
@@ -39,7 +38,7 @@ selectColumnsUI <- function(id){
       shiny::uiOutput(ns("select_next_ui")),
       col_widths = c(2, -6, 2, -2)  
     ) 
-     ,verbatimTextOutput(ns("test")) # for testing
+    # ,verbatimTextOutput(ns("test")) # for testing
     
   )
 }
@@ -144,7 +143,7 @@ selectColumnsServer <- function(id, input_df = NULL, prom_session){
     
     
     ### TESTING
-     output$test  <- renderPrint(list(select_check(), allele_check() )  )
+    # output$test  <- renderPrint(list(select_check(), allele_check() )  )
     
     return(middle_table)
   })
