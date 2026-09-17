@@ -35,7 +35,7 @@ promiscuityServer <- function(id, app_session, compare_values){
     output$funcdiv_ui <- renderUI({
       if ( any(grepl("FuncDiv", colnames(out_prom()))) ){
         
-        actionButton(ns("funcdiv_button"), label = "Compare functional divergence", disabled = TRUE)
+        actionButton(ns("funcdiv_button"), label = "Visualize functional divergence", disabled = TRUE)
         }
     })
     
