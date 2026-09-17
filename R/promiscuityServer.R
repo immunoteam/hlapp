@@ -38,9 +38,7 @@ promiscuityServer <- function(id, app_session, compare_values){
       #get row name
       row_name <- out_prom()$ID[as.integer(click$row)]
       
-      output$clickedval <- renderPrint(
-        list(col_name, row_name)
-        )
+      #output$clickedval <- renderPrint(  list(col_name, row_name)      )
       
       updateActionButton(session, "funcdiv_button", disabled = !grepl("FuncDiv_", col_name))
       
