@@ -9,7 +9,7 @@ HLApp_server <- function(input, output, session) {
   # values
   login_status <- loginServer("login")
   prom_result <- shiny::reactiveVal(NULL)
-  compare_values <- reactiveValues()
+  compare_values <- reactiveValues( alleles = c("A0101", "A0101"))
   
   # ui-s
   output$promUI <- shiny::renderUI({
