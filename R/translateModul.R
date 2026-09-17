@@ -9,6 +9,7 @@ translateUI <- function(id){
     shiny::actionButton(ns("load_alleles"), label = "Load alleles from PromsicuityApp"), 
     shiny::checkboxGroupInput(ns("formats"), label = "Allele formats", choices = c("netMHCpan", "MHCnuggets","mixMHCpred") ),
    # shiny::verbatimTextOutput(ns("test")), # for testing
+    uiOutput(ns("allele_feedback")),
     DT::DTOutput(ns("translate_res"))
   )
 }
@@ -32,12 +33,14 @@ translateServer <- function(id, prom_result = NULL) {
     })
     
     # transform input to vector
-    alleles_pass <- reactive({
+    alleles_vec <- reactive({
       req(input$alleles)
       
-      alleles_vec <- gsub(" ", "", unlist(strsplit(input$alleles, split = "\n") ) )
-      
-      alleles_vec[alleles_vec %in% unlist(allele_names) ]
+      gsub(" ", "", unlist(strsplit(input$alleles, split = "\n") ) )
+    })
+    
+    alleles_pass <- reactive({
+      alleles_vec()[alleles_vec() %in% unlist(allele_names) ]
     })
     
     # generate output table
@@ -52,6 +55,16 @@ translateServer <- function(id, prom_result = NULL) {
                                    extensions = "Buttons", 
                                    options = DToptions)
    # output$test<- shiny::renderPrint( alleles_pass() ) # for testing
+    
+    # check for recognised alleles
+    alleles_check <- reactive({
+      req(alleles_vec)
+      !all( alleles_vec() %in% unlist(allele_names) )
+    })
+    
+    output$allele_feedback <- renderUI({
+      giveFeedBack(!alleles_check(), "", "Warning: Some inputs are not recognised as allele names!")
+    }) 
     
   })
 }
