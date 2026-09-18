@@ -11,7 +11,7 @@ HLApp_ui <- function() {
    # verbatimTextOutput("testing"),
     bslib::page_navbar(id = "app_navbar",
       navbar_options = bslib::navbar_options(collapsible = FALSE),
-      bslib::nav_panel("PromiscuityApp", value = "prom", shiny::uiOutput("promUI")),
+      bslib::nav_panel("Calculate HLA metrics", value = "prom", shiny::uiOutput("promUI")),
       bslib::nav_panel("Submotif explorer", value = "submotif", shiny::uiOutput("submUI")),
       bslib::nav_panel("Submotif comparison", value = "submotif_comp", shiny::uiOutput("submCompUI")),
       bslib::nav_panel("HLA translate", value = "translate", shiny::uiOutput("transUI")),
