@@ -10,6 +10,7 @@ uploadUI <- function(id){
                        accept = c(".tsv", ".csv", ".xlsx", ".txt", ".xls") ),
       bslib::tooltip(bsicons::bs_icon("info-circle"), 
                      texts$upload_tooltip),
+      downloadButton(ns("download_example"), "Download example data"),
       uiOutput(ns("file_delim_ui"))
     ),
     shiny::uiOutput(ns("file_feedback")),
@@ -23,6 +24,15 @@ uploadUI <- function(id){
 uploadServer <- function(id, prom_session){
   shiny::moduleServer(id, function(input, output, session) {
     ns <- session$ns
+    
+    output$download_example<- downloadHandler(
+      filename = function() {
+        "HLApp_example_input.csv"
+      },
+      content = function(file) {
+        write.csv(HLApp_example_input_data, file, row.names = FALSE)
+      }
+    )
     
     #take the selected file, if any, if no file is selected, dont do anything
     input_file <- shiny::reactive({
