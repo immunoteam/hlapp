@@ -14,7 +14,7 @@ HLApp_ui <- function() {
       bslib::nav_panel("Calculate HLA metrics", value = "prom", shiny::uiOutput("promUI")),
       bslib::nav_panel("Submotif explorer", value = "submotif", shiny::uiOutput("submUI")),
       bslib::nav_panel("Submotif comparison", value = "submotif_comp", shiny::uiOutput("submCompUI")),
-      bslib::nav_panel("HLA translate", value = "translate", shiny::uiOutput("transUI")),
+      bslib::nav_panel("Translate allele formats", value = "translate", shiny::uiOutput("transUI")),
       footer = shiny::fluidRow(
         shiny::HTML("&nbsp;&nbsp;&nbsp;"),
         shiny::hr(size = 1),
