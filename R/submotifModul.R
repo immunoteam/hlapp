@@ -61,7 +61,7 @@ submotifServer <- function(id) {
 
     output$allele_ui <- shiny::renderUI({
       shiny::req(input$type)
-      shiny::selectInput(ns("allele"), "Select an allele:", choices = available_alleles() )
+      shiny::selectizeInput(ns("allele"), "Select allele form list, or start typing:", choices = available_alleles() )
     })
     
     allele_data <- shiny::eventReactive(input$allele, {
