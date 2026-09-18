@@ -27,7 +27,7 @@ functionalDivergence <- function(middle_table, selected, mean_by = "Locus"){
   # arrange to export format
   out <- x |> 
     dplyr::group_by(ID, .data[[mean_by]]) |> # or class -  switch if needed 
-    dplyr::summarise(FuncDiv = mean(FuncDiv, na.rm = T), .groups = "drop") |> 
+    dplyr::summarise(FuncDiv = max(FuncDiv, na.rm = T), .groups = "drop") |> # max,
     tidyr::pivot_wider(names_from = all_of(mean_by) , names_prefix = "FuncDiv_", values_from = "FuncDiv")
   
   return(out)
