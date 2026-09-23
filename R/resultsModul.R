@@ -55,6 +55,9 @@ resultsServer <- function(id, middle_table, prom_session){
       if(avail_check()){
         ind_values <- paste0(avail_loci(), "i")
         avg_values <- paste0(avail_loci(), "a")
+        avail_type <- dplyr::recode_values(avail_loci(),
+                                                         c("A", "B", "C") ~ "I", 
+                                                         c("DP", "DQ", "DR") ~ "II")  |>  unique()
         
         shiny::updateCheckboxGroupInput(session, "res_ind",
                                         choiceNames = avail_loci(),
@@ -62,6 +65,16 @@ resultsServer <- function(id, middle_table, prom_session){
         shiny::updateCheckboxGroupInput(session, "res_avg",
                                         choiceNames = avail_loci(),
                                         choiceValues = avg_values) # add ()?  
+        
+        updateCheckboxGroupInput(session, "res_funcdiv", 
+                                 choiceNames = paste0("HLA-", avail_loci()), 
+                                 choiceValues = avail_loci()
+                                 )
+        updateCheckboxGroupInput(session, "res_evdiv", 
+                                 choiceNames = paste0("HLA-", avail_type), 
+                                 choiceValues = avail_type
+                                 )
+        
       }
     })
     
