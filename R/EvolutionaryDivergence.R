@@ -3,7 +3,7 @@
 #' @param middletable middle table in long format, output of selectModul
 #'
 evolutionaryDivergence <- function(middle_table, selected,
-                                   mean_by = "Class"){
+                                   mean_by = "Class", warn){
   
   x <- middle_table |>
     dplyr::select(ID, HLA, Locus) |>
@@ -30,6 +30,7 @@ evolutionaryDivergence <- function(middle_table, selected,
     dplyr::summarise(max_dist= max(Distance, na.rm = T), .groups = "drop")     |>
     dplyr::group_by(ID, .data[[mean_by]]) |> 
     dplyr::summarise(HED = mean(max_dist, na.rm = T), .groups = "drop") |> 
+    mutateToWarning(warn, "HED", col_check = "Class") |> 
     tidyr::pivot_wider(names_from = all_of(mean_by) , names_prefix = "HED_", values_from = "HED")
   
   return(out)

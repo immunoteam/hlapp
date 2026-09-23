@@ -1,6 +1,6 @@
 # calculate functional divergence - this is just a placeholder, to generate dummy output
 
-functionalDivergence <- function(middle_table, selected, mean_by = "Locus"){
+functionalDivergence <- function(middle_table, selected, mean_by = "Locus", warn){
   
   if (!all(selected %in% c("A", "B", "C"))) stop("wrong locus for funcdiv")
   
@@ -28,6 +28,7 @@ functionalDivergence <- function(middle_table, selected, mean_by = "Locus"){
   out <- x |> 
     dplyr::group_by(ID, .data[[mean_by]]) |> # or class -  switch if needed 
     dplyr::summarise(FuncDiv = max(FuncDiv, na.rm = T), .groups = "drop") |> # max,
+    mutateToWarning(warn, "FuncDiv") |> 
     tidyr::pivot_wider(names_from = all_of(mean_by) , names_prefix = "FuncDiv_", values_from = "FuncDiv")
   
   return(out)

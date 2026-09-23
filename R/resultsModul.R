@@ -8,6 +8,7 @@ resultsUI <- function(id){
   shiny::tagList(
     shiny::p(texts$result_main),
     shiny::uiOutput(ns("avail_feedback")),
+    shiny::uiOutput(ns("warning_feedback")),
     bslib::layout_columns(
       shiny::div(
         shiny::p("Allele promiscuity"),
@@ -30,7 +31,7 @@ resultsUI <- function(id){
       shiny::uiOutput(ns("results_next_ui")),
       col_widths = c(2, -6, 2, -2)
     )
-  # , verbatimTextOutput(ns("test"))
+   , verbatimTextOutput(ns("test"))
   )
 }
 
@@ -44,10 +45,18 @@ resultsServer <- function(id, middle_table, prom_session){
     #get the available loci
     avail_loci <- shiny::reactive(sort(unique(middle_table()[["Locus"]])))
     
+    # get loci, where none of the samples has more than one 
+    warn_loci <- reactive(checkFor2Alleles(middle_table()))
+    
     # check if any locus are recognized
     avail_check <- shiny::reactive(length(avail_loci()) > 0)
     output$avail_feedback <- shiny::renderUI(giveFeedBack(avail_check(), texts$results_avail_pass, texts$results_avail_fail ) )
-    
+    output$warning_feedback <- renderUI(giveFeedBack(length(warn_loci()) == 0, "",
+                                                     paste("Warning: The following HLA-loci has only one allele in the input:", 
+                                                           paste(warn_loci(), collapse = ", "),
+                                                           "  Some results will not be calculated."
+                                                           )
+                                                     ))
     
     #update the checkbox input based on available values 
     shiny::observeEvent(avail_check(), {
@@ -110,7 +119,8 @@ resultsServer <- function(id, middle_table, prom_session){
     # calculate heterogeneity 
     out_homo <- shiny::eventReactive(input$result_next ,{ # only calculate if result_next button is clicked
       if (input$res_homo) {
-        detectHomozygotes(middle_table()) |> as.data.frame()
+        detectHomozygotes(middle_table(), warn = warn_loci()) |> 
+          as.data.frame()
       } else {
         # a data frame only consisting of the ID column
         makePlaceHolder(middle_table())
@@ -120,7 +130,8 @@ resultsServer <- function(id, middle_table, prom_session){
     # calculate evolutionary divergence
     out_evdiv <- shiny::eventReactive(input$result_next ,{ # only calculate if result_next button is clicked
       if (length(input$res_evdiv) > 0) {
-        evolutionaryDivergence(middle_table() , mean_by = "Class", selected = input$res_evdiv) |> as.data.frame()
+        evolutionaryDivergence(middle_table() , mean_by = "Class", selected = input$res_evdiv, warn = warn_loci()) |> 
+          as.data.frame()
       } else {
         # a data frame only consisting of the ID column
         makePlaceHolder(middle_table())
@@ -129,7 +140,8 @@ resultsServer <- function(id, middle_table, prom_session){
     
     out_funcdiv <-  shiny::eventReactive(input$result_next ,{ # only calculate if result_next button is clicked
       if (length(input$res_funcdiv) > 0) {
-        functionalDivergence(middle_table(), selected = input$res_funcdiv, "Locus") |> as.data.frame()
+        functionalDivergence(middle_table(), selected = input$res_funcdiv, "Locus", warn = warn_loci()) |> 
+          as.data.frame()
       } else {
         # a data frame only consisting of the ID column
         makePlaceHolder(middle_table())
@@ -159,7 +171,7 @@ resultsServer <- function(id, middle_table, prom_session){
     
     
     
-   # output$test <- shiny::renderPrint(str(input$res_funcdiv)) # uncomment for easy testing
+    output$test <- shiny::renderPrint(checkFor2Alleles(middle_table())) # uncomment for easy testing
     return(all_results)
   })
 }

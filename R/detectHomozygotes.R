@@ -2,7 +2,7 @@
 #' 
 #' @param middle_table middle table in long format, output of selectModul
 
-detectHomozygotes <- function(middle_table){
+detectHomozygotes <- function(middle_table, warn){
 
   x <- middle_table |>
     dplyr::select(ID, HLA, Locus) |>
@@ -12,6 +12,7 @@ detectHomozygotes <- function(middle_table){
   out <-  x |>
       dplyr::group_by(ID, Locus) |>
       dplyr::summarise(Homozygote = dplyr::n_distinct(HLA) == 1, .groups = "drop") |>
+      mutateToWarning(warn, "Homozygote") |> 
       tidyr::pivot_wider(names_from = Locus, values_from = Homozygote, names_prefix = "Homozygote_")
 
     return(out)
