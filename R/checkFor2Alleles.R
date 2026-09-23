@@ -38,3 +38,21 @@ mutateToWarning <- function(df, warn, col_to_mutate, col_check = "Locus"){
   
   return(df)
 }
+
+
+checkForMoreAlleles <- function(middle_table){
+  
+  avail_loci <- unique(middle_table$Locus) # all loci that are in input
+  
+  max_alleles <- middle_table |> 
+    dplyr::count(ID, Locus) |> 
+    dplyr::group_by(Locus) |> 
+    dplyr::summarise(max_Allele = max(n))
+  
+  
+  warn_alleles <- max_alleles |>
+    dplyr::filter(Locus %in% c("A", "B", "C", "DR") & max_Allele > 2 | Locus %in% c("DQ", "DP") & max_Allele > 4 ) |>
+    dplyr::pull(Locus)
+  
+  return(warn_alleles)
+}

@@ -9,6 +9,7 @@ resultsUI <- function(id){
     shiny::p(texts$result_main),
     shiny::uiOutput(ns("avail_feedback")),
     shiny::uiOutput(ns("warning_feedback")),
+    shiny::uiOutput(ns("more_feedback")),
     bslib::layout_columns(
       shiny::div(
         shiny::p("Allele promiscuity"),
@@ -31,7 +32,7 @@ resultsUI <- function(id){
       shiny::uiOutput(ns("results_next_ui")),
       col_widths = c(2, -6, 2, -2)
     )
-  # , verbatimTextOutput(ns("test"))
+   , verbatimTextOutput(ns("test"))
   )
 }
 
@@ -46,17 +47,26 @@ resultsServer <- function(id, middle_table, prom_session){
     avail_loci <- shiny::reactive(sort(unique(middle_table()[["Locus"]])))
     
     # get loci, where none of the samples has more than one 
-    warn_loci <- reactive(checkFor2Alleles(middle_table()))
+    warn_loci <- reactive(checkFor2Alleles(middle_table() ) )
+    more_loci <- reactive(checkForMoreAlleles(middle_table() ) )
     
-    # check if any locus are recognized
+    # check if any locus are recognized - give user feedback
     avail_check <- shiny::reactive(length(avail_loci()) > 0)
     output$avail_feedback <- shiny::renderUI(giveFeedBack(avail_check(), texts$results_avail_pass, texts$results_avail_fail ) )
     output$warning_feedback <- renderUI(giveFeedBack(length(warn_loci()) == 0, "",
                                                      paste("Warning: The following HLA-loci has only one allele in the input:", 
                                                            paste(warn_loci(), collapse = ", "),
-                                                           "  Some results will not be calculated."
+                                                           "---Some results will not be calculated."
                                                            )
                                                      ))
+    output$warning_feedback <- renderUI(giveFeedBack(length(more_loci()) == 0, "",
+                                                     paste("ERROR!: The following HLA-loci has more than 2 alleles in the input:", 
+                                                           paste(more_loci(), collapse = ", "),
+                                                          "---Fix this to proceed!"
+                                                     )
+    ))
+    
+    
     
     #update the checkbox input based on available values 
     shiny::observeEvent(avail_check(), {
@@ -154,14 +164,14 @@ resultsServer <- function(id, middle_table, prom_session){
     })
     
     
-    # RESULTS nav button - only active if select_check is passed
-    res_check <- shiny::reactive( any( length(res_types()) > 0, input$res_homo, length(input$res_evdiv) > 0, length(input$res_funcdiv) > 0  )  )
+    # RESULTS nav button - only active if select_check is passed&
+    res_check_ok <- shiny::reactive( any( length(res_types()) > 0, input$res_homo, length(input$res_evdiv) > 0, length(input$res_funcdiv) > 0  ) & length(more_loci()) == 0 )
     
     output$results_next_ui  <- shiny::renderUI(
-      if (!res_check()) {
-        shiny::actionButton(ns("result_next"), "Get results!", disabled = TRUE)
+      if (res_check_ok()) {
+        bslib::input_task_button(ns("result_next"), label = "Get results", status = "primary" , spinner = TRUE, state = "ready")
       } else {
-        bslib::input_task_button(ns("result_next"), label = "Get results!", status = "primary" , spinner = TRUE, state = "ready")
+        shiny::actionButton(ns("result_next"), "Get results", disabled = TRUE)
       }
     )
     
@@ -171,7 +181,7 @@ resultsServer <- function(id, middle_table, prom_session){
     
     
     
-  #  output$test <- shiny::renderPrint(checkFor2Alleles(middle_table())) # uncomment for easy testing
+    output$test <- shiny::renderPrint(list(warn_loci(), more_loci(), res_check_ok())) # uncomment for easy testing
     return(all_results)
   })
 }
