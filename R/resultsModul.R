@@ -31,7 +31,7 @@ resultsUI <- function(id){
       shiny::uiOutput(ns("results_next_ui")),
       col_widths = c(2, -6, 2, -2)
     )
-   , verbatimTextOutput(ns("test"))
+  # , verbatimTextOutput(ns("test"))
   )
 }
 
@@ -171,7 +171,7 @@ resultsServer <- function(id, middle_table, prom_session){
     
     
     
-    output$test <- shiny::renderPrint(checkFor2Alleles(middle_table())) # uncomment for easy testing
+  #  output$test <- shiny::renderPrint(checkFor2Alleles(middle_table())) # uncomment for easy testing
     return(all_results)
   })
 }
