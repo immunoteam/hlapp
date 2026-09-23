@@ -52,14 +52,14 @@ resultsServer <- function(id, middle_table, prom_session){
     
     # check if any locus are recognized - give user feedback
     avail_check <- shiny::reactive(length(avail_loci()) > 0)
-    output$avail_feedback <- shiny::renderUI(giveFeedBack(avail_check(), texts$results_avail_pass, texts$results_avail_fail ) )
+    output$avail_feedback <- shiny::renderUI(giveFeedBack(avail_check(), paste(texts$results_avail_pass, paste(avail_loci(), collapse = ", ")), texts$results_avail_fail ) )
     output$warning_feedback <- renderUI(giveFeedBack(length(warn_loci()) == 0, "",
                                                      paste("Warning: The following HLA-loci has only one allele in the input:", 
                                                            paste(warn_loci(), collapse = ", "),
                                                            "---Some results will not be calculated."
                                                            )
                                                      ))
-    output$warning_feedback <- renderUI(giveFeedBack(length(more_loci()) == 0, "",
+    output$more_feedback <- renderUI(giveFeedBack(length(more_loci()) == 0, "",
                                                      paste("ERROR!: The following HLA-loci has more than 2 alleles in the input:", 
                                                            paste(more_loci(), collapse = ", "),
                                                           "---Fix this to proceed!"
