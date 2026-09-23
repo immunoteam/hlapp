@@ -29,7 +29,7 @@ texts <- list(
     select_hla_pass = "Column(s) identified as potential HLA genotype columns:",
     select_hla_fail = "ERROR: Could not detect any columns with recognised HLA allele data",  
     select_hla = "Select columns of HLA data you want to analyze.",
-    select_hla_tooltip = "In each row, selected columns should only contain hla data of one sample/patient.\n One column can contain multiple alleles, separated with a comma.", 
+    select_hla_tooltip = "In each row, selected columns should only contain HLA data of one sample/patient.\n One column can contain multiple alleles, separated with a comma.", 
     select_check_pass = "", 
     select_check_fail = "To proceed, please select at least one colum.", 
     # result modul
