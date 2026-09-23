@@ -23,7 +23,7 @@ texts <- list(
     select_title = "2. Select input columns", 
     select_main = "Detected columns that potentially contain sample IDs and HLA genotype data. Please select the columns you want to use.",
     select_id = "Select column of sample IDs:",
-    select_id_tooltip = "IDs should be unique to each sample", 
+    select_id_tooltip = "IDs should be unique for each sample", 
     select_id_pass = "Column(s) identified as potential ID column:",
     select_id_fail = "ERROR: Could not detect a potential ID column. (Column of unique, non-HLA genotype values)",
     select_hla_pass = "Column(s) identified as potential HLA genotype columns:",
