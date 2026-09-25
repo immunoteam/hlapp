@@ -32,7 +32,7 @@ resultsUI <- function(id){
       shiny::uiOutput(ns("results_next_ui")),
       col_widths = c(2, -6, 2, -2)
     )
-   , verbatimTextOutput(ns("test"))
+ #  , verbatimTextOutput(ns("test"))
   )
 }
 
@@ -181,7 +181,7 @@ resultsServer <- function(id, middle_table, prom_session){
     
     
     
-    output$test <- shiny::renderPrint(list(warn_loci(), more_loci(), res_check_ok())) # uncomment for easy testing
+    #output$test <- shiny::renderPrint(list(warn_loci(), more_loci(), res_check_ok())) # uncomment for easy testing
     return(all_results)
   })
 }

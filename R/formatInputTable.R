@@ -64,6 +64,17 @@ formatManualTable <- function(x, id.col, hla.cols, delim = ","){
     dplyr::rename(ID = .data[[id.col]]) |>
     tidyr::unite(HLA, all_of(hla.cols), sep = delim) 
   
+  #  remove HLA or HLA- from the beginning of alleles names
+  if (any(grepl("HLA|HLA-", x$HLA) ) ){
+    message("Removing HLA from allele names")
+    x$HLA <- gsub("HLA|HLA-", "", x$HLA) 
+  }
+  
+  if(any(grepl("\\*|:", x$HLA) ) ){
+    message("Removing * and : from allele names")
+    x$HLA <- gsub("\\*|:", "", x$HLA)
+  } 
+  
   if(delim != " "){
     x <- dplyr::mutate(x, HLA = gsub(" ", "", HLA)) # remove spaces from rows
   } else {
@@ -100,11 +111,6 @@ formatInputTable <- function(x, id.col = "ID", hla.cols = NULL, flag.forbidden =
   
   # check if HLA allele names contain any * or : if they do, remove them
   
-  if(any(grepl("\\*|:", x$HLA) ) ){
-    message("Removing * and : from allele names")
-    x$HLA <- gsub("\\*|:", "", x$HLA)
-  } 
-  
   #remove P from the end of the allele name
   if (any(grepl("P$|P-", x$HLA) ) ){
     message("Removing P from end of the allele names")
@@ -115,11 +121,31 @@ formatInputTable <- function(x, id.col = "ID", hla.cols = NULL, flag.forbidden =
   # remove empty and non identified allele rows
   x <- x |>
     dplyr::filter(HLA != "") |>
-    dplyr::filter(grepl("\\d\\d\\d\\d", HLA))
+    dplyr::filter(grepl("\\d\\d\\d\\d", HLA)) |> #remove rows without 4 digit numbers
+    dplyr::mutate(HLA = trim_id(HLA))
+  
+  
+
+  
   
   #rm forbidden alpha-beta combinations
   x <- rmForbiddenCombinations(x, flag = flag.forbidden)
   x <- dplyr::arrange(x, ID, HLA) 
   
+  return(x)
+}
+
+# function to remove the 5th and 6th digit from an allele
+trim_id <- function(x, types = c("A", "B", "C", "DPB1", "DPA1", "DQA1", "DQB1", "DRB1")) {
+  type_pattern <- paste0("(", paste(types, collapse = "|"), ")")
+  
+  pattern <- paste0(type_pattern, "(\\d{4})\\d{2}")
+  sub_pattern <- "\\1\\2"
+  
+  
+  if (any(grepl(pattern, x))) {
+    message("Removeing 5th and 6th digits from allele names")
+    x <- gsub(pattern, sub_pattern, x)
+  }
   return(x)
 }
