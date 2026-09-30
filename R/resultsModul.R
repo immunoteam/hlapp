@@ -74,6 +74,7 @@ resultsServer <- function(id, middle_table, prom_session){
       if(avail_check()){
         ind_values <- paste0(avail_loci(), "i")
         avg_values <- paste0(avail_loci(), "a")
+        funcdiv_loci <- intersect(avail_loci(), c("A", "B", "C") )
         avail_type <- dplyr::recode_values(avail_loci(),
                                                          c("A", "B", "C") ~ "I", 
                                                          c("DP", "DQ", "DR") ~ "II")  |>  unique()
@@ -86,8 +87,8 @@ resultsServer <- function(id, middle_table, prom_session){
                                         choiceValues = avg_values) # add ()?  
         
         updateCheckboxGroupInput(session, "res_funcdiv", 
-                                 choiceNames = paste0("HLA-", avail_loci()), 
-                                 choiceValues = avail_loci()
+                                 choiceNames = paste0("HLA-", funcdiv_loci), 
+                                 choiceValues = funcdiv_loci
                                  )
         updateCheckboxGroupInput(session, "res_evdiv", 
                                  choiceNames = paste0("HLA-", avail_type), 
