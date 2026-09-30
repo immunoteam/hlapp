@@ -38,7 +38,7 @@ selectColumnsUI <- function(id){
       shiny::uiOutput(ns("select_next_ui")),
       col_widths = c(2, -6, 2, -2)  
     ) 
-    # ,verbatimTextOutput(ns("test")) # for testing
+     ,verbatimTextOutput(ns("test")) # for testing
     
   )
 }
@@ -110,14 +110,20 @@ selectColumnsServer <- function(id, input_df = NULL, prom_session){
     #check if middle table contains recognizeable alleles (at least for each sample)
     
     allele_check <- reactive( {
-      input_df() |>
-        head(n = 3)|>
-        formatInputTable(id.col = input$idcol, hla.cols = input$hlacol,
-                         flag.forbidden = T , delim = input$delim) |> 
-        group_by(ID) |> 
-        summarise(allele_check = any(HLA %in% unlist(allele_names))) |>
-        pull(allele_check) |> 
-        any()
+      
+      if (input$idcol != ""){
+        input_df() |>
+          head(n = 3)|>
+          formatInputTable(id.col = input$idcol, hla.cols = input$hlacol,
+                           flag.forbidden = T , delim = input$delim) |> 
+          group_by(ID) |> 
+          summarise(allele_check = any(HLA %in% unlist(allele_names))) |>
+          pull(allele_check) |> 
+          any()
+      } else {
+        FALSE
+      }
+      
     })
     
     output$allele_check <- renderUI(giveFeedBack(allele_check() & select_check(), "Alleles recognised",   "No alleles recognised with these settings"))
@@ -143,7 +149,7 @@ selectColumnsServer <- function(id, input_df = NULL, prom_session){
     
     
     ### TESTING
-    # output$test  <- renderPrint(list(select_check(), allele_check() )  )
+     output$test  <- renderPrint(list(input$idcol )  )
     
     return(middle_table)
   })

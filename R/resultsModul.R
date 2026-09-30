@@ -122,7 +122,7 @@ resultsServer <- function(id, middle_table, prom_session){
     res_types <- shiny::reactive(c(input$res_ind, input$res_avg)) # merge the values from the two checkboxes
     
     out_prom <- shiny::eventReactive(input$result_next ,{ # only calculate if result_next button is clicked
-      #Sys.sleep(3)# for testing
+      #Sys.sleep(3)# for testing 
       hlaFromMiddleTable(middle_table(), res_types())
     })
     

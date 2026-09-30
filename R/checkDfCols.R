@@ -57,7 +57,7 @@ checkIdCol <- function(col){
 }
 
 checkDfForIdCols <- function(df) {
-  res <- apply(head(df), 2, checkIdCol)
+  res <- apply(df, 2, checkIdCol)
   names(res[res])
 }
 
