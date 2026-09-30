@@ -113,7 +113,7 @@ selectColumnsServer <- function(id, input_df = NULL, prom_session){
       
       if (input$idcol != ""){
         input_df() |>
-          head(n = 3)|>
+          head(n = 100)|>
           formatInputTable(id.col = input$idcol, hla.cols = input$hlacol,
                            flag.forbidden = T , delim = input$delim) |> 
           group_by(ID) |> 

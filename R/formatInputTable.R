@@ -70,9 +70,9 @@ formatManualTable <- function(x, id.col, hla.cols, delim = ","){
     x$HLA <- gsub("HLA|HLA-", "", x$HLA) 
   }
   
-  if(any(grepl("\\*|:", x$HLA) ) ){
-    message("Removing * and : from allele names")
-    x$HLA <- gsub("\\*|:", "", x$HLA)
+  if(any(grepl("\\*|:|_", x$HLA) ) ){
+    message("Removing *, _ and : from allele names")
+    x$HLA <- gsub("\\*|:|_", "", x$HLA)
   } 
   
   if(delim != " "){
