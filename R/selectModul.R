@@ -117,7 +117,7 @@ selectColumnsServer <- function(id, input_df = NULL, prom_session){
         group_by(ID) |> 
         summarise(allele_check = any(HLA %in% unlist(allele_names))) |>
         pull(allele_check) |> 
-        all()
+        any()
     })
     
     output$allele_check <- renderUI(giveFeedBack(allele_check() & select_check(), "Alleles recognised",   "No alleles recognised with these settings"))
