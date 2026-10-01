@@ -26,13 +26,12 @@ resultsUI <- function(id){
       shiny::checkboxGroupInput(ns("res_funcdiv"), "Calculate functional divergence", choiceNames = c("HLA-A", "HLA-B", "HLA-C"), choiceValues = c("A", "B", "C")) # get evolutionary divergence
       
     ),
-   # shiny::verbatimTextOutput(ns("testing")), # uncomment for easy testing
     bslib::layout_columns(
       shiny::actionButton(ns("result_back"), "Go back", disabled = FALSE),
       shiny::uiOutput(ns("results_next_ui")),
       col_widths = c(2, -6, 2, -2)
     )
- #  , verbatimTextOutput(ns("test"))
+   , verbatimTextOutput(ns("test"))
   )
 }
 
@@ -181,8 +180,9 @@ resultsServer <- function(id, middle_table, prom_session){
     all_results <- shiny::reactive(  purrr::reduce(list( out_prom(), out_homo(), out_evdiv(), out_funcdiv() ), full_join, by = dplyr::join_by(ID) ) )
     
     
-    
-    #output$test <- shiny::renderPrint(list(warn_loci(), more_loci(), res_check_ok())) # uncomment for easy testing
+    ### TESTING
+    testval <-reactive(  middle_table() |> pull(ID)|> unique() )
+    output$test <- shiny::renderPrint(list(warn_loci(), more_loci(), testval()  )) # uncomment for easy testing
     return(all_results)
   })
 }

@@ -106,6 +106,9 @@ formatManualTable <- function(x, id.col, hla.cols, delim = ","){
 #' @return a data frame
 formatInputTable <- function(x, id.col = "ID", hla.cols = NULL, flag.forbidden = T, delim = ","){
   
+   # force ID to be treated as a character
+  x[[id.col]] <- as.character(x[[id.col]])
+  
   #turn input table a long format
   x <- formatManualTable(x, id.col, hla.cols, delim)
   
@@ -125,9 +128,6 @@ formatInputTable <- function(x, id.col = "ID", hla.cols = NULL, flag.forbidden =
     dplyr::mutate(HLA = trim_id(HLA))
   
   
-
-  
-  
   #rm forbidden alpha-beta combinations
   x <- rmForbiddenCombinations(x, flag = flag.forbidden)
   x <- dplyr::arrange(x, ID, HLA) 
@@ -139,12 +139,13 @@ formatInputTable <- function(x, id.col = "ID", hla.cols = NULL, flag.forbidden =
 trim_id <- function(x, types = c("A", "B", "C", "DPB1", "DPA1", "DQA1", "DQB1", "DRB1")) {
   type_pattern <- paste0("(", paste(types, collapse = "|"), ")")
   
-  pattern <- paste0(type_pattern, "(\\d{4})\\d{2}")
+  if_pattern <-paste0(type_pattern, "(\\d{5})")
+  pattern <- paste0(type_pattern, "(\\d{4})\\d{0,4}")
   sub_pattern <- "\\1\\2"
   
   
-  if (any(grepl(pattern, x))) {
-    message("Removeing 5th and 6th digits from allele names")
+  if (any(grepl(if_pattern, x))) {
+    message("Trimming allelle names to 4 digits")
     x <- gsub(pattern, sub_pattern, x)
   }
   return(x)
