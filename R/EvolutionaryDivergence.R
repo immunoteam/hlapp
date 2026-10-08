@@ -20,16 +20,15 @@ evolutionaryDivergence <- function(middle_table, selected,
                   HLA_ = TMP[2]) |>
     dplyr::ungroup() |>
     unique() |>
+    dplyr::filter(length(TMP) == 1 | HLA_ != HLA ) |> 
     dplyr::left_join(evolutionary_distances, by = join_by(HLA == Allele1, HLA_ == Allele2)) |> # add HED values
     mutate(Distance = as.numeric(ifelse(HLA==HLA_, 0, Distance))) |> 
     dplyr::select(-TMP)
   
   # arrange to export format
-  out <- x |> 
-    dplyr::group_by(ID, Locus, Class) |> 
-    dplyr::summarise(max_dist= max(Distance, na.rm = T), .groups = "drop")     |>
+  out <- x |>
     dplyr::group_by(ID, .data[[mean_by]]) |> 
-    dplyr::summarise(HED = mean(max_dist, na.rm = T), .groups = "drop") |> 
+    dplyr::summarise(HED = mean(Distance, na.rm = T), .groups = "drop") |> 
     mutateToWarning(warn, "HED", col_check = "Class") |> 
     tidyr::pivot_wider(names_from = all_of(mean_by) , names_prefix = "HED_", values_from = "HED")
   
