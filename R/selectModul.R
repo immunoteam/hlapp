@@ -37,7 +37,10 @@ selectColumnsUI <- function(id){
       shiny::actionButton(ns("select_back"), "Go back", disabled = FALSE),
       shiny::uiOutput(ns("select_next_ui")),
       col_widths = c(2, -6, 2, -2)  
-    ) 
+    ) , 
+    p("Your input:"),
+    DT::dataTableOutput(ns("input_head"))
+    
      #,verbatimTextOutput(ns("test")) # for testing
     
   )
@@ -46,6 +49,22 @@ selectColumnsUI <- function(id){
 selectColumnsServer <- function(id, input_df = NULL, prom_session){
   moduleServer(id, function(input, output, session) {
     ns <- session$ns
+    
+    # user feedback on uploaded data
+    output$input_head <- DT::renderDT({
+      
+      selcols <- which(colnames(input_df()) %in% c(input$idcol, input$hlacol))
+      
+      DT::datatable(
+        head(input_df(), n=3),
+        options = DToptions,
+        selection = list(
+          mode = "multiple",
+          target = "column",
+          selected = selcols
+        )
+      )
+    } )
     
     # get the column names of input_df
     cols <- reactive(  checkDfCols(input_df() ) )
