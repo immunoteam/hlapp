@@ -9,7 +9,7 @@
 replaceComplex <- function(x, locus, delim = ","){
   if(!locus %in% c("DQ", "DP")) stop("complex locus must be DP or DQ")
   
-  # get valuues to be replaced
+  # get values to be replaced
   x_vec <- strsplit(x, delim) |> unlist()
   vals_to_replace <- grep("-", grep(locus, x_vec, value = T), invert = T,  value = T)
   
@@ -59,29 +59,17 @@ rmForbiddenCombinations <- function(x,  hla.col = "HLA", flag = F ){
 #' @param id.col name of id column
 #' @param delim deliminator within coulumn. currently ","
 formatManualTable <- function(x, id.col, hla.cols, delim = ","){
+  
+  # merge all hla columns into one column, values separated by delim
   x <- x |>
     dplyr::select(all_of(c(id.col, hla.cols))) |>
     dplyr::rename(ID = .data[[id.col]]) |>
     tidyr::unite(HLA, all_of(hla.cols), sep = delim) 
   
-  #  remove HLA or HLA- from the beginning of alleles names
-  if (any(grepl("HLA|HLA-", x$HLA) ) ){
-    message("Removing HLA from allele names")
-    x$HLA <- gsub("HLA|HLA-", "", x$HLA) 
-  }
+  x <- x |> 
+    dplyr::mutate(HLA = formatHlaFormat(HLA))
   
-  if(any(grepl("\\*|:|_", x$HLA) ) ){
-    message("Removing *, _ and : from allele names")
-    x$HLA <- gsub("\\*|:|_", "", x$HLA)
-  } 
-  
-  if(delim != " "){
-    x <- dplyr::mutate(x, HLA = gsub(" ", "", HLA)) # remove spaces from rows
-  } else {
-    x <- dplyr::mutate(x, HLA = gsub("  ", " ", HLA)) # if delim is " " remove second spaces from rows
-  }
-    
-  # replace DQ and DP genes with complexes
+  # replace DQ and DP genes with complexes - this works on a delim separated, single charachter
   x <- x |>
     dplyr::rowwise() |>
     dplyr::mutate(HLA = replaceComplex(HLA, "DQ", delim)) |>
@@ -112,20 +100,11 @@ formatInputTable <- function(x, id.col = "ID", hla.cols = NULL, flag.forbidden =
   #turn input table a long format
   x <- formatManualTable(x, id.col, hla.cols, delim)
   
-  # check if HLA allele names contain any * or : if they do, remove them
-  
-  #remove P from the end of the allele name
-  if (any(grepl("P$|P-", x$HLA) ) ){
-    message("Removing P from end of the allele names")
-    x$HLA <- gsub("P$", "", x$HLA) 
-    x$HLA <- gsub("P-", "-", x$HLA) 
-  }
-  
   # remove empty and non identified allele rows
   x <- x |>
     dplyr::filter(HLA != "") |>
-    dplyr::filter(grepl("\\d\\d\\d\\d", HLA)) |> #remove rows without 4 digit numbers
-    dplyr::mutate(HLA = trim_id(HLA))
+    dplyr::filter(grepl("\\d\\d\\d\\d", HLA)) #remove rows without 4 digit numbers
+
   
   
   #rm forbidden alpha-beta combinations
@@ -135,18 +114,4 @@ formatInputTable <- function(x, id.col = "ID", hla.cols = NULL, flag.forbidden =
   return(x)
 }
 
-# function to remove the 5th and 6th digit from an allele
-trim_id <- function(x, types = c("A", "B", "C", "DPB1", "DPA1", "DQA1", "DQB1", "DRB1")) {
-  type_pattern <- paste0("(", paste(types, collapse = "|"), ")")
-  
-  if_pattern <-paste0(type_pattern, "(\\d{5})")
-  pattern <- paste0(type_pattern, "(\\d{4})\\d{0,4}")
-  sub_pattern <- "\\1\\2"
-  
-  
-  if (any(grepl(if_pattern, x))) {
-    message("Trimming allelle names to 4 digits")
-    x <- gsub(pattern, sub_pattern, x)
-  }
-  return(x)
-}
+

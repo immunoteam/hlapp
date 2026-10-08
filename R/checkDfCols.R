@@ -2,22 +2,55 @@
 accepted_hla_formats <- paste0(c("A", "B", "C", "DPA1", "DPB1", "DQA1", "DQB1", "DRB1"), "\\d\\d\\d\\d")
 
 #
-formatHlaFormat <- function(x) {
+# function to remove the 5th and 6th digit from an allele
+trimId <- function(x, types = c("A", "B", "C", "DPB1", "DPA1", "DQA1", "DQB1", "DRB1")) {
+  type_pattern <- paste0("(", paste(types, collapse = "|"), ")")
+  
+  if_pattern <-paste0(type_pattern, "(\\d{5})")
+  pattern <- paste0(type_pattern, "(\\d{4})\\d{0,4}")
+  sub_pattern <- "\\1\\2"
+  
+  
+  if (any(grepl(if_pattern, x))) {
+    message("Trimming allelle names to 4 digits")
+    x <- gsub(pattern, sub_pattern, x)
+  }
+  return(x)
+}
+
+
+formatHlaFormat <- function(x, delim = ",") {
+  
+  # remove extra whitespace
+  if(delim != " "){
+    x <- gsub(" ", "", x) # remove spaces from rows
+  } else {
+    x <- gsub("  ", " ", x) # if delim is " " remove second spaces from rows
+  }
+  
+  #  remove HLA or HLA- from the beginning of alleles names
+  if (any(grepl("HLA|HLA-", x) ) ){
+    message("Removing HLA from allele names")
+    x <- gsub("HLA|HLA-", "", x) 
+  }
   
   # remove * and : from allele names
   if(any(grepl("\\*|:|_", x) ) ){
-   # message("Removing * and : and _ from allele names")
+    message("Removing * and : and _ from allele names")
     x <- gsub("\\*|:|_", "", x)
   } 
   
   #remove P from the end of the allele name
-  if (any(grepl("P$|P-", x) ) ){
-  #  message("Removing P from end of the allele names")
+  P_pattern<- paste0("P$|P-|P", delim)
+  if (any(grepl(P_pattern, x) ) ){
+   message("Removing P from end of the allele names")
     x <- gsub("P$", "", x) 
     x <- gsub("P-", "-", x) 
+    x <- gsub(paste0("P", delim), delim, x) 
   }
   
-  # later alleles longer than 4 digits could be shortened
+  # trim longer alleles to 4 digits
+  x <- trimId(x)
   
   return(x)
 }
