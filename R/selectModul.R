@@ -38,7 +38,7 @@ selectColumnsUI <- function(id){
       shiny::uiOutput(ns("select_next_ui")),
       col_widths = c(2, -6, 2, -2)  
     ) 
-     ,verbatimTextOutput(ns("test")) # for testing
+     #,verbatimTextOutput(ns("test")) # for testing
     
   )
 }
