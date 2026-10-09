@@ -31,7 +31,7 @@ resultsUI <- function(id){
       shiny::uiOutput(ns("results_next_ui")),
       col_widths = c(2, -6, 2, -2)
     )
-   #, verbatimTextOutput(ns("test"))
+   , verbatimTextOutput(ns("test"))
   )
 }
 
@@ -91,7 +91,7 @@ resultsServer <- function(id, middle_table, prom_session){
         
         updateCheckboxGroupInput(session, "res_funcdiv", 
                                  choiceNames = if(funcdiv_is_0) "Unavailable" else paste0("HLA-", funcdiv_loci) , 
-                                 choiceValues = if (funcdiv_is_0)  "Unavailable "else funcdiv_loci 
+                                 choiceValues = if (funcdiv_is_0)  "Unavailable" else funcdiv_loci 
                                  )
         
         updateCheckboxGroupInput(session, "res_evdiv", 
@@ -154,9 +154,13 @@ resultsServer <- function(id, middle_table, prom_session){
     })
     
     out_funcdiv <-  shiny::eventReactive(input$result_next ,{ # only calculate if result_next button is clicked
-      if (length(input$res_funcdiv) > 0 & all(input$res_funcdiv != "Unavailable")) {
-        functionalDivergence(middle_table(), selected = input$res_funcdiv, "Locus", warn = warn_loci()) |> 
-          as.data.frame()
+      if (length(input$res_funcdiv) > 0 ) {
+        if ("Unavailable" %in% input$res_funcdiv){
+          makePlaceHolder(middle_table())
+        } else {
+          functionalDivergence(middle_table(), selected = input$res_funcdiv, "Locus", warn = warn_loci()) |> 
+            as.data.frame() 
+        }
       } else {
         # a data frame only consisting of the ID column
         makePlaceHolder(middle_table())
@@ -186,8 +190,7 @@ resultsServer <- function(id, middle_table, prom_session){
     
     
     ### TESTING
-    testval <-reactive(  middle_table() |> pull(ID)|> unique() )
-    output$test <- shiny::renderPrint(list(warn_loci(), more_loci(), testval()  )) # uncomment for easy testing
+    output$test <- shiny::renderPrint(list(input$res_funcdiv )) # uncomment for easy testing
     return(all_results)
   })
 }
