@@ -22,15 +22,16 @@ evolutionaryDivergence <- function(middle_table, selected,
     unique() |>
     dplyr::filter(length(TMP) == 1 | HLA_ != HLA ) |> 
     dplyr::left_join(evolutionary_distances, by = join_by(HLA == Allele1, HLA_ == Allele2)) |> # add HED values
-    mutate(Distance = as.numeric(ifelse(HLA==HLA_, 0, Distance))) |> 
+    dplyr::mutate(Distance = as.numeric(ifelse(HLA==HLA_, 0, Distance) ) )  |> 
     dplyr::select(-TMP)
   
   # arrange to export format
   out <- x |>
     dplyr::group_by(ID, .data[[mean_by]]) |> 
-    dplyr::summarise(HED = mean(Distance, na.rm = T), .groups = "drop") |> 
+    dplyr::summarise(HED = round(mean(Distance, na.rm = T), 3), .groups = "drop") |> 
     mutateToWarning(warn, "HED", col_check = "Class") |> 
-    tidyr::pivot_wider(names_from = all_of(mean_by) , names_prefix = "HED_", values_from = "HED")
+    tidyr::pivot_wider(names_from = all_of(mean_by) , names_prefix = "HED_", values_from = "HED") |> 
+    dplyr::select(ID, contains("HED"))
   
   return(out)
 }

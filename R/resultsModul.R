@@ -21,9 +21,9 @@ resultsUI <- function(id){
         shiny::checkboxInput(ns("res_avg_all"),  "Select / Deselect all", value = FALSE),
         shiny::checkboxGroupInput(ns("res_avg"), NULL, choices = character())  
       ),
-      shiny::radioButtons(ns("res_homo"), "Detect homozygosity", choiceNames = c("yes", "no"), choiceValues = c(TRUE, FALSE), selected = FALSE), # get homozygosity
-      shiny::checkboxGroupInput(ns("res_evdiv"), "Calculate evolutionary divergence", choiceNames = c("HLA-I", "HLA-II"), choiceValues = c("I", "II")), # get evolutionary divergence
-      shiny::checkboxGroupInput(ns("res_funcdiv"), "Calculate functional divergence", choiceNames = c("HLA-A", "HLA-B", "HLA-C"), choiceValues = c("A", "B", "C")) # get evolutionary divergence
+      shiny::radioButtons(ns("res_homo"), "Homozygosity", choiceNames = c("yes", "no"), choiceValues = c(TRUE, FALSE), selected = FALSE), # get homozygosity
+      shiny::checkboxGroupInput(ns("res_evdiv"), "HLA evolutionary divergence (HED)", choiceNames = c("HLA-I", "HLA-II"), choiceValues = c("I", "II")), # get evolutionary divergence
+      shiny::checkboxGroupInput(ns("res_funcdiv"), "Functional divergence", choiceNames = c("HLA-A", "HLA-B", "HLA-C"), choiceValues = c("A", "B", "C")) # get evolutionary divergence
       
     ),
     bslib::layout_columns(
@@ -71,24 +71,29 @@ resultsServer <- function(id, middle_table, prom_session){
     shiny::observeEvent(avail_check(), {
       
       if(avail_check()){
-        ind_values <- paste0(avail_loci(), "i")
-        avg_values <- paste0(avail_loci(), "a")
-        funcdiv_loci <- intersect(avail_loci(), c("A", "B", "C") )
-        avail_type <- dplyr::recode_values(avail_loci(),
+        
+        loci <- unique(avail_loci())
+        
+        ind_values <- paste0(loci, "i")
+        avg_values <- paste0(loci, "a")
+        funcdiv_loci <- intersect(loci, c("A", "B", "C") )
+        funcdiv_is_0 <- length(funcdiv_loci) == 0
+        avail_type <- dplyr::recode_values(loci,
                                                          c("A", "B", "C") ~ "I", 
                                                          c("DP", "DQ", "DR") ~ "II")  |>  unique()
         
         shiny::updateCheckboxGroupInput(session, "res_ind",
-                                        choiceNames = avail_loci(),
-                                        choiceValues = ind_values) # add ()?
+                                        choiceNames = loci,
+                                        choiceValues = ind_values) 
         shiny::updateCheckboxGroupInput(session, "res_avg",
-                                        choiceNames = avail_loci(),
-                                        choiceValues = avg_values) # add ()?  
+                                        choiceNames = loci,
+                                        choiceValues = avg_values) 
         
         updateCheckboxGroupInput(session, "res_funcdiv", 
-                                 choiceNames = paste0("HLA-", funcdiv_loci), 
-                                 choiceValues = funcdiv_loci
+                                 choiceNames = if(funcdiv_is_0) "Unavailable" else paste0("HLA-", funcdiv_loci) , 
+                                 choiceValues = if (funcdiv_is_0)  "Unavailable "else funcdiv_loci 
                                  )
+        
         updateCheckboxGroupInput(session, "res_evdiv", 
                                  choiceNames = paste0("HLA-", avail_type), 
                                  choiceValues = avail_type
@@ -149,7 +154,7 @@ resultsServer <- function(id, middle_table, prom_session){
     })
     
     out_funcdiv <-  shiny::eventReactive(input$result_next ,{ # only calculate if result_next button is clicked
-      if (length(input$res_funcdiv) > 0) {
+      if (length(input$res_funcdiv) > 0 & all(input$res_funcdiv != "Unavailable")) {
         functionalDivergence(middle_table(), selected = input$res_funcdiv, "Locus", warn = warn_loci()) |> 
           as.data.frame()
       } else {
