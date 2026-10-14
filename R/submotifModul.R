@@ -5,7 +5,8 @@ submotifUI <- function(id) {
   ns <- shiny::NS(id)
   
   shiny::fluidPage(
-    shiny::titlePanel("HLA-I submotif collection"),
+    shiny::titlePanel("HLA submotifs"),
+    p("Here you can select HLA alleles, to explore their binding motifs and peptide submotifs. [MORE EXPLANTION CAN BE ADDED]"),
     
     # CSS styling for all download buttons
     shiny::tags$head(
@@ -70,7 +71,7 @@ submotifUI <- function(id) {
       ),
       
       shiny::mainPanel(
-        shiny::h4("Submotif and Entropy"),
+        shiny::h4("Submotif of the selected peptid cluster"),
         
         # Submotif plot
         shiny::uiOutput(ns("submotif_plot")),
@@ -81,14 +82,13 @@ submotifUI <- function(id) {
         shiny::uiOutput(ns("peptide_ui")),
         
         # Entropy plot
+        shiny::h4("Entropy of the AA positions of the submotif"),
         shiny::plotOutput(ns("entropy_plot")),
         
         # All download buttons grouped at the bottom
         shiny::div(
           class = "download-section",
-          
           shiny::h4("Download data"),
-          
           shiny::div(
             class = "download-row",
             shiny::downloadButton(

@@ -5,8 +5,10 @@ translateUI <- function(id){
   ns <- shiny::NS(id)
   
   shiny::fluidPage(
-    shiny::textAreaInput(ns("alleles"), label = "Enter alleles", rows = 6, value = ""), 
-    shiny::actionButton(ns("load_alleles"), label = "Load alleles from PromsicuityApp"), 
+    p("Here you can translate HLA alleles into the accepted input format of some HLA binding prediction tools."), 
+    p("Type in the allele names, (one allele in a row), or import the allele names from the data you uploaded at the Calculate HLA metrics modul"), 
+    shiny::textAreaInput(ns("alleles"), label = "Enter alleles here", rows = 6, value = ""), 
+    shiny::actionButton(ns("load_alleles"), label = "Import alleles from Calculate metrics modul"), 
     shiny::checkboxGroupInput(ns("formats"), label = "Allele formats", choices = c("netMHCpan", "MHCnuggets","mixMHCpred") ),
    # shiny::verbatimTextOutput(ns("test")), # for testing
     uiOutput(ns("allele_feedback")),
@@ -36,7 +38,8 @@ translateServer <- function(id, prom_result = NULL) {
     alleles_vec <- reactive({
       req(input$alleles)
       
-      gsub(" ", "", unlist(strsplit(input$alleles, split = "\n") ) )
+      alleles_raw <- gsub(" ", "", unlist(strsplit(input$alleles, split = "\n") ) )
+      formatHlaFormat(alleles_raw)
     })
     
     alleles_pass <- reactive({
