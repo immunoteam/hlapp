@@ -4,44 +4,159 @@
 submotifUI <- function(id) {
   ns <- shiny::NS(id)
   
-      shiny::fluidPage(
-        shiny::titlePanel("HLA-I submotif collection"),
+  shiny::fluidPage(
+    shiny::titlePanel("HLA-I submotif collection"),
     
-        shiny::sidebarLayout(
-          shiny::sidebarPanel(
-            shiny::radioButtons(ns("type"), "Select HLA devtype:", choiceNames = c("HLA-I", "HLA-II"), choiceValues = c("HLA_I", "HLA_II")),
-            shiny::uiOutput(ns("allele_ui")),
-            shiny::uiOutput(ns("cluster_ui")),
-            shiny::hr(),
-            shiny::h4("General allele information"),
-            shiny::uiOutput(ns("allele_motif")),
-            shiny::textOutput(ns("allele_peptide_count")),
-            shiny::plotOutput(ns("nmds_plot"), height = "400px")
+    # CSS styling for all download buttons
+    shiny::tags$head(
+      shiny::tags$style(shiny::HTML("
+        .download-section {
+          margin-top: 25px;
+          padding-top: 15px;
+          border-top: 1px solid #ddd;
+        }
+
+        .download-section h4 {
+          margin-bottom: 15px;
+        }
+
+        .download-row {
+          display: flex;
+          align-items: center;
+          gap: 12px;
+          margin-bottom: 12px;
+        }
+
+        .download-section .btn-primary,
+        .download-section .btn-default {
+          background-color: #007bff !important;
+          border-color: #007bff !important;
+          color: white !important;
+          min-width: 230px;
+          text-align: center;
+        }
+
+        .download-section .btn:hover {
+          background-color: #0056b3 !important;
+          border-color: #0056b3 !important;
+        }
+
+        .download-description {
+          font-size: 13px;
+          color: #555;
+        }
+      "))
+    ),
+    
+    shiny::sidebarLayout(
+      shiny::sidebarPanel(
+        shiny::radioButtons(
+          ns("type"),
+          "Select HLA devtype:",
+          choiceNames = c("HLA-I", "HLA-II"),
+          choiceValues = c("HLA_I", "HLA_II")
+        ),
+        
+        shiny::uiOutput(ns("allele_ui")),
+        shiny::uiOutput(ns("cluster_ui")),
+        
+        shiny::hr(),
+        
+        shiny::h4("General allele information"),
+        shiny::uiOutput(ns("allele_motif")),
+        shiny::textOutput(ns("allele_peptide_count")),
+        
+        shiny::plotOutput(ns("nmds_plot"), height = "400px")
+      ),
+      
+      shiny::mainPanel(
+        shiny::h4("Submotif and Entropy"),
+        
+        # Submotif plot
+        shiny::uiOutput(ns("submotif_plot")),
+        
+        shiny::textOutput(ns("cluster_peptide_count")),
+        
+        # Peptide list interface
+        shiny::uiOutput(ns("peptide_ui")),
+        
+        # Entropy plot
+        shiny::plotOutput(ns("entropy_plot")),
+        
+        # All download buttons grouped at the bottom
+        shiny::div(
+          class = "download-section",
+          
+          shiny::h4("Download data"),
+          
+          shiny::div(
+            class = "download-row",
+            shiny::downloadButton(
+              ns("download_submotif"),
+              "Download Submotif Plot",
+              class = "btn-primary"
+            ),
+            shiny::span(
+              class = "download-description",
+              "Download the submotif plot as an image."
+            )
           ),
-    
-          shiny::mainPanel(
-            shiny::h4("Submotif and Entropy"),
-            shiny::uiOutput(ns("submotif_plot")),
-    
-            # Download button for the submotif plot
-            shiny::downloadButton(ns("download_submotif"), "Download Submotif Plot"),
-            shiny::downloadButton(ns("download_submotif_data"), "Download Submotif Data (RDS)"),
-    
-            shiny::textOutput(ns("cluster_peptide_count")),
-    
-            # Új: peptidek helytakarékos megjelenítése egy accordionPanel-ben
-            shiny::uiOutput(ns("peptide_ui")),  # AccordionPanel vagy toggle gomb a peptidekhez
-    
-            shiny::downloadButton(ns("download_peptide_list"), "Download Peptide List (TXT)"),
-    
-            shiny::plotOutput(ns("entropy_plot")),
-            shiny::downloadButton(ns("download_entropy_plot"), "Download Entropy Plot (PNG)"),
-            shiny::downloadButton(ns("download_entropy_data"), "Download Entropy Data (RDS)")
+          
+          shiny::div(
+            class = "download-row",
+            shiny::downloadButton(
+              ns("download_submotif_data"),
+              "Download Submotif Data (RDS)",
+              class = "btn-primary"
+            ),
+            shiny::span(
+              class = "download-description",
+              "Download the underlying submotif data in RDS format."
+            )
+          ),
+          
+          shiny::div(
+            class = "download-row",
+            shiny::downloadButton(
+              ns("download_peptide_list"),
+              "Download Peptide List (TXT)",
+              class = "btn-primary"
+            ),
+            shiny::span(
+              class = "download-description",
+              "Download the peptide list as a plain-text file."
+            )
+          ),
+          
+          shiny::div(
+            class = "download-row",
+            shiny::downloadButton(
+              ns("download_entropy_plot"),
+              "Download Entropy Plot (PNG)",
+              class = "btn-primary"
+            ),
+            shiny::span(
+              class = "download-description",
+              "Download the entropy plot as a PNG image."
+            )
+          ),
+          
+          shiny::div(
+            class = "download-row",
+            shiny::downloadButton(
+              ns("download_entropy_data"),
+              "Download Entropy Data (RDS)",
+              class = "btn-primary"
+            ),
+            shiny::span(
+              class = "download-description",
+              "Download the underlying entropy data in RDS format."
+            )
           )
         )
       )
-    
-  
+    )
+  )
 }
 
 
