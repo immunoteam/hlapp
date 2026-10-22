@@ -24,8 +24,8 @@ functionalDivergence <- function(middle_table, selected, mean_by = "Locus", warn
   # arrange to export format
   out <- x |> 
     mutateToWarning(warn, "FuncDiv") |> 
-    tidyr::pivot_wider(names_from = all_of(mean_by) , names_prefix = "FuncDiv_", values_from = "FuncDiv") |> 
-    dplyr::select(ID, contains("FuncDiv"))
-  
+    dplyr::select(all_of(c("ID", mean_by, "FuncDiv"))) |>
+    tidyr::pivot_wider(names_from = all_of(mean_by) , names_prefix = "FuncDiv_", values_from = "FuncDiv")  
+    
   return(out)
 }
