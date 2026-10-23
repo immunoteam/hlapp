@@ -3,7 +3,13 @@
 uploadUI <- function(id){
   ns <- shiny::NS(id)
   shiny::tagList(
-    shiny::p(texts$upload_main),
+    shiny::tags$div(
+      shiny::p("Upload your file with HLA genotypes. The file should contain:"),
+      shiny::tags$ul(
+        shiny::tags$li("A column of unique ID values to identify subjects/samples."),
+        shiny::tags$li("One or multiple columns with recognizable HLA alleles. One column can contain either a single allele or multiple alleles separated by a delimiter.")
+      )
+    ),
     shiny::tags$div( style = "display: inline-flex; align-items: center; gap: 8px;",
       shiny::fileInput(ns("file"), 
                        label = "", 

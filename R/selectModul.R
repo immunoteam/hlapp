@@ -1,13 +1,18 @@
 selectColumnsUI <- function(id){
   ns <- NS(id)
-  fluidRow(
-    p(texts$select_main),
+  tagList(
+    p("Select the columns that will be used to identify the samples/subject, and the columns that contain HLA alleles."),
+    shiny::tags$ul(
+      shiny::tags$li("When selecting HLA allele columns, the selected columns should only contain the HLA of one subject/sample per row."),
+      shiny::tags$li("The selected columns are indicated in the table below."),
+      shiny::tags$li("If your HLA clumns contain multiple alleles, please select the correct delimiter.")
+    ),
+    p("If the columns you want to select can\\'t be selected, it is likely that they do not meet the format requirements. Please refer to the User Manual."),
     bslib::layout_columns(
-      
       #id column ui
       bslib::card(
         tags$div( style = "display: inline-flex; align-items: center; gap: 8px;",
-          p(texts$select_id), 
+          p("Select column of sample ID"), 
           bslib::tooltip(bsicons::bs_icon("info-circle"), texts$select_id_tooltip)
         ),
         shiny::uiOutput(ns("id_pre_check") ) , # repurposed, now checks if there are ANY colums that qualify as IDs, prior to selection 
