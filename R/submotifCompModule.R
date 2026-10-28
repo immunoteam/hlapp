@@ -33,14 +33,20 @@ submotifCompServer <- function(id, compare_values) {
     ns <- session$ns
     
     #output$testing <- renderPrint({ reactiveValuesToList(compare_values)  })
-    
     ## receive input
-    alleles <- reactive( compare_values$alleles )
-    
-    observeEvent(alleles(), {
-      req(alleles())
-      updateSelectInput(session, "allele_1_sel", selected = alleles()[1])
-      updateSelectInput(session, "allele_2_sel", selected = alleles()[2])
+    observe({
+      selected <- compare_values$alleles
+      
+      req(length(selected) == 2)
+      req(!is.null(input$allele_1_sel), !is.null(input$allele_2_sel))
+      
+      if (!identical(input$allele_1_sel, selected[1])) {
+        updateSelectInput(session, "allele_1_sel", selected = selected[1])
+      }
+      
+      if (!identical(input$allele_2_sel, selected[2])) {
+        updateSelectInput(session, "allele_2_sel", selected = selected[2])
+      }
     })
     
     
