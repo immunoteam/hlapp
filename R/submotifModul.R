@@ -53,7 +53,7 @@ submotifUI <- function(id) {
       shiny::sidebarPanel(
         shiny::radioButtons(
           ns("type"),
-          "Select HLA devtype:",
+          "Select HLA class:",
           choiceNames = c("HLA-I", "HLA-II"),
           choiceValues = c("HLA_I", "HLA_II")
         ),

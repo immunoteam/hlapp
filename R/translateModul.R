@@ -9,7 +9,7 @@ translateUI <- function(id){
     p("Type in the allele names, (one allele in a row), or import the allele names from the data you uploaded at the Calculate HLA metrics modul"), 
     shiny::textAreaInput(ns("alleles"), label = "Enter alleles here", rows = 6, value = ""), 
     shiny::actionButton(ns("load_alleles"), label = "Import alleles from Calculate metrics modul"), 
-    shiny::checkboxGroupInput(ns("formats"), label = "Allele formats", choices = c("netMHCpan", "MHCnuggets","mixMHCpred") ),
+    shiny::checkboxGroupInput(ns("formats"), label = "Allele formats", choices = c("NetMHCpan", "MHCnuggets","MixMHCpred") ),
    # shiny::verbatimTextOutput(ns("test")), # for testing
     uiOutput(ns("allele_feedback")),
     DT::DTOutput(ns("translate_res"))

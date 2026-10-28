@@ -32,7 +32,7 @@ resultsUI <- function(id){
       shiny::uiOutput(ns("results_next_ui")),
       col_widths = c(2, -6, 2, -2)
     )
-   , verbatimTextOutput(ns("test"))
+   #, verbatimTextOutput(ns("test"))
   )
 }
 
