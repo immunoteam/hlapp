@@ -34,6 +34,7 @@ submotifCompServer <- function(id, compare_values) {
     
     #output$testing <- renderPrint({ reactiveValuesToList(compare_values)  })
     
+    ## receive input
     alleles <- reactive( compare_values$alleles )
     
     observeEvent(alleles(), {
@@ -42,6 +43,8 @@ submotifCompServer <- function(id, compare_values) {
       updateSelectInput(session, "allele_2_sel", selected = alleles()[2])
     })
     
+    
+    ### Output
     output$allele_1 <- renderText({
       req(input$allele_1_sel)
       paste("Motif of", input$allele_1_sel)
