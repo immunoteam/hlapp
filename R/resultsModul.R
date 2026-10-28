@@ -73,22 +73,24 @@ resultsServer <- function(id, middle_table, prom_session){
       
       if(avail_check()){
         
+        #get available loci and types
         loci <- unique(avail_loci())
-        
-        ind_values <- paste0(loci, "i")
-        avg_values <- paste0(loci, "a")
-        funcdiv_loci <- intersect(loci, c("A", "B", "C") )
-        funcdiv_is_0 <- length(funcdiv_loci) == 0
         avail_type <- dplyr::recode_values(loci,
-                                                         c("A", "B", "C") ~ "I", 
-                                                         c("DP", "DQ", "DR") ~ "II")  |>  unique()
+                                           c("A", "B", "C") ~ "class-I", 
+                                           c("DP", "DQ", "DR") ~ "class-II")  |>  unique()
+        avail_all <- c(loci, avail_type)
+        
+        
+        avg_values <- paste0(avail_all, "a")
+        funcdiv_loci <- intersect(avail_all, c("A", "B", "C", "class-I") )
+        funcdiv_is_0 <- length(funcdiv_loci) == 0
         
         shiny::updateCheckboxGroupInput(session, "res_ind",
-                                        choiceNames = loci,
-                                        choiceValues = ind_values) 
+                                        choiceNames = paste("HLA-", loci),
+                                        choiceValues = paste0(loci, "i")) 
         shiny::updateCheckboxGroupInput(session, "res_avg",
-                                        choiceNames = loci,
-                                        choiceValues = avg_values) 
+                                        choiceNames = paste("HLA-", avail_all),
+                                        choiceValues = paste0(avail_all, "a")) 
         
         updateCheckboxGroupInput(session, "res_funcdiv", 
                                  choiceNames = if(funcdiv_is_0) "Unavailable" else paste0("HLA-", funcdiv_loci) , 
@@ -96,8 +98,8 @@ resultsServer <- function(id, middle_table, prom_session){
                                  )
         
         updateCheckboxGroupInput(session, "res_evdiv", 
-                                 choiceNames = paste0("HLA-", avail_type), 
-                                 choiceValues = avail_type
+                                 choiceNames = paste0("HLA-", avail_all), 
+                                 choiceValues = avail_all
                                  )
         
       }
@@ -146,7 +148,7 @@ resultsServer <- function(id, middle_table, prom_session){
     # calculate evolutionary divergence
     out_evdiv <- shiny::eventReactive(input$result_next ,{ # only calculate if result_next button is clicked
       if (length(input$res_evdiv) > 0) {
-        evolutionaryDivergence(middle_table() , mean_by = "Class", selected = input$res_evdiv, warn = warn_loci()) |> 
+        evolutionaryDivergence(middle_table() , selected = input$res_evdiv, warn = warn_loci()) |> 
           as.data.frame()
       } else {
         # a data frame only consisting of the ID column
@@ -159,7 +161,7 @@ resultsServer <- function(id, middle_table, prom_session){
         if ("Unavailable" %in% input$res_funcdiv){
           makePlaceHolder(middle_table())
         } else {
-          functionalDivergence(middle_table(), selected = input$res_funcdiv, "Locus", warn = warn_loci()) |> 
+          functionalDivergence(middle_table(), selected = input$res_funcdiv, warn = warn_loci()) |> 
             as.data.frame() 
         }
       } else {

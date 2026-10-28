@@ -19,26 +19,6 @@ checkFor2Alleles <- function(middle_table){
     return(warn_alleles)
 }
 
-# function to mutate column, if an allele is missing
-
-mutateToWarning <- function(df, warn, col_to_mutate, col_check = "Locus"){
-  
-  if (col_check == "Class"){
-   warn <- dplyr::recode_values(warn,
-                         c("A", "B", "C") ~ "I", 
-                         c("DP", "DQ", "DR") ~ "II")  |>  
-     unique()
-  }
-  
-  if ( length(warn) > 0) {
-    df <- df |>
-      mutate("{col_to_mutate}" := ifelse(.data[[col_check]] %in% warn, "Warning: Cannot be calculated", .data[[col_to_mutate]]) )
-    
-  }
-  
-  return(df)
-}
-
 
 checkForMoreAlleles <- function(middle_table){
   

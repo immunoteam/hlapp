@@ -5,7 +5,7 @@ HLApp_ui <- function() {
     theme = bslib::bs_theme(version = 5, bootswatch = "flatly", "card-border-width" = "0", "card-box-shadow" = "none"),
     shinyjs::useShinyjs(),
     shiny::tags$head(shiny::tags$meta(name = "robots", content = "noindex, nofollow")),
-    img(src = "img/logo.png", height = "100px"),
+    img(src = "img/logo2.png", height = "100px"),
     shiny::HTML("&nbsp;&nbsp;&nbsp;&nbsp;"),
     #loginUI("login"),
    # verbatimTextOutput("testing"),
