@@ -106,12 +106,12 @@ submotifUI <- function(id) {
             class = "download-row",
             shiny::downloadButton(
               ns("download_submotif_data"),
-              "Download Submotif Data (RDS)",
+              "Download Submotif Data (TXT)",
               class = "btn-primary"
             ),
             shiny::span(
               class = "download-description",
-              "Download the underlying submotif data in RDS format."
+              "Download the underlying submotif data in TXT format."
             )
           ),
           
@@ -251,9 +251,9 @@ submotifServer <- function(id) {
 
     # Download handler for submotif cluster data (RDS)
     output$download_submotif_data <- shiny::downloadHandler(
-      filename = function() { paste0(input$allele, "_cluster_", input$cluster, "_motif.rds") },
+      filename = function() { paste0(input$allele, "_cluster_", input$cluster, "_motif.txt") },
       content = function(file) { 
-        rds_path <- file.path("data", "cluster_motif", paste0(input$allele, "_cluster_", input$cluster, "_motif.rds")) 
+        rds_path <- file.path("data", "cluster_motif", paste0(input$allele, "_cluster_", input$cluster, "_motif.txt")) 
         file.copy(rds_path, file) }
     )
 
