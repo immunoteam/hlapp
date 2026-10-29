@@ -89,7 +89,7 @@ evolutionaryDivergence <- function(middle_table, selected, warn = c()){
     out_df$HED_class_I <- round(rowMeans(dplyr::select(out_df, any_of(c("HED_A", "HED_B", "HED_C"))), na.rm = TRUE), 3)
   }
   if ("class-II" %in% selected_class ){
-    out_df$HED_class_II <- rround(rowMeans(dplyr::select(out_df, any_of(c("HED_DP", "HED_DQ", "HED_DR"))), na.rm = TRUE), 3)
+    out_df$HED_class_II <- round(rowMeans(dplyr::select(out_df, any_of(c("HED_DP", "HED_DQ", "HED_DR"))), na.rm = TRUE), 3)
   }
   
   

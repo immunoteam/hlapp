@@ -12,20 +12,31 @@ resultsUI <- function(id){
     shiny::uiOutput(ns("warning_feedback")),
     shiny::uiOutput(ns("more_feedback")),
     bslib::layout_columns(
+      # individual allele promiscuity
       shiny::div(
         shiny::p("Allele promiscuity"),
         shiny::checkboxInput(ns("res_ind_all"),  "Select / Deselect all", value = FALSE),
         shiny::checkboxGroupInput(ns("res_ind"), NULL, choices = character())
         ),
+      # Locus promiscuity
       shiny::div(
         shiny::p("Locus promiscuity"),
         shiny::checkboxInput(ns("res_avg_all"),  "Select / Deselect all", value = FALSE),
         shiny::checkboxGroupInput(ns("res_avg"), NULL, choices = character())  
       ),
       shiny::radioButtons(ns("res_homo"), "Homozygosity", choiceNames = c("yes", "no"), choiceValues = c(TRUE, FALSE), selected = FALSE), # get homozygosity
-      shiny::checkboxGroupInput(ns("res_evdiv"), "HLA evolutionary divergence (HED)", choiceNames = c("HLA-I", "HLA-II"), choiceValues = c("I", "II")), # get evolutionary divergence
-      shiny::checkboxGroupInput(ns("res_funcdiv"), "Functional divergence", choiceNames = c("HLA-A", "HLA-B", "HLA-C"), choiceValues = c("A", "B", "C")) # get evolutionary divergence
-      
+      # HLA evolutionary divergence (HED)
+      shiny::div(
+        shiny::p("HLA evolutionary divergence (HED)"),
+        shiny::checkboxInput(ns("res_evdiv_all"),  "Select / Deselect all",  value = FALSE),
+        shiny::checkboxGroupInput(ns("res_evdiv"), NULL,  choices = character())
+        ),
+      # Functional divergence
+      shiny::div(
+        shiny::p("Functional divergence"),
+        shiny::checkboxInput(ns("res_funcdiv_all"),"Select / Deselect all", value = FALSE),
+        shiny::checkboxGroupInput(ns("res_funcdiv"), NULL, choices = character())
+      )
     ),
     bslib::layout_columns(
       shiny::actionButton(ns("result_back"), "Go back", disabled = FALSE),
@@ -206,6 +217,41 @@ resultsServer <- function(id, middle_table, prom_session) {
         "res_avg",
         selected = if (input$res_avg_all) {
           avg_values
+        } else {
+          character(0)
+        }
+      )
+      
+    })
+    
+    # Select / deselect all evolutionary divergence values
+    shiny::observeEvent(input$res_evdiv_all, {
+      
+      evdiv_values <- locus_data$avail_all
+      
+      shiny::updateCheckboxGroupInput(
+        session,
+        "res_evdiv",
+        selected = if (input$res_evdiv_all) {
+          evdiv_values
+        } else {
+          character(0)
+        }
+      )
+      
+    })
+    
+    
+    # Select / deselect all functional divergence values
+    shiny::observeEvent(input$res_funcdiv_all, {
+      
+      funcdiv_values <- locus_data$funcdiv_loci
+      
+      shiny::updateCheckboxGroupInput(
+        session,
+        "res_funcdiv",
+        selected = if (input$res_funcdiv_all) {
+          funcdiv_values
         } else {
           character(0)
         }
