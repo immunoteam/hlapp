@@ -145,12 +145,12 @@ submotifUI <- function(id) {
             class = "download-row",
             shiny::downloadButton(
               ns("download_entropy_data"),
-              "Download Entropy Data (RDS)",
+              "Download Entropy Data (TXT)",
               class = "btn-primary"
             ),
             shiny::span(
               class = "download-description",
-              "Download the underlying entropy data in RDS format."
+              "Download the underlying entropy data in TXT format."
             )
           )
         )
@@ -253,8 +253,11 @@ submotifServer <- function(id) {
     output$download_submotif_data <- shiny::downloadHandler(
       filename = function() { paste0(input$allele, "_cluster_", input$cluster, "_motif.txt") },
       content = function(file) { 
-        rds_path <- file.path("data", "cluster_motif", paste0(input$allele, "_cluster_", input$cluster, "_motif.txt")) 
-        file.copy(rds_path, file) }
+        #txt_path <- file.path("data", "cluster_motif", paste0(input$allele, "_cluster_", input$cluster, "_motif.txt")) 
+        motif_txt <- cluster_data()$entropy$freq
+        colnames(motif_txt) <- paste0("pos_", 1:ncol(motif_txt))
+        write.table(motif_txt, file, row.names = TRUE, quote = FALSE, sep = "\t")
+         }
     )
 
     #Peptidek száma
@@ -321,14 +324,14 @@ submotifServer <- function(id) {
       }
     )
 
-    # Entrópia adat letöltése RDS-ben
+    # Entrópia adat letöltése TXT-ben
     output$download_entropy_data <- shiny::downloadHandler(
-      filename = function() { downloadFileName(input, "entropy_data_", ".rds") },
-      content = function(file) { saveRDS(cluster_data()$entropy$H, file) }
+      filename = function() { downloadFileName(input, "entropy_data", ".txt") },
+      content = function(file) { 
+        entropy_txt <- data.frame(entropy = cluster_data()$entropy$H)
+        write.table(entropy_txt, file = file, sep = "\t", quote = FALSE, row.names = FALSE) 
+        }
     )
-    
-    
-    #observe
 
     return(session)
   })
