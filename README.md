@@ -1,6 +1,6 @@
 # promiscuity_app
 
-Currently the app can be tested on : <https://c2bia7-gergely-kopp0ny.shinyapps.io/promiscuityapp/>
+Currently the app can be tested on : <https://c2bia7-gergely-kopp0ny.shinyapps.io/HLApp/>
 
 user: sysimmgroup
 
