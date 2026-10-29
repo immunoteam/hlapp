@@ -39,159 +39,325 @@ resultsUI <- function(id){
 ########## SERVER ################
 
 ###### Control input UI ######
-resultsServer <- function(id, middle_table, prom_session){
+resultsServer <- function(id, middle_table, prom_session) {
   shiny::moduleServer(id, function(input, output, session) {
-    ns <- session$ns 
     
-    #get the available loci
-    avail_loci <- shiny::reactive(sort(unique(middle_table()[["Locus"]])))
+    ns <- session$ns
     
-    # get loci, where none of the samples has more than one 
-    warn_loci <- reactive(checkFor2Alleles(middle_table() ) )
-    more_loci <- reactive(checkForMoreAlleles(middle_table() ) )
+    # Store all locus-related information in one reactiveValues object
+    locus_data <- shiny::reactiveValues(
+      avail_loci = character(0),
+      avail_type = character(0),
+      avail_all = character(0),
+      funcdiv_loci = character(0),
+      warn_loci = character(0),
+      more_loci = character(0)
+    )
     
-    # check if any locus are recognized - give user feedback
-    avail_check <- shiny::reactive(length(avail_loci()) > 0)
-    output$avail_feedback <- shiny::renderUI(giveFeedBack(avail_check(), paste(texts$results_avail_pass, paste(avail_loci(), collapse = ", ")), texts$results_avail_fail ) )
-    output$warning_feedback <- renderUI(giveFeedBack(length(warn_loci()) == 0, "",
-                                                     paste("Warning: The following HLA-loci has only one allele in the input:", 
-                                                           paste(warn_loci(), collapse = ", "),
-                                                           "---Some results will not be calculated."
-                                                           )
-                                                     ))
-    output$more_feedback <- renderUI(giveFeedBack(length(more_loci()) == 0, "",
-                                                     paste("ERROR!: The following HLA-loci has more than 2 alleles in the input:", 
-                                                           paste(more_loci(), collapse = ", "),
-                                                          "---Fix this to proceed!"
-                                                     )
-    ))
-    
-    
-    
-    #update the checkbox input based on available values 
-    shiny::observeEvent(avail_check(), {
+    # Update all locus-related values whenever middle_table changes
+    shiny::observeEvent(middle_table(), {
       
-      if(avail_check()){
-        
-        #get available loci and types
-        loci <- unique(avail_loci())
-        avail_type <- dplyr::recode_values(loci,
-                                           c("A", "B", "C") ~ "class-I", 
-                                           c("DP", "DQ", "DR") ~ "class-II")  |>  unique()
-        avail_all <- c(loci, avail_type)
-        
-        funcdiv_loci <- intersect(avail_all, c("A", "B", "C", "class-I") )
-        funcdiv_is_0 <- length(funcdiv_loci) == 0
-        
-        shiny::updateCheckboxGroupInput(session, "res_ind",
-                                        choiceNames = paste("HLA-", loci),
-                                        choiceValues = paste0(loci, "i")) 
-        shiny::updateCheckboxGroupInput(session, "res_avg",
-                                        choiceNames = paste("HLA-", avail_all),
-                                        choiceValues = paste0(avail_all, "a")) 
-        
-        updateCheckboxGroupInput(session, "res_funcdiv", 
-                                 choiceNames = if(funcdiv_is_0) "Unavailable" else paste0("HLA-", funcdiv_loci) , 
-                                 choiceValues = if (funcdiv_is_0)  "Unavailable" else funcdiv_loci 
-                                 )
-        
-        updateCheckboxGroupInput(session, "res_evdiv", 
-                                 choiceNames = paste0("HLA-", avail_all), 
-                                 choiceValues = avail_all
-                                 )
-        
-      }
-    })
-    
-    # update checked boxes adter select all / deselect all is clicked
-    shiny::observeEvent(input$res_ind_all, {
-      ind_values <- paste0(avail_loci(), "i")
-      if (input$res_ind_all) {
-        shiny::updateCheckboxGroupInput( session, "res_ind", selected = ind_values)
-      } else {
-        shiny::updateCheckboxGroupInput(session, "res_ind", selected = character(0))
-      }
-    })
-    
-    shiny::observeEvent(input$res_avg_all, {
-      avg_values <- paste0(avail_loci(), "a")
-      if (input$res_avg_all) {
-        shiny::updateCheckboxGroupInput( session, "res_avg", selected = avg_values)
-      } else {
-        shiny::updateCheckboxGroupInput(session, "res_avg", selected = character(0))
-      }
-    })
-    
-###### Generate results ###### 
-    
-    #calculate selected  promiscuity values
-    res_types <- shiny::reactive(c(input$res_ind, input$res_avg)) # merge the values from the two checkboxes
-    
-    out_prom <- shiny::eventReactive(input$result_next ,{ # only calculate if result_next button is clicked
-      #Sys.sleep(3)# for testing 
-      hlaFromMiddleTable(middle_table(), res_types())
-    })
-    
-    # calculate heterogeneity 
-    out_homo <- shiny::eventReactive(input$result_next ,{ # only calculate if result_next button is clicked
-      if (input$res_homo) {
-        detectHomozygotes(middle_table(), warn = warn_loci()) |> 
-          as.data.frame()
-      } else {
-        # a data frame only consisting of the ID column
-        makePlaceHolder(middle_table())
-      }
-    })
-    
-    # calculate evolutionary divergence
-    out_evdiv <- shiny::eventReactive(input$result_next ,{ # only calculate if result_next button is clicked
-      if (length(input$res_evdiv) > 0) {
-        evolutionaryDivergence(middle_table() , selected = input$res_evdiv, warn = warn_loci()) |> 
-          as.data.frame()
-      } else {
-        # a data frame only consisting of the ID column
-        makePlaceHolder(middle_table())
-      }
-    })
-    
-    out_funcdiv <-  shiny::eventReactive(input$result_next ,{ # only calculate if result_next button is clicked
-      if (length(input$res_funcdiv) > 0 ) {
-        if ("Unavailable" %in% input$res_funcdiv){
-          makePlaceHolder(middle_table())
-        } else {
-          functionalDivergence(middle_table(), selected = input$res_funcdiv, warn = warn_loci()) |> 
-            as.data.frame() 
-        }
-      } else {
-        # a data frame only consisting of the ID column
-        makePlaceHolder(middle_table())
-      }
-    })
- 
-    #nav buttons
-    shiny::observeEvent(input$result_back, {
-      shiny::updateTabsetPanel(prom_session, "prom_tabs", selected = "select")
-    })
+      # Available loci
+      locus_data$avail_loci <- sort(unique(middle_table()[["Locus"]]))
+      
+      # Loci with only one allele
+      locus_data$warn_loci <- checkFor2Alleles(middle_table())
+      
+      # Loci with more than two alleles
+      locus_data$more_loci <- checkForMoreAlleles(middle_table())
+      
+      # Available locus types
+      locus_data$avail_type <- dplyr::recode_values(
+        locus_data$avail_loci,
+        c("A", "B", "C") ~ "class-I",
+        c("DP", "DQ", "DR") ~ "class-II"
+      ) |>
+        unique()
+      
+      # All available loci and locus types
+      locus_data$avail_all <- c(
+        locus_data$avail_loci,
+        locus_data$avail_type
+      )
+      
+      # Loci available for functional divergence
+      locus_data$funcdiv_loci <- intersect(
+        locus_data$avail_all,
+        c("A", "B", "C", "class-I")
+      )
+      
+    }, ignoreInit = FALSE)
     
     
-    # RESULTS nav button - only active if select_check is passed&
-    res_check_ok <- shiny::reactive( any( length(res_types()) > 0, input$res_homo, length(input$res_evdiv) > 0, length(input$res_funcdiv) > 0  ) & length(more_loci()) == 0 )
+    # Check whether any loci are available
+    avail_check <- shiny::reactive(
+      length(locus_data$avail_loci) > 0
+    )
     
-    output$results_next_ui  <- shiny::renderUI(
-      if (res_check_ok()) {
-        bslib::input_task_button(ns("result_next"), label = "Get results", status = "primary" , spinner = TRUE, state = "ready")
-      } else {
-        shiny::actionButton(ns("result_next"), "Get results", disabled = TRUE)
-      }
+    # User feedback
+    output$avail_feedback <- shiny::renderUI(
+      giveFeedBack(
+        avail_check(),
+        paste(
+          texts$results_avail_pass,
+          paste(locus_data$avail_loci, collapse = ", ")
+        ),
+        texts$results_avail_fail
+      )
+    )
+    
+    output$warning_feedback <- shiny::renderUI(
+      giveFeedBack(
+        length(locus_data$warn_loci) == 0,
+        "",
+        paste(
+          "Warning: The following HLA-loci has only one allele in the input:",
+          paste(locus_data$warn_loci, collapse = ", "),
+          "---Some results will not be calculated."
+        )
+      )
+    )
+    
+    output$more_feedback <- shiny::renderUI(
+      giveFeedBack(
+        length(locus_data$more_loci) == 0,
+        "",
+        paste(
+          "ERROR!: The following HLA-loci has more than 2 alleles in the input:",
+          paste(locus_data$more_loci, collapse = ", "),
+          "---Fix this to proceed!"
+        )
+      )
     )
     
     
-    # merge all results tables
-    all_results <- shiny::reactive(  purrr::reduce(list( out_prom(), out_homo(), out_evdiv(), out_funcdiv() ), full_join, by = dplyr::join_by(ID) ) )
+    # Update available checkbox choices
+    shiny::observeEvent(avail_check(), {
+      
+      if (avail_check()) {
+        
+        shiny::updateCheckboxGroupInput(
+          session,
+          "res_ind",
+          choiceNames = paste("HLA-", locus_data$avail_loci),
+          choiceValues = paste0(locus_data$avail_loci, "i")
+        )
+        
+        shiny::updateCheckboxGroupInput(
+          session,
+          "res_avg",
+          choiceNames = paste("HLA-", locus_data$avail_all),
+          choiceValues = paste0(locus_data$avail_all, "a")
+        )
+        
+        funcdiv_is_0 <- length(locus_data$funcdiv_loci) == 0
+        
+        shiny::updateCheckboxGroupInput(
+          session,
+          "res_funcdiv",
+          choiceNames = if (funcdiv_is_0) {
+            "Unavailable"
+          } else {
+            paste0("HLA-", locus_data$funcdiv_loci)
+          },
+          choiceValues = if (funcdiv_is_0) {
+            "Unavailable"
+          } else {
+            locus_data$funcdiv_loci
+          }
+        )
+        
+        shiny::updateCheckboxGroupInput(
+          session,
+          "res_evdiv",
+          choiceNames = paste0("HLA-", locus_data$avail_all),
+          choiceValues = locus_data$avail_all
+        )
+      }
+      
+    }, ignoreInit = FALSE)
     
     
-    ### TESTING
-    output$test <- shiny::renderPrint(list(input$res_funcdiv )) # uncomment for easy testing
+    # Select / deselect all individual promiscuity values
+    shiny::observeEvent(input$res_ind_all, {
+      
+      ind_values <- paste0(locus_data$avail_loci, "i")
+      
+      shiny::updateCheckboxGroupInput(
+        session,
+        "res_ind",
+        selected = if (input$res_ind_all) {
+          ind_values
+        } else {
+          character(0)
+        }
+      )
+      
+    })
+    
+    
+    # Select / deselect all average promiscuity values
+    shiny::observeEvent(input$res_avg_all, {
+      
+      avg_values <- paste0(locus_data$avail_all, "a")
+      
+      shiny::updateCheckboxGroupInput(
+        session,
+        "res_avg",
+        selected = if (input$res_avg_all) {
+          avg_values
+        } else {
+          character(0)
+        }
+      )
+      
+    })
+    
+    
+    # Calculate selected promiscuity values
+    res_types <- shiny::reactive(
+      c(input$res_ind, input$res_avg)
+    )
+    
+    out_prom <- shiny::eventReactive(input$result_next, {
+      hlaFromMiddleTable(
+        middle_table(),
+        res_types()
+      )
+    })
+    
+    
+    # Calculate homozygosity
+    out_homo <- shiny::eventReactive(input$result_next, {
+      
+      if (isTRUE(input$res_homo)) {
+        detectHomozygotes(
+          middle_table(),
+          warn = locus_data$warn_loci
+        ) |>
+          as.data.frame()
+      } else {
+        makePlaceHolder(middle_table())
+      }
+      
+    })
+    
+    
+    # Calculate evolutionary divergence
+    out_evdiv <- shiny::eventReactive(input$result_next, {
+      
+      if (length(input$res_evdiv) > 0) {
+        evolutionaryDivergence(
+          middle_table(),
+          selected = input$res_evdiv,
+          warn = locus_data$warn_loci
+        ) |>
+          as.data.frame()
+      } else {
+        makePlaceHolder(middle_table())
+      }
+      
+    })
+    
+    
+    # Calculate functional divergence
+    out_funcdiv <- shiny::eventReactive(input$result_next, {
+      
+      if (length(input$res_funcdiv) > 0) {
+        
+        if ("Unavailable" %in% input$res_funcdiv) {
+          makePlaceHolder(middle_table())
+        } else {
+          functionalDivergence(
+            middle_table(),
+            selected = input$res_funcdiv,
+            warn = locus_data$warn_loci
+          ) |>
+            as.data.frame()
+        }
+        
+      } else {
+        makePlaceHolder(middle_table())
+      }
+      
+    })
+    
+    
+    # Navigation
+    shiny::observeEvent(input$result_back, {
+      shiny::updateTabsetPanel(
+        prom_session,
+        "prom_tabs",
+        selected = "select"
+      )
+    })
+    
+    
+    # Check whether results can be calculated
+    res_check_ok <- shiny::reactive({
+      
+      any(
+        length(res_types()) > 0,
+        isTRUE(input$res_homo),
+        length(input$res_evdiv) > 0,
+        length(input$res_funcdiv) > 0
+      ) && length(locus_data$more_loci) == 0
+      
+    })
+    
+    
+    # Results button
+    output$results_next_ui <- shiny::renderUI({
+      
+      if (res_check_ok()) {
+        bslib::input_task_button(
+          ns("result_next"),
+          label = "Get results",
+          status = "primary",
+          spinner = TRUE,
+          state = "ready"
+        )
+      } else {
+        shiny::actionButton(
+          ns("result_next"),
+          "Get results",
+          disabled = TRUE
+        )
+      }
+      
+    })
+    
+    
+    # Merge all result tables
+    all_results <- shiny::reactive({
+      
+      purrr::reduce(
+        list(
+          out_prom(),
+          out_homo(),
+          out_evdiv(),
+          out_funcdiv()
+        ),
+        full_join,
+        by = dplyr::join_by(ID)
+      )
+      
+    })
+    
+    
+    # Optional testing output
+    # output$test <- shiny::renderPrint({
+    #   list(
+    #     avail_loci = locus_data$avail_loci,
+    #     avail_type = locus_data$avail_type,
+    #     avail_all = locus_data$avail_all,
+    #     funcdiv_loci = locus_data$funcdiv_loci,
+    #     warn_loci = locus_data$warn_loci,
+    #     more_loci = locus_data$more_loci
+    #   )
+    # })
+    
     return(all_results)
+    
   })
 }
