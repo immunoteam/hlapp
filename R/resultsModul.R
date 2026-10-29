@@ -80,8 +80,6 @@ resultsServer <- function(id, middle_table, prom_session){
                                            c("DP", "DQ", "DR") ~ "class-II")  |>  unique()
         avail_all <- c(loci, avail_type)
         
-        
-        avg_values <- paste0(avail_all, "a")
         funcdiv_loci <- intersect(avail_all, c("A", "B", "C", "class-I") )
         funcdiv_is_0 <- length(funcdiv_loci) == 0
         

@@ -25,7 +25,7 @@ hlaFromMiddleTable <- function(middle_table, types){
   avg_types <- grep("a$", types, value = T) # extract types with an i at the end - for average outputs
   message(paste0("ind types: ", paste(ind_types, collapse = ", "), "\navg types: ", paste(avg_types, collapse = ", ") ) )
   
-  #remove not alloowed loci from middle table
+  #remove not allowed loci from middle table
   middle_table <- middle_table |>
     dplyr::filter(flag == "") |>
     dplyr::select(!any_of("flag"))
@@ -61,8 +61,16 @@ hlaFromMiddleTable <- function(middle_table, types){
       dplyr::select(any_of("ID") )
   }
   
+  # table of selected individual and locus average promiscuities
   prom_sel <- dplyr::full_join(prom_ind_sel, prom_avg_sel, by = join_by(ID))
-  prom_all <- dplyr::full_join(prom_ind_all, prom_avg_all, by = join_by(ID))
+  
+  # add class averages
+  if ("class-Ia" %in% avg_types) {
+    prom_sel$Promiscuity_mean_class_I <- round(rowMeans(dplyr::select(prom_avg_all, contains(c("_A", "_B", "_C"))) , na.rm = TRUE), 4)
+  }
+  if ("class-IIa" %in% avg_types) {
+    prom_sel$Promiscuity_mean_class_II <- round(rowMeans(dplyr::select(prom_avg_all, contains(c("_DP", "_DQ", "_DR"))) , na.rm = TRUE), 4)
+  }
   
   return(prom_sel) # use of prom_all is deprecatetd
 }
