@@ -2,12 +2,6 @@
 
 Currently the app can be tested on : <https://c2bia7-gergely-kopp0ny.shinyapps.io/HLApp/>
 
-user: sysimmgroup
-
-pw: LetMeIn
-
-If you want to make changes to the app, follow the instructions below.
-
 ## SETUP
 
 -   Clone main to local project via command line or the RSrudio UI
