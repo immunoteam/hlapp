@@ -7,7 +7,7 @@ resultsUI <- function(id){
   ns <- shiny::NS(id)
   shiny::tagList(
     
-    shiny::p("Select the HLA metrics that you want to be calculated. Results will be returned E.as "),
+    shiny::p("Select the HLA metrics that you want to be calculated. Results will be returned as a single data table."),
     shiny::uiOutput(ns("avail_feedback")),
     shiny::uiOutput(ns("warning_feedback")),
     shiny::uiOutput(ns("more_feedback")),
