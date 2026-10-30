@@ -10,7 +10,7 @@ translateUI <- function(id){
     shiny::textAreaInput(ns("alleles"), label = "Enter alleles here", rows = 6, value = ""), 
     shiny::actionButton(ns("load_alleles"), label = "Import alleles from Calculate metrics modul"), 
     shiny::checkboxGroupInput(ns("formats"), label = "Allele formats", choices = c("NetMHCpan", "MHCnuggets","MixMHCpred") ),
-   # shiny::verbatimTextOutput(ns("test")), # for testing
+    #shiny::verbatimTextOutput(ns("test")), # for testing
     uiOutput(ns("allele_feedback")),
     DT::DTOutput(ns("translate_res"))
   )
@@ -57,7 +57,8 @@ translateServer <- function(id, prom_result = NULL) {
                                    rownames = FALSE,
                                    extensions = "Buttons", 
                                    options = DToptions)
-   # output$test<- shiny::renderPrint( alleles_pass() ) # for testing
+   
+     #output$test<- shiny::renderPrint( alleles_vec() ) # for testing
     
     # check for recognised alleles
     alleles_check <- reactive({

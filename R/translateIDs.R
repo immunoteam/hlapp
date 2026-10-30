@@ -51,16 +51,16 @@ translateToMhcNuggets <- function(x){
 #' @param formats character vector, name of the algorithms, thats formats needs to be returned
 translateIDs <- function(alleles, formats){
   # select chosen format columns
-  req(is.character(formats), all(formats %in% c("netMHCpan", "MHCnuggets","mixMHCpred") ) )
+  req(is.character(formats), all(formats %in% c("NetMHCpan", "MHCnuggets","MixMHCpred") ) )
     
   # add translated formats to middle table 
   out <- data.frame(allele = alleles)
   
-  if ("netMHCpan" %in% formats){
+  if ("NetMHCpan" %in% formats){
     out$netMHCpan_netMHCIIpan <- translateToNetMhcPan(alleles)
   }
   
-  if ("mixMHCpred" %in% formats){
+  if ("MixMHCpred" %in% formats){
     out$mixMHCpred_mixMHC2pred <- translateToMixMhcPred(alleles)
   }
   
