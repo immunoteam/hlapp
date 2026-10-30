@@ -34,20 +34,29 @@ submotifCompServer <- function(id, compare_values) {
     
     #output$testing <- renderPrint({ reactiveValuesToList(compare_values)  })
     ## receive input
+    # Track whether the inputs have been initialized
+    initialized <- reactiveVal(FALSE)
+    
+    # Synchronize when inputs become available or external values change
     observe({
-      selected <- compare_values$alleles
-      
-      req(length(selected) == 2)
+      req(length(compare_values$alleles) == 2)
       req(!is.null(input$allele_1_sel), !is.null(input$allele_2_sel))
       
-      if (!identical(input$allele_1_sel, selected[1])) {
-        updateSelectInput(session, "allele_1_sel", selected = selected[1])
-      }
-      
-      if (!identical(input$allele_2_sel, selected[2])) {
-        updateSelectInput(session, "allele_2_sel", selected = selected[2])
+      if (!initialized()) {
+        updateSelectInput(session, "allele_1_sel", selected = compare_values$alleles[1])
+        updateSelectInput(session, "allele_2_sel", selected = compare_values$alleles[2])
+        initialized(TRUE)
       }
     })
+    
+    # Synchronize only when external values change
+    observeEvent(compare_values$alleles, {
+      req(initialized())
+      req(length(compare_values$alleles) == 2)
+      
+      updateSelectInput(session, "allele_1_sel", selected = compare_values$alleles[1])
+      updateSelectInput(session, "allele_2_sel", selected = compare_values$alleles[2])
+    }, ignoreInit = TRUE)
     
     
     ### Output
