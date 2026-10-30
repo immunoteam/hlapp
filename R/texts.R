@@ -38,5 +38,5 @@ texts <- list(
     results_avail_pass = "Recognised HLA loci in the selected columns:",
     results_avail_fail = "ERROR: No HLA molecules were recognized in the selected columns",
   
-  app_footer = "If you experience any issues, or if you want to give feedback on this software, please visit https://github.com/immunoteam/promiscuity_app"
+  app_footer = "If you experience any issues, or if you want to give feedback on this software, please visit https://github.com/immunoteam/hlapp"
 )
