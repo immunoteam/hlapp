@@ -8,21 +8,24 @@ svg_files <- list.files(
 )
 
 check_svg <- function(file) {
-  tryCatch({
-    if (file.info(file)$size == 0) {
-      return("empty")
+  tryCatch(
+    {
+      if (file.info(file)$size == 0) {
+        return("empty")
+      }
+
+      doc <- read_xml(file)
+
+      if (xml_name(xml_root(doc)) != "svg") {
+        return("not_svg")
+      }
+
+      "ok"
+    },
+    error = function(e) {
+      paste0("invalid_xml: ", conditionMessage(e))
     }
-    
-    doc <- read_xml(file)
-    
-    if (xml_name(xml_root(doc)) != "svg") {
-      return("not_svg")
-    }
-    
-    "ok"
-  }, error = function(e) {
-    paste0("invalid_xml: ", conditionMessage(e))
-  })
+  )
 }
 
 results <- data.frame(

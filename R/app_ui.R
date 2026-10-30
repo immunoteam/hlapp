@@ -7,9 +7,10 @@ HLApp_ui <- function() {
     shiny::tags$head(shiny::tags$meta(name = "robots", content = "noindex, nofollow")),
     img(src = "img/logo2.png", height = "100px"),
     shiny::HTML("&nbsp;&nbsp;&nbsp;&nbsp;"),
-    #loginUI("login"),
-   # verbatimTextOutput("testing"),
-    bslib::page_navbar(id = "app_navbar",
+    # loginUI("login"),
+    # verbatimTextOutput("testing"),
+    bslib::page_navbar(
+      id = "app_navbar",
       navbar_options = bslib::navbar_options(collapsible = FALSE),
       bslib::nav_panel("Calculate HLA metrics", value = "prom", shiny::uiOutput("promUI")),
       bslib::nav_panel("Submotif explorer", value = "submotif", shiny::uiOutput("submUI")),

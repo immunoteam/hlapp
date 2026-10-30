@@ -1,24 +1,28 @@
 # new promiscuity UI
 
-promiscuityUI <- function(id){
+promiscuityUI <- function(id) {
   ns <- NS(id)
-  
+
   shiny::fluidPage(
     shiny::fluidRow(
-      shiny::tabsetPanel( id = ns("prom_tabs"), 
-                          header = HTML("&nbsp;&nbsp;"),
-        shiny::tabPanel( texts$upload_title, value = "upload",
-                          #fileInput(ns("file"), label = " Upload HLA genotype file", accept = c(".tsv", ".csv", ".xlsx"))
-                          #uploadUI(id)
-                          uploadUI(ns("upload"))
-        ), 
-        shiny::tabPanel( texts$select_title, value = "select",
-                         #selectUI(id)
-                         selectColumnsUI(ns("columns"))
+      shiny::tabsetPanel(
+        id = ns("prom_tabs"),
+        header = HTML("&nbsp;&nbsp;"),
+        shiny::tabPanel(texts$upload_title,
+          value = "upload",
+          # fileInput(ns("file"), label = " Upload HLA genotype file", accept = c(".tsv", ".csv", ".xlsx"))
+          # uploadUI(id)
+          uploadUI(ns("upload"))
         ),
-        shiny::tabPanel( texts$result_title, value = "result",
-                         resultsUI(ns("results"))
-        ), 
+        shiny::tabPanel(texts$select_title,
+          value = "select",
+          # selectUI(id)
+          selectColumnsUI(ns("columns"))
+        ),
+        shiny::tabPanel(texts$result_title,
+          value = "result",
+          resultsUI(ns("results"))
+        ),
         # disacle tabset navigation
         tags$script(HTML("
           $(document).ready(function() {
@@ -33,10 +37,7 @@ promiscuityUI <- function(id){
     hr(size = 1),
     ### OUTPUT PANELS
     DT::DTOutput(ns("result_df")),
-    
     uiOutput(ns("funcdiv_ui"))
-    #shiny::verbatimTextOutput(ns("clickedval"))
-    
+    # shiny::verbatimTextOutput(ns("clickedval"))
   )
 }
-  

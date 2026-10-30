@@ -3,11 +3,11 @@
 
 submotifUI <- function(id) {
   ns <- shiny::NS(id)
-  
+
   shiny::fluidPage(
     shiny::titlePanel("HLA submotifs"),
     p("Here you can select HLA alleles, to explore their binding motifs and peptide submotifs. [MORE EXPLANTION CAN BE ADDED]"),
-    
+
     # CSS styling for all download buttons
     shiny::tags$head(
       shiny::tags$style(shiny::HTML("
@@ -48,7 +48,6 @@ submotifUI <- function(id) {
         }
       "))
     ),
-    
     shiny::sidebarLayout(
       shiny::sidebarPanel(
         shiny::radioButtons(
@@ -57,34 +56,28 @@ submotifUI <- function(id) {
           choiceNames = c("HLA-I", "HLA-II"),
           choiceValues = c("HLA_I", "HLA_II")
         ),
-        
         shiny::uiOutput(ns("allele_ui")),
         shiny::uiOutput(ns("cluster_ui")),
-        
         shiny::hr(),
-        
         shiny::h4("General allele information"),
         shiny::uiOutput(ns("allele_motif")),
         shiny::textOutput(ns("allele_peptide_count")),
-        
         shiny::plotOutput(ns("nmds_plot"), height = "400px")
       ),
-      
       shiny::mainPanel(
         shiny::h4("Submotif of the selected peptid cluster"),
-        
+
         # Submotif plot
         shiny::uiOutput(ns("submotif_plot")),
-        
         shiny::textOutput(ns("cluster_peptide_count")),
-        
+
         # Peptide list interface
         shiny::uiOutput(ns("peptide_ui")),
-        
+
         # Entropy plot
         shiny::h4("Entropy of the AA positions of the submotif"),
         shiny::plotOutput(ns("entropy_plot")),
-        
+
         # All download buttons grouped at the bottom
         shiny::div(
           class = "download-section",
@@ -101,7 +94,6 @@ submotifUI <- function(id) {
               "Download the submotif plot as an image."
             )
           ),
-          
           shiny::div(
             class = "download-row",
             shiny::downloadButton(
@@ -114,7 +106,6 @@ submotifUI <- function(id) {
               "Download the underlying submotif data in TXT format."
             )
           ),
-          
           shiny::div(
             class = "download-row",
             shiny::downloadButton(
@@ -127,7 +118,6 @@ submotifUI <- function(id) {
               "Download the peptide list as a plain-text file."
             )
           ),
-          
           shiny::div(
             class = "download-row",
             shiny::downloadButton(
@@ -140,7 +130,6 @@ submotifUI <- function(id) {
               "Download the entropy plot as a PNG image."
             )
           ),
-          
           shiny::div(
             class = "download-row",
             shiny::downloadButton(
@@ -166,7 +155,7 @@ submotifUI <- function(id) {
 submotifServer <- function(id) {
   shiny::moduleServer(id, function(input, output, session) {
     ns <- session$ns
-    
+
 
     # Get available HLA alleles for allele type
     available_alleles <- shiny::eventReactive(input$type, {
@@ -176,13 +165,12 @@ submotifServer <- function(id) {
 
     output$allele_ui <- shiny::renderUI({
       shiny::req(input$type)
-      shiny::selectizeInput(ns("allele"), "Select allele form list, or start typing:", choices = available_alleles() )
+      shiny::selectizeInput(ns("allele"), "Select allele form list, or start typing:", choices = available_alleles())
     })
-    
+
     allele_data <- shiny::eventReactive(input$allele, {
       shiny::req(input$allele)
       read_allele(input$allele)
-      
     })
 
     # Dinamikusan elérhető klaszterek az adott allélhoz, peptid-szám szerint rendezetten
@@ -194,26 +182,25 @@ submotifServer <- function(id) {
     output$cluster_ui <- shiny::renderUI({
       shiny::selectInput(ns("cluster"), "Select a cluster:", choices = available_clusters())
     })
-    
-    cluster_data <- shiny::eventReactive(list(input$type, input$allele, input$cluster),{
-        shiny::req(input$type, input$allele, input$cluster)
-      
-        read_cluster(input$type, input$allele, input$cluster)
-      }
-    )
+
+    cluster_data <- shiny::eventReactive(list(input$type, input$allele, input$cluster), {
+      shiny::req(input$type, input$allele, input$cluster)
+
+      read_cluster(input$type, input$allele, input$cluster)
+    })
 
     # Általános allél motívum
     output$allele_motif <- shiny::renderUI({
       shiny::req(input$allele)
-      
-      file_name <- paste0( input$allele, ".svg"  )
-      
+
+      file_name <- paste0(input$allele, ".svg")
+
       shiny::tags$img(
         src = file.path("img/motif", file_name),
         style = "width:100%; max-width:900px;"
       )
     })
-    
+
 
     # Peptid szám az allélhoz
     output$allele_peptide_count <- shiny::renderText({
@@ -227,13 +214,13 @@ submotifServer <- function(id) {
       shiny::req(input$allele, input$cluster)
       makeNmdsPlot(allele_data(), input$allele, input$cluster)
     })
-    
+
     # Submotif plot
     output$submotif_plot <- shiny::renderUI({
       shiny::req(input$allele, input$cluster)
-      
-      file_name <- paste0(input$allele, "_cluster", input$cluster, ".svg"  )
-      
+
+      file_name <- paste0(input$allele, "_cluster", input$cluster, ".svg")
+
       shiny::tags$img(
         src = file.path("img/submotif", file_name),
         style = "width:100%; max-width:900px;"
@@ -242,7 +229,9 @@ submotifServer <- function(id) {
 
     # Download handler for submotif plot (SVG)
     output$download_submotif <- shiny::downloadHandler(
-      filename = function() { downloadFileName(input, "submotif_plot", ".svg") },
+      filename = function() {
+        downloadFileName(input, "submotif_plot", ".svg")
+      },
       content = function(file) {
         svg_path <- file.path("www/img/submotif", paste0(input$allele, "_cluster", input$cluster, ".svg"))
         file.copy(svg_path, file)
@@ -251,17 +240,19 @@ submotifServer <- function(id) {
 
     # Download handler for submotif cluster data (RDS)
     output$download_submotif_data <- shiny::downloadHandler(
-      filename = function() { paste0(input$allele, "_cluster_", input$cluster, "_motif.txt") },
-      content = function(file) { 
-        #txt_path <- file.path("data", "cluster_motif", paste0(input$allele, "_cluster_", input$cluster, "_motif.txt")) 
+      filename = function() {
+        paste0(input$allele, "_cluster_", input$cluster, "_motif.txt")
+      },
+      content = function(file) {
+        # txt_path <- file.path("data", "cluster_motif", paste0(input$allele, "_cluster_", input$cluster, "_motif.txt"))
         motif_txt <- cluster_data()$entropy$freq
         colnames(motif_txt) <- paste0("pos_", 1:ncol(motif_txt))
         write.table(motif_txt, file, row.names = TRUE, quote = FALSE, sep = "\t")
-         }
+      }
     )
 
-    #Peptidek száma
-    output$cluster_peptide_count = shiny::renderText({
+    # Peptidek száma
+    output$cluster_peptide_count <- shiny::renderText({
       shiny::req(cluster_data())
       n_peptides_in_cluster <- length(cluster_data()$peptides)
       paste("Number of peptides in this cluster:", n_peptides_in_cluster)
@@ -269,27 +260,30 @@ submotifServer <- function(id) {
 
     # Klaszter peptidjeinek helytakarékos megjelenítése
     show_peptides <- shiny::reactiveVal(FALSE) # show peptides as a reactive
-    shiny::observeEvent(input$show_peptides, { #change show petides, when the button is clicked
+    shiny::observeEvent(input$show_peptides, { # change show petides, when the button is clicked
       show_peptides(!show_peptides())
     })
 
     output$peptide_ui <- shiny::renderUI({
       shiny::req(cluster_data())
       # Ha nincsenek peptidek, visszaadunk egy üzenetet
-      if (length(cluster_data()$peptides) == 0) { return("No peptides in this cluster.") }
+      if (length(cluster_data()$peptides) == 0) {
+        return("No peptides in this cluster.")
+      }
 
       shiny::tagList(
-        if(show_peptides()){
+        if (show_peptides()) {
           shiny::actionButton(ns("show_peptides"), "Hide peptides")
         } else {
           shiny::actionButton(ns("show_peptides"), "Show peptides")
-        }
-        ,
+        },
         if (show_peptides()) { # show only when showpeptides is TRUE
           shiny::div(
             style = "max-height: 300px; overflow-y: auto; columns: 5;",
-            shiny::tags$ul(style = "margin: 0; padding-left: 20px;",
-                    lapply(cluster_data()$peptides, shiny::tags$li) )
+            shiny::tags$ul(
+              style = "margin: 0; padding-left: 20px;",
+              lapply(cluster_data()$peptides, shiny::tags$li)
+            )
           )
         }
       )
@@ -297,28 +291,38 @@ submotifServer <- function(id) {
 
     # Peptid lista letöltése txt-ben
     output$download_peptide_list <- shiny::downloadHandler(
-      filename = function() {  downloadFileName(input, "peptide_list_", ".txt")  },
-      content = function(file) {  writeLines(cluster_data()$peptides, con = file) }
+      filename = function() {
+        downloadFileName(input, "peptide_list_", ".txt")
+      },
+      content = function(file) {
+        writeLines(cluster_data()$peptides, con = file)
+      }
     )
 
     # Entrópia görbe
-    output$entropy_plot = shiny::renderPlot({
-      shiny::req(input$cluster) #prevents plot render when input$cluster is missing upon startup
+    output$entropy_plot <- shiny::renderPlot({
+      shiny::req(input$cluster) # prevents plot render when input$cluster is missing upon startup
 
-      plot(cluster_data()$entropy$H, type = "o", col = "darkgreen",
-           xlab = "Position", ylab = "Entropy", pch = 16,
-           main = paste("Entropy -", input$allele, "Cluster", input$cluster))
+      plot(cluster_data()$entropy$H,
+        type = "o", col = "darkgreen",
+        xlab = "Position", ylab = "Entropy", pch = 16,
+        main = paste("Entropy -", input$allele, "Cluster", input$cluster)
+      )
       abline(h = cluster_data()$red_line, col = "red", lty = 2)
     })
 
     # Entrópia plot letöltése PNG-ben
     output$download_entropy_plot <- shiny::downloadHandler(
-      filename = function() { downloadFileName(input, "entropy_plot_", ".png") },
+      filename = function() {
+        downloadFileName(input, "entropy_plot_", ".png")
+      },
       content = function(file) {
         png(file)
-        plot(cluster_data()$entropy$H, type = "o", col = "darkgreen",
-             xlab = "Position", ylab = "Entropy", pch = 16,
-             main = paste("Entropy -", input$allele, "Cluster", input$cluster))
+        plot(cluster_data()$entropy$H,
+          type = "o", col = "darkgreen",
+          xlab = "Position", ylab = "Entropy", pch = 16,
+          main = paste("Entropy -", input$allele, "Cluster", input$cluster)
+        )
         abline(h = cluster_data()$red_line, col = "red", lty = 2)
         dev.off()
       }
@@ -326,11 +330,13 @@ submotifServer <- function(id) {
 
     # Entrópia adat letöltése TXT-ben
     output$download_entropy_data <- shiny::downloadHandler(
-      filename = function() { downloadFileName(input, "entropy_data", ".txt") },
-      content = function(file) { 
+      filename = function() {
+        downloadFileName(input, "entropy_data", ".txt")
+      },
+      content = function(file) {
         entropy_txt <- data.frame(entropy = cluster_data()$entropy$H)
-        write.table(entropy_txt, file = file, sep = "\t", quote = FALSE, row.names = FALSE) 
-        }
+        write.table(entropy_txt, file = file, sep = "\t", quote = FALSE, row.names = FALSE)
+      }
     )
 
     return(session)
