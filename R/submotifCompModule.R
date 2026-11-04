@@ -4,7 +4,7 @@ submotifCompUI <- function(id) {
   fluidPage(
     shiny::titlePanel("HLA submotif comparison"),
     p("Here the binding motifs of two alleles are shown beside each other for comparison."),
-    p("Below the plots the binding motifs are shown in a text format (only available for HLA-I alleles.)"),
+    p("Below the plots the binding motifs are shown in a text format."),
     # verbatimTextOutput(ns("testing")),
     bslib::layout_columns(
       div(
@@ -22,7 +22,7 @@ submotifCompUI <- function(id) {
         verbatimTextOutput(ns("allele_2_submotifs"))
       )
     ),
-    p("Functional divergence between the two alleles is: (Only available for HLA-I alleles, within a HLA locus)"),
+    p("Functional divergence between the two alleles is: (Only available within a HLA locus)"),
     verbatimTextOutput(ns("funcdiv_value"))
   )
 }
