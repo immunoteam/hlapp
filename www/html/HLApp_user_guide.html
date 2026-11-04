@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>HLApp User Guide</title>
+
+  <style>
+    /* Inherit the Shiny app's typography and colours */
+    body {
+      font-family: inherit;
+      font-size: inherit;
+      line-height: 1.6;
+      color: inherit;
+      background: transparent;
+      max-width: none;
+      margin: 0;
+      padding: 0;
+    }
+
+    img {
+      max-width: 100%;
+      height: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    
+    th, td {
+      border: 1px solid black;
+      padding: 6px 10px;
+    }
+  </style>
+</head>  
+<body>
+<header id="title-block-header">
+<h1 class="title">HLApp User Guide</h1>
+</header>
+<p>Version 1.0 | 22 October 2026</p>
+<p>Use this guide to prepare HLA genotypes, select outputs, interpret
+peptide-binding promiscuity and divergence, and export results.</p>
+<p>The app supports HLA-A, HLA-B and HLA-C, HLA-DP, HLA-DQ and HLA-DRB1.
+The metrics describe different properties; a high score does not by
+itself establish clinical benefit.</p>
+<h2 id="choose-the-output-that-matches-your-question">Choose the output
+that matches your question</h2>
+<table>
+<colgroup>
+<col style="width: 19%" />
+<col style="width: 48%" />
+<col style="width: 32%" />
+</colgroup>
+<thead>
+<tr>
+<th><strong>Metric</strong></th>
+<th><strong>What it describes</strong></th>
+<th><strong>Output level</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Promiscuity</td>
+<td>Breadth of the peptide sequence preferences of one HLA molecule</td>
+<td>Individual alleles, means within HLA-A/B/C/DP/DQ/DRB1 and across
+HLA-I and II</td>
+</tr>
+<tr>
+<td>HED</td>
+<td>Physicochemical divergence between homologous HLA protein
+sequences</td>
+<td>Separate values for HLA-A/B/C/DP/DQ/DRB1 and means across HLA-I and
+II</td>
+</tr>
+<tr>
+<td>Functional divergence</td>
+<td>Complementarity of peptide-binding submotifs for an allele pair</td>
+<td>Separate values for HLA-A/B/C/DP/DQ/DRB1 and means across HLA-I and
+II</td>
+</tr>
+<tr>
+<td>Homozygosity</td>
+<td>Whether only one distinct allele remains at a gene</td>
+<td>Gene-specific flags</td>
+</tr>
+</tbody>
+</table>
+<h2 id="quick-start">Quick start</h2>
+<p>1. Download example data on the Calculate HLA metrics tab and prepare
+one row per sample with a unique ID.</p>
+<p>2. Upload the table, choose the ID column and one representation of
+the HLA genotype, and set the delimiter used inside allele-list
+cells.</p>
+<p>3. Select the metrics to calculate: allele or locus promiscuity,
+homozygosity, HED and/or functional divergence. Choose Get results,
+review completeness, then export.</p>
+<p>Navigation: input preparation on page 2; calculation workflow on page
+3; promiscuity on page 4; HED on page 5; functional divergence on page
+6; additional tools on page 7; troubleshooting and verification on page
+8; references on page 9.</p>
+<h1 id="prepare-the-input-table">Prepare the input table</h1>
+<p>Use a rectangular table with column names in the first row and one
+sample per subsequent row. Include a unique, nonempty sample ID. Column
+names are selected in the interface and need not follow a fixed naming
+scheme. Remove titles, notes, merged cells and extra header rows.</p>
+<table>
+<colgroup>
+<col style="width: 17%" />
+<col style="width: 82%" />
+</colgroup>
+<thead>
+<tr>
+<th><strong>File</strong></th>
+<th><strong>Confirmed reader behavior</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>CSV</td>
+<td>Comma-separated columns. Quote any cell that itself contains
+commas.</td>
+</tr>
+<tr>
+<td>TSV</td>
+<td>Tab-separated columns.</td>
+</tr>
+<tr>
+<td>XLSX or XLS</td>
+<td>Excel table; the reader uses its default first worksheet.</td>
+</tr>
+<tr>
+<td>TXT</td>
+<td>Comma-separated by default in the upload module. Prefer CSV or TSV
+to avoid ambiguity.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="two-ways-to-represent-genotypes">Two ways to represent
+genotypes</h2>
+<p>1. Separate columns. Store the two copies of each gene in separate
+columns, including both identical copies for a known homozygote. For
+example:</p>
+<p>ID,A1,A2,B1,B2,C1,C2<br />
+S01,A*01:01,A*03:01,B*51:01,B*57:01,C*07:01,C*15:02<br />
+S02,A*02:01,A*02:01,B*13:02,B*18:01,C*06:02,C*07:01</p>
+<p>2. Allele lists. Store multiple alleles in a cell, separated by
+commas, semicolons or spaces; select the matching delimiter in step 2.
+The outer file delimiter and the delimiter inside a cell are different
+settings. Comma is the recommended internal delimiter.</p>
+<p>ID,HLA_I<br />
+S01,&quot;A0101,A0301,B5101,B5701,C0701,C1502&quot;</p>
+<p>The app example contains both HLA_I/HLA_II lists and separate gene
+columns. Select either the lists or the separate columns for a sample,
+not both. Combining duplicate representations can inflate allele counts
+and prevent calculation.</p>
+<h2 id="allele-names-and-class-ii-complexes">Allele names and class II
+complexes</h2>
+<p>Use uppercase, two-field allele names with the locus included:
+A*01:01 or A0101; DRB1*07:01 or DRB10701. The importer removes several
+punctuation characters and truncates longer numeric names to four
+digits. Use canonical compact names if detection fails. Do not assume
+that low-resolution typing, ambiguous calls, null-expression suffixes or
+every modern allele name is supported.</p>
+<p>DP example: DPA10103-DPB10301<br />
+DQ example: DQA10201-DQB10303<br />
+DR example: DRB10701</p>
+<p>For DP and DQ, provide explicit alpha-beta complexes, or separate
+alpha- and beta-chain calls. With separate calls, the code forms every
+alpha-beta combination within the sample, including potential trans
+combinations, and discards DQ combinations if they are unable to form
+stable complexes (i.e., they are forbidden pairings [1]). DR is
+represented by DRB1 alone.</p>
+<p>Known homozygosity is different from incomplete typing. A single
+allele in a list does not prove homozygosity. Preserve both copies where
+known; never fill an unknown second allele by copying the first.</p>
+<h1 id="calculate-and-export-results">Calculate and export results</h1>
+<h2 id="step-1-upload-file">Step 1 Upload file</h2>
+<p>Open “Calculate HLA metrics” and remain on the “1. Upload file”
+tab.<br />
+Use Browse... to choose your table. Download example data provides the
+app’s own CSV template.<br />
+After the file is read successfully, select Next -&gt;.<br />
+If the table cannot be read, check the file format and remove any
+non-table lines.</p>
+<h2 id="step-2-select-input-columns">Step 2 Select input columns</h2>
+<p>Choose the column of sample IDs, then tick the HLA columns to
+analyze. Select / Deselect all is convenient only when every detected
+column is needed. For example, in the published example data, it would
+select both alternative genotype representations, so you have to choose
+columns individually.</p>
+<p>Set the internal delimiter to comma, space or semicolon. Inspect Your
+input, which previews the first three rows. The source checks for
+candidate HLA columns in the first six rows and checks whether alleles
+can be recognized within the first 100 rows. A successful recognition
+message does not validate every sample. Ensure all intended loci are
+selected, then click Next -&gt;.</p>
+<h2 id="step-3-choose-output">Step 3 Choose output</h2>
+<table>
+<colgroup>
+<col style="width: 34%" />
+<col style="width: 65%" />
+</colgroup>
+<thead>
+<tr>
+<th><strong>Control</strong></th>
+<th><strong>Selection and meaning</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Allele promiscuity</td>
+<td>Select loci for allele-level promiscuity values</td>
+</tr>
+<tr>
+<td>Locus promiscuity</td>
+<td>Select loci for calculating the mean of available scores within each
+locus.</td>
+</tr>
+<tr>
+<td>Homozygosity</td>
+<td>Choose yes to include gene-specific homozygosity flags.</td>
+</tr>
+<tr>
+<td>HLA evolutionary divergence</td>
+<td>Choose HLA-I and/or HLA-II for class-level HED values.</td>
+</tr>
+<tr>
+<td>Functional divergence</td>
+<td>Select loci for calculating functional divergence between alleles
+within each locus</td>
+</tr>
+</tbody>
+</table>
+<p>The output choices are updated from recognized loci. Select at least
+one output and resolve excessive-allele errors (i.e., when more than two
+alleles are provided for a given locus) to enable Get results. Go back
+returns to the preceding step. Get results calculates the selected
+summaries.</p>
+<h2 id="read-and-export-the-table">Read and export the table</h2>
+<p>The results are returned in a table format with all the selected
+calculated metrics for each ID in one row. You can export the results in
+.xlsx and .csv format or copy them to clipboard.</p>
+<p>You can select any functional divergence value in the table and click
+on the “Visualize functional divergence” button to see and compare
+submotifs of peptides bound by the two alleles at the given locus.</p>
+<h1 id="hla-peptide-binding-promiscuity">HLA peptide binding
+promiscuity</h1>
+<p>Promiscuity describes how broadly an HLA molecule can bind peptide
+sequences.</p>
+<h2 id="calculating-promiscuity-for-hla-class-i-molecules">Calculating
+promiscuity for HLA class I molecules</h2>
+<p>In the original publication, we analyzed positive IEDB binding or
+T-cell assay records for 8–12-residue peptides, retaining alleles with
+at least 400 distinct peptides [2]. In the current implementation of the
+app, promiscuity was calculated using the Sarkizova et al.
+immunopeptidomics dataset [3] to avoid bias caused by heterogeneous
+study results deposited in the IEDB. For each peptide length L and
+position y, amino-acid frequencies P are compared with human-proteome
+background frequencies Q by calculating the Kullback-Laibler divergence
+value. [2]</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>D</mi><mrow><mi>K</mi><mi>L</mi><mo>,</mo><mi>L</mi></mrow></msub><mo stretchy="false" form="prefix">(</mo><mi>y</mi><mo stretchy="false" form="postfix">)</mo><mrow><mspace width="0.333em"></mspace><mtext mathvariant="normal"> </mtext><mspace width="0.333em"></mspace></mrow><mo>=</mo><msub><mi mathvariant="normal">Σ</mi><mi>a</mi></msub><msub><mi>P</mi><mi>L</mi></msub><mo stretchy="false" form="prefix">(</mo><mi>a</mi><mo>,</mo><mi>y</mi><mo stretchy="false" form="postfix">)</mo><mrow><mspace width="0.333em"></mspace><mtext mathvariant="normal"> </mtext><mspace width="0.333em"></mspace></mrow><mrow><mi mathvariant="normal">log</mi><mo>⁡</mo></mrow><mo stretchy="false" form="prefix">[</mo><msub><mi>P</mi><mi>L</mi></msub><mo stretchy="false" form="prefix">(</mo><mi>a</mi><mo>,</mo><mi>y</mi><mo stretchy="false" form="postfix">)</mo><mfrac><mrow><mspace width="0.333em"></mspace><mtext mathvariant="normal"> </mtext><mspace width="0.333em"></mspace></mrow><mrow><mspace width="0.333em"></mspace><mtext mathvariant="normal"> </mtext><mspace width="0.333em"></mspace></mrow></mfrac><mi>Q</mi><mo stretchy="false" form="prefix">(</mo><mi>a</mi><mo stretchy="false" form="postfix">)</mo><mo stretchy="false" form="postfix">]</mo></mrow><annotation encoding="application/x-tex">D_{KL,L}(y)\text{ } = \Sigma_{a}P_{L}(a,y)\text{ }\log\lbrack P_{L}(a,y)\frac{\text{ }}{\text{ }}Q(a)\rbrack</annotation></semantics></math></p>
+<p>A value of 10⁻⁷ is added to all amino-acid frequencies at a position
+containing a zero frequency. Position values are averaged within each
+length and corrected by subtracting the mean from 1,000 random
+human-proteome peptide samples of matching size and length.
+Length-specific corrected values are weighted by their repertoire
+proportions. Promiscuity is the reciprocal. [2]</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>D</mi><mrow><mi>c</mi><mi>o</mi><mi>r</mi><mi>r</mi><mi>e</mi><mi>c</mi><mi>t</mi><mi>e</mi><mi>d</mi><mo>,</mo><mi>L</mi></mrow></msub><mo>=</mo><mrow><mspace width="0.333em"></mspace><mtext mathvariant="normal"> </mtext><mspace width="0.333em"></mspace></mrow><mo stretchy="false" form="prefix">(</mo><mfrac><mn>1</mn><mi>L</mi></mfrac><mo stretchy="false" form="postfix">)</mo><msub><mi mathvariant="normal">Σ</mi><mi>y</mi></msub><msub><mi>D</mi><mrow><mi>K</mi><mi>L</mi><mo>,</mo><mi>L</mi></mrow></msub><mo stretchy="false" form="prefix">(</mo><mi>y</mi><mo stretchy="false" form="postfix">)</mo><mrow><mspace width="0.333em"></mspace><mtext mathvariant="normal"> </mtext><mspace width="0.333em"></mspace></mrow><mo>−</mo><msub><mi>D</mi><mrow><mi>r</mi><mi>a</mi><mi>n</mi><mi>d</mi><mi>o</mi><mi>m</mi><mo>,</mo><mi>L</mi></mrow></msub></mrow><annotation encoding="application/x-tex">D_{corrected,L} = \text{ }(\frac{1}{L})\Sigma_{y}D_{KL,L}(y)\text{ } - D_{random,L}</annotation></semantics></math></p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mrow><mi mathvariant="normal">Pr</mi><mo>⁡</mo></mrow><mrow><mspace width="0.333em"></mspace><mtext mathvariant="normal"> </mtext><mspace width="0.333em"></mspace></mrow><mo>=</mo><mrow><mspace width="0.333em"></mspace><mtext mathvariant="normal"> </mtext><mspace width="0.333em"></mspace></mrow><mn>1</mn><mfrac><mrow><mspace width="0.333em"></mspace><mtext mathvariant="normal"> </mtext><mspace width="0.333em"></mspace></mrow><mrow><mspace width="0.333em"></mspace><mtext mathvariant="normal"> </mtext><mspace width="0.333em"></mspace></mrow></mfrac><mo stretchy="false" form="prefix">[</mo><msub><mi mathvariant="normal">Σ</mi><mi>L</mi></msub><msub><mi>w</mi><mi>L</mi></msub><msub><mi>D</mi><mrow><mi>c</mi><mi>o</mi><mi>r</mi><mi>r</mi><mi>e</mi><mi>c</mi><mi>t</mi><mi>e</mi><mi>d</mi><mo>,</mo><mi>L</mi></mrow></msub><mo stretchy="false" form="postfix">]</mo></mrow><annotation encoding="application/x-tex">\Pr\text{ } = \text{ }1\frac{\text{ }}{\text{ }}\lbrack\Sigma_{L}w_{L}D_{corrected,L}\rbrack</annotation></semantics></math></p>
+<p>Here w_L is the fraction of peptides of length L. Lower corrected
+divergence from background gives higher Pr. [2]</p>
+<h2 id="calculating-promiscuity-for-hla-class-ii-molecules">Calculating
+promiscuity for HLA class II molecules</h2>
+<p>To determine promiscuity for HLA-II molecules, we applied the same
+approach to unique nine-residue binding cores from a large
+immunopeptidomics dataset [4]. We retained alleles with at least 100
+core sequences.</p>
+<h2 id="app-implementation">App implementation</h2>
+<p>The app calculates promiscuity for each selected locus. Locus
+promiscuity is an unweighted arithmetic mean of alleles for
+HLA-A/B/C/DRB1 and alpha-beta chain combinations for HLA-DP/DQ. Missing
+scores are ignored during calculation.</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><munder><mi mathvariant="normal">Pr</mi><mrow><mi>m</mi><mi>e</mi><mi>a</mi><mi>n</mi></mrow></munder><mo>=</mo><mrow><mspace width="0.333em"></mspace><mtext mathvariant="normal"> </mtext><mspace width="0.333em"></mspace></mrow><mo stretchy="false" form="prefix">(</mo><mfrac><mn>1</mn><mi>k</mi></mfrac><mo stretchy="false" form="postfix">)</mo><msub><mi mathvariant="normal">Σ</mi><mi>j</mi></msub><munder><mi mathvariant="normal">Pr</mi><mi>j</mi></munder></mrow><annotation encoding="application/x-tex">\Pr_{mean} = \text{ }(\frac{1}{k})\Sigma_{j}\Pr_{j}</annotation></semantics></math></p>
+<p>Here k is the number of available scores at the locus.</p>
+<h1 id="hla-evolutionary-divergence">HLA evolutionary divergence</h1>
+<p>HED quantifies physicochemical differences between the two homologous
+HLA protein sequences. The Grantham amino-acid distance reflects
+composition, polarity and volume. For aligned peptide-binding domains of
+length N, HED is the mean site-wise Grantham distance. Identical
+sequences give zero. According to Chowell et al., we averaged the HLA-A,
+HLA-B and HLA-C pairwise values to obtain mean HLA-I HED. [5–7]</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>H</mi><mi>E</mi><mi>D</mi><mo stretchy="false" form="prefix">(</mo><mi>u</mi><mo>,</mo><mi>v</mi><mo stretchy="false" form="postfix">)</mo><mrow><mspace width="0.333em"></mspace><mtext mathvariant="normal"> </mtext><mspace width="0.333em"></mspace></mrow><mo>=</mo><mrow><mspace width="0.333em"></mspace><mtext mathvariant="normal"> </mtext><mspace width="0.333em"></mspace></mrow><mo stretchy="false" form="prefix">(</mo><mfrac><mn>1</mn><mi>N</mi></mfrac><mo stretchy="false" form="postfix">)</mo><msub><mi mathvariant="normal">Σ</mi><mi>i</mi></msub><mi>G</mi><mo stretchy="false" form="prefix">(</mo><msub><mi>u</mi><mi>i</mi></msub><mo>,</mo><msub><mi>v</mi><mi>i</mi></msub><mo stretchy="false" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">HED(u,v)\text{ } = \text{ }(\frac{1}{N})\Sigma_{i}G(u_{i},v_{i})</annotation></semantics></math></p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mrow><mi>H</mi><mi>E</mi><mi>D</mi></mrow><mi>I</mi></msub><mo>=</mo><mrow><mspace width="0.333em"></mspace><mtext mathvariant="normal"> </mtext><mspace width="0.333em"></mspace></mrow><mo stretchy="false" form="prefix">[</mo><msub><mrow><mi>H</mi><mi>E</mi><mi>D</mi></mrow><mi>A</mi></msub><mo>+</mo><msub><mrow><mi>H</mi><mi>E</mi><mi>D</mi></mrow><mi>B</mi></msub><mo>+</mo><msub><mrow><mi>H</mi><mi>E</mi><mi>D</mi></mrow><mi>C</mi></msub><mo stretchy="false" form="postfix">]</mo><mfrac><mrow><mspace width="0.333em"></mspace><mtext mathvariant="normal"> </mtext><mspace width="0.333em"></mspace></mrow><mrow><mspace width="0.333em"></mspace><mtext mathvariant="normal"> </mtext><mspace width="0.333em"></mspace></mrow></mfrac><mn>3</mn></mrow><annotation encoding="application/x-tex">{HED}_{I} = \text{ }\lbrack{HED}_{A} + {HED}_{B} + {HED}_{C}\rbrack\frac{\text{ }}{\text{ }}3</annotation></semantics></math></p>
+<p>G is the Grantham distance for the two amino acids at aligned
+position i. Higher HED denotes more physicochemical sequence divergence;
+it is a proxy for binding-repertoire differences rather than a direct
+measurement of peptide overlap. [5,6]</p>
+<p>For HLA-II, distances are compared within DPA1, DPB1, DQA1, DQB1 and
+DRB1, then the five values are averaged.</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mrow><mi>H</mi><mi>E</mi><mi>D</mi></mrow><mrow><mi>I</mi><mi>I</mi></mrow></msub><mo>=</mo><mrow><mspace width="0.333em"></mspace><mtext mathvariant="normal"> </mtext><mspace width="0.333em"></mspace></mrow><mo stretchy="false" form="prefix">[</mo><msub><mrow><mi>H</mi><mi>E</mi><mi>D</mi></mrow><mrow><mi>D</mi><mi>P</mi><mi>A</mi><mn>1</mn></mrow></msub><mo>+</mo><msub><mrow><mi>H</mi><mi>E</mi><mi>D</mi></mrow><mrow><mi>D</mi><mi>P</mi><mi>B</mi><mn>1</mn></mrow></msub><mo>+</mo><msub><mrow><mi>H</mi><mi>E</mi><mi>D</mi></mrow><mrow><mi>D</mi><mi>Q</mi><mi>A</mi><mn>1</mn></mrow></msub><mo>+</mo><msub><mrow><mi>H</mi><mi>E</mi><mi>D</mi></mrow><mrow><mi>D</mi><mi>Q</mi><mi>B</mi><mn>1</mn></mrow></msub><mo>+</mo><msub><mrow><mi>H</mi><mi>E</mi><mi>D</mi></mrow><mrow><mi>D</mi><mi>R</mi><mi>B</mi><mn>1</mn></mrow></msub><mo stretchy="false" form="postfix">]</mo><mfrac><mrow><mspace width="0.333em"></mspace><mtext mathvariant="normal"> </mtext><mspace width="0.333em"></mspace></mrow><mrow><mspace width="0.333em"></mspace><mtext mathvariant="normal"> </mtext><mspace width="0.333em"></mspace></mrow></mfrac><mn>5</mn></mrow><annotation encoding="application/x-tex">{HED}_{II} = \text{ }\lbrack{HED}_{DPA1} + {HED}_{DPB1} + {HED}_{DQA1} + {HED}_{DQB1} + {HED}_{DRB1}\rbrack\frac{\text{ }}{\text{ }}5</annotation></semantics></math></p>
+<p>HED values for allele pairs at the same locus are calculated using
+the perl script published by Pierini et al. [6,
+https://sourceforge.net/projects/granthamdist/]. HLA allele sequences
+were downloaded from the same resource.</p>
+<p>HED values for HLA-I and HLA-II are only calculated if all loci are
+represented and have valid HED values.</p>
+<h2 id="section"></h2>
+<h1 id="hla-functional-divergence">HLA functional divergence</h1>
+<p>HLA functional divergence describes the degree to which an
+individual’s HLA allele at given locus differ in their peptide-binding
+preferences, reflecting their capacity to present distinct sets of
+antigens to T cells.</p>
+<h2 id="calculating-functional-divergence">Calculating functional
+divergence</h2>
+<p>Following the approach by Viard et al., we determined nonamer peptide
+clusters from 95 HLA-I alleles. We summarized clusters as submotifs,
+retaining highly selective position–amino-acid features with an entropy
+value below 0.1. We then compared the submotif overlap of two alleles
+yielding a divergence measure: greater divergence means lower overlap
+between the repertoire of the two alleles. As in the original study,
+singletons were retained as a separate subgroup. [8]</p>
+<p>We applied the same approach for HLA-II alleles by using unique
+nine-residue binding cores from a large immunopeptidomics dataset
+[ref].</p>
+<p><strong>Warning.</strong> The original publication’s calculation
+scripts were not available to the app developers. While the reproduced
+values show strong correlation with the ones in the original publication
+(Spearman’s rho was 0.84, 0.79, and 0.9 for HLA-A, B, and C,
+respectively), some of them may differ. Therefore, the numeric result
+should be reported as an app-derived reproduction, with its version
+stated.</p>
+<h2 id="section-1"></h2>
+<h1 id="explore-motifs-and-translate-allele-names">Explore motifs and
+translate allele names</h1>
+<h2 id="submotif-explorer">Submotif explorer</h2>
+<p>This module visualizes peptide clusters and submotifs used for
+calculating functional divergence between HLA alleles (see page 6. and
+ref. [8]).</p>
+<p>Choose “Submotif explorer”, then HLA-I or HLA-II under “Select HLA
+class”<br />
+When the data are loaded, “Select allele form list, or start typing”:
+chooses a molecule<br />
+Select a cluster: chooses the peptide cluster of the selected allele
+(the clustered are ordered by decreasing number of peptides).<br />
+The general view shows the molecule’s motif, total peptide count and an
+NMDS plot; the selected cluster is highlighted with green.</p>
+<p>On the right side, you can see the submotif of the selected peptide
+cluster, the peptide count, and the entropy of amino acids at each
+position. On the entropy plot, the red dashed line indicates the entropy
+value of 0.1, which is used for defining the submotif (see page 6.).</p>
+<p>Peptide sequences can be visualized with the “Show peptides/Hide
+peptides” button. All data on the submotif can be downloaded:</p>
+<table>
+<colgroup>
+<col style="width: 46%" />
+<col style="width: 53%" />
+</colgroup>
+<thead>
+<tr>
+<th><strong>Download control</strong></th>
+<th><strong>File and intended use</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Download Submotif Plot</td>
+<td>SVG vector graphic</td>
+</tr>
+<tr>
+<td>Download Submotif Data</td>
+<td>RDS motif data for analysis in R</td>
+</tr>
+<tr>
+<td>Download Peptide List</td>
+<td>TXT peptide list</td>
+</tr>
+<tr>
+<td>Download Entropy Plot</td>
+<td>PNG graphic</td>
+</tr>
+<tr>
+<td>Download Entropy Data</td>
+<td>RDS vector of entropy values</td>
+</tr>
+</tbody>
+</table>
+<h2 id="submotif-comparison">Submotif comparison</h2>
+<p>Choose “Submotif comparison” and select under Allele 1 and Allele 2.
+The code displays each molecule’s binding motif and the submotif
+composition text, and also the functional-divergence value for the two
+alleles.</p>
+<h2 id="translate-allele-formats">Translate allele formats</h2>
+<p>Enter canonical compact identifiers, one per line, in the “Enter
+alleles” field; for example A0101, DRB10701 or DQA10201-DQB10303.
+Alternatively, select the “Load alleles from PromsicuityApp” to import
+unique allele names in the “Calculate HLA metrics” module. Select
+NetMHCpan, MHCnuggets and/or MixMHCpred.</p>
+<p>The output includes columns for NetMHCpan/NetMHCIIpan, MHCnuggets,
+and MixMHCpred/MixMHC2pred as selected. Unsupported entries trigger a
+warning and are excluded from the translation table.</p>
+<h1 id="troubleshoot-and-verify-the-analysis">Troubleshoot and verify
+the analysis</h1>
+<table>
+<colgroup>
+<col style="width: 31%" />
+<col style="width: 68%" />
+</colgroup>
+<thead>
+<tr>
+<th><strong>Symptom</strong></th>
+<th><strong>Action</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>No candidate input ID column</td>
+<td>Use unique, nonempty IDs in a dedicated column that contains no HLA
+allele calls.</td>
+</tr>
+<tr>
+<td>No HLA columns or alleles recognized</td>
+<td>Use uppercase locus-prefixed two-field calls. Put valid calls near
+the top; check the internal delimiter and selected columns.</td>
+</tr>
+<tr>
+<td>More than two alleles error</td>
+<td>Select one genotype representation. Remove accidental duplicate
+columns. The code permits up to four DP or DQ complexes but only two A,
+B, C or DRB1 entries.</td>
+</tr>
+<tr>
+<td>Only one allele warning</td>
+<td>Check that both gene copies are present where required. Do not
+replace unknown calls with fabricated homozygosity.</td>
+</tr>
+<tr>
+<td>Blank NA or NaN result</td>
+<td>Check allele or pair coverage. Missing lookup values are not
+evidence of zero. Available-case averages can hide incomplete
+coverage.</td>
+</tr>
+<tr>
+<td>Empty plots or disabled results</td>
+<td>Check input selections and data availability. Reload the app if the
+session stops responding.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="check-every-sample-before-interpretation">Check every sample
+before interpretation</h2>
+<p>Check exported IDs against the input, review each required gene and
+score, and count missing outputs. Preserve known homozygous copies,
+record excluded DQ combinations, and state whether partial-case means
+were accepted. Save the input, selected columns and delimiters, output
+choices, export and analysis date. These records make comparisons
+reproducible.</p>
+<h1 id="scientific-and-implementation-references">Scientific and
+implementation references</h1>
+<p>Bracketed numbers refer to these sources. Links open the original
+methods or implementation. Access date for web and repository material
+is 13 October 2026.</p>
+<p>[1] Raymond CK et al. Ancient haplotypes of the HLA Class II region.
+Genome Research. 2005;15.9:1250-1257. Definition of forbidden HLA-DQ
+alpha and beta chain pairings.</p>
+<p><a href="https://doi.org/10.1101/gr.3554305">doi.org/10.1101/gr.3554305</a></p>
+<p>[2] Manczinger M et al. Negative trade-off between neoantigen
+repertoire breadth and the specificity of HLA-I molecules shapes
+antitumor immunity. Nature Cancer. 2021;2:950–961. Original HLA-I
+KL-based promiscuity method.</p>
+<p><a href="https://doi.org/10.1038/s43018-021-00226-4">doi.org/10.1038/s43018-021-00226-4</a></p>
+<p>[3] Sarkizova S et al. A large peptidome dataset improves HLA class I
+epitope prediction across most of the human population. Nature
+Biotechnology. 2020;38:199–209. HLAthena peptide data underlying the
+published submotif approach.</p>
+<p><a href="https://doi.org/10.1038/s41587-019-0322-9">doi.org/10.1038/s41587-019-0322-9</a></p>
+<p>[4] HLA-II peptide-binding diversity shapes humoral immune responses
+and susceptibility to infections. Nature Communications. 2026. Methods
+section Determining the promiscuity of HLA-II molecules.</p>
+<p><a href="https://doi.org/10.1038/s41467-026-76184-1">doi.org/10.1038/s41467-026-76184-1</a></p>
+<p>[5] Chowell D et al. Evolutionary divergence of HLA class I genotype
+impacts efficacy of cancer immunotherapy. Nature Medicine.
+2019;25:1715–1720. HED calculation and HLA-I aggregation.</p>
+<p><a href="https://doi.org/10.1038/s41591-019-0639-4">doi.org/10.1038/s41591-019-0639-4</a></p>
+<p>[6] Pierini F and Lenz TL. Divergent Allele Advantage at Human MHC
+Genes Signatures of Past and Ongoing Selection. Molecular Biology and
+Evolution. 2018;35:2145–2158. Sequence divergence and peptide repertoire
+analysis.</p>
+<p><a href="https://doi.org/10.1093/molbev/msy116">doi.org/10.1093/molbev/msy116</a></p>
+<p>[7] Grantham R. Amino acid difference formula to help explain protein
+evolution. Science. 1974;185:862–864. Original physicochemical
+amino-acid distance.</p>
+<p><a href="https://doi.org/10.1126/science.185.4154.862">doi.org/10.1126/science.185.4154.862</a></p>
+<p>[8] Viard M et al. Impact of HLA class I functional divergence on HIV
+control. Science. 2024;383:319–325. Submotif-based method; supplementary
+Data S1 supplies reference pairwise values.</p>
+<p><a href="https://doi.org/10.1126/science.adk0777">doi.org/10.1126/science.adk0777</a></p>
+<h2 id="support">Support</h2>
+<p>For app errors or feedback, use the <a href="https://github.com/immunoteam/promiscuity_app">promiscuity_app
+repository</a>. Include the app date, selected settings and a minimal
+example without identifiable sample information (screenshot is
+preferred).</p>
+</body>
+</html>

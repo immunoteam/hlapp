@@ -31,6 +31,10 @@ HLApp_server <- function(input, output, session) {
     # shiny::req(login_status())
     translateUI("translate")
   })
+  
+  output$guideUI <- shiny::renderUI({
+    guideUI("guide")
+  })
 
   # server logic
   # shiny::observeEvent(login_status(), {
@@ -39,6 +43,7 @@ HLApp_server <- function(input, output, session) {
   submotifCompServer("submotif_comp", compare_values)
   prom_result(promiscuityServer("promiscuity", app_session = session, compare_values))
   translateServer("translate", prom_result)
+  guideServer("guide")
   #  }
   # })
 
