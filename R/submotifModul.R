@@ -219,7 +219,7 @@ submotifServer <- function(id) {
     output$submotif_plot <- shiny::renderUI({
       shiny::req(input$allele, input$cluster)
 
-      file_name <- paste0(input$allele, "_cluster", input$cluster, ".svg")
+      file_name <- paste0(input$allele, "_cluster_", input$cluster, ".svg")
 
       shiny::tags$img(
         src = file.path("img/submotif", file_name),
@@ -233,7 +233,7 @@ submotifServer <- function(id) {
         downloadFileName(input, "submotif_plot", ".svg")
       },
       content = function(file) {
-        svg_path <- file.path("www/img/submotif", paste0(input$allele, "_cluster", input$cluster, ".svg"))
+        svg_path <- file.path("www/img/submotif", paste0(input$allele, "_cluster_", input$cluster, ".svg"))
         file.copy(svg_path, file)
       }
     )
