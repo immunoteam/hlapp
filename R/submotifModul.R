@@ -246,7 +246,7 @@ submotifServer <- function(id) {
       content = function(file) {
         # txt_path <- file.path("data", "cluster_motif", paste0(input$allele, "_cluster_", input$cluster, "_motif.txt"))
         motif_txt <- cluster_data()$entropy$freq
-        colnames(motif_txt) <- paste0("pos_", 1:ncol(motif_txt))
+        colnames(motif_txt) <- paste0("pos_", seq_len(ncol(motif_txt)))
         write.table(motif_txt, file, row.names = TRUE, quote = FALSE, sep = "\t")
       }
     )
@@ -301,14 +301,9 @@ submotifServer <- function(id) {
 
     # Entrópia görbe
     output$entropy_plot <- shiny::renderPlot({
-      shiny::req(input$cluster) # prevents plot render when input$cluster is missing upon startup
+      shiny::req(cluster_data()) # prevents plot render when input$cluster is missing upon startup
 
-      plot(cluster_data()$entropy$H,
-        type = "o", col = "darkgreen",
-        xlab = "Position", ylab = "Entropy", pch = 16,
-        main = paste("Entropy -", input$allele, "Cluster", input$cluster)
-      )
-      abline(h = cluster_data()$red_line, col = "red", lty = 2)
+      makeEntropyPlot(cluster_data()$entropy$H)
     })
 
     # Entrópia plot letöltése PNG-ben
@@ -318,12 +313,7 @@ submotifServer <- function(id) {
       },
       content = function(file) {
         png(file)
-        plot(cluster_data()$entropy$H,
-          type = "o", col = "darkgreen",
-          xlab = "Position", ylab = "Entropy", pch = 16,
-          main = paste("Entropy -", input$allele, "Cluster", input$cluster)
-        )
-        abline(h = cluster_data()$red_line, col = "red", lty = 2)
+        makeEntropyPlot(cluster_data()$entropy$H)
         dev.off()
       }
     )
