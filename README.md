@@ -410,7 +410,7 @@ Data S1 supplies reference pairwise values.
 
 ### Support
 
-For app errors or feedback, use the [promiscuity_app
-repository](https://github.com/immunoteam/promiscuity_app). Include the
+For app errors or feedback, use the [HLAapp
+repository](https://github.com/immunoteam/hlapp). Include the
 app date, selected settings and a minimal example without identifiable
 sample information (screenshot is preferred).
